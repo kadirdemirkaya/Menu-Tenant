@@ -12,12 +12,11 @@
     <Folder Include="Cqrs\Queries\RequestHandlers\" />
     <Folder Include="Cqrs\Queries\Requests\" />
     <Folder Include="Configurations\" />
-    <Folder Include="Repository\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.Application\Shared.Application.csproj" />
   </ItemGroup>
 
 </Project>

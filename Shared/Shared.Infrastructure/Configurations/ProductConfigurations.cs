@@ -21,6 +21,8 @@ namespace Shared.Infrastructure.Configurations
                     id => id.Id,
                     value => ProductId.Create(value));
 
+            builder.Property(p => p.TenantId).IsRequired();
+
             builder.Property(p => p.UpdatedDateUTC).HasDefaultValue(DateTime.UtcNow);
 
             builder.Property(p => p.CreatedDateUTC).IsRequired().HasDefaultValue(DateTime.UtcNow);

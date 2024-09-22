@@ -1,7 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
-using Shared.Domain.Models;
+﻿using Shared.Domain.Models;
 
-namespace Shared.Infrastructure.Abstractions
+namespace Shared.Application.Abstractions
 {
     public interface ITokenService
     {

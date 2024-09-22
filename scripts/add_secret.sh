@@ -12,7 +12,7 @@ add_secret() {
 }
 
 add_secret "Seq" "localhost:5341"
-add_secret "SecretManagement" "my_secret_2"
+add_secret "SecretManagement" "localhost:4566"
 add_secret "Redis" "localhost:6379,ssl=False,allowAdmin=true"
-add_secret "Postgresql1" ""
-add_secret "Postgresql2" ""
+add_secret "Postgresql1" "Server=localhost;port=5432;Database=AppDbContext;User Id=postgresql;Password=123"
+add_secret "Postgresql2" "Server=localhost;port=5432;Database=AppDbContext;User Id=postgresql;Password=123"

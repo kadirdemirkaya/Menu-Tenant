@@ -4,6 +4,7 @@
         where TId : notnull
     {
         public TId Id { get; protected set; }
+        public string TenantId { get; protected set; }
         public bool IsDeleted { get; protected set; }
         public DateTime CreatedDateUTC { get; protected set; }
         public DateTime? UpdatedDateUTC { get; protected set; }

@@ -1,43 +1,34 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using Shared.Application.Abstractions;
+using Shared.Domain.Models;
 
 namespace Shared.Infrastructure.Middlewares
 {
-    public class JwtMiddleware
+    public class JwtMiddleware(RequestDelegate _next, IJwtTokenService _authService)
     {
-        //private readonly RequestDelegate _next;
-        //private readonly IAuthService _authService;
+        public async Task Invoke(HttpContext context)
+        {
+            var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
-        //public JwtMiddleware(RequestDelegate next, IAuthService authService)
-        //{
-        //    this._next = next;
-        //    this._authService = authService;
-        //}
+            if (token != null)
+            {
+                bool result = _authService.ValidateCurrentToken(token);
 
-        //public async Task Invoke(HttpContext context)
-        //{
-        //    var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+                if (result == false)
+                {
+                    return;
+                }
 
-        //    if (token != null)
-        //    {
-        //        bool result = _authService.ValidateCurrentToken(token);
+                var tenantModel = _authService.GetClaim(token, "TenantModel");
 
-        //        if (result == false)
-        //        {
-        //            return;
-        //        }
+                if (string.IsNullOrWhiteSpace(tenantModel))
+                    return;
 
-        //        var tenantInfo = _authService.GetClaim(token, "TenantInfo");
+                context.Items["TenantInfo"] = JsonConvert.DeserializeObject<TenantModel>(tenantModel);
+            }
 
-        //        if (string.IsNullOrWhiteSpace(tenantInfo))
-        //        {
-        //            return;
-        //        }
-
-        //        //context.Items["TenantInfo"] = JsonConvert.DeserializeObject<TenantInfo>(tenantInfo);
-        //    }
-
-        //    await _next(context);
-        //}
+            await _next(context);
+        }
     }
 }
