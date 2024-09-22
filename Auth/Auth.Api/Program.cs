@@ -1,10 +1,19 @@
+using Auth.Application;
+using Auth.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
+
+using var configuration = builder.Configuration;
 
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
+
+builder.Services.AuthApplicationRegistration();
+
+builder.Services.AuthInfrastructureServiceRegistrations(configuration);
 
 
 var app = builder.Build();
@@ -17,8 +26,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.AuthInfrastructureWebApplicationRegistration();
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+

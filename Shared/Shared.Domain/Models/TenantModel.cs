@@ -6,6 +6,8 @@
         public string PhoneNumber { get; set; }
 
         public string TenantId { get; set; } // companyId
+        public string Port { get; private set; }
+        public string DatabaseName { get; private set; }
 
         public string Name { get; set; }
         public string Host { get; set; }

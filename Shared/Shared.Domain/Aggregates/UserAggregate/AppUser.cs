@@ -12,5 +12,12 @@ namespace Shared.Domain.Aggregates.UserAggregate
         public string PhoneNumber { get; private set; }
 
         public List<Company> Companies { get; private set; }
+
+
+        public void SetTenantIdForAppUser(string id)
+        {
+            SetTenantId(id);
+        }
+     
     }
 }

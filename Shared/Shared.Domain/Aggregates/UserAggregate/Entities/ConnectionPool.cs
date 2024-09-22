@@ -8,6 +8,8 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
     {
         public string Name { get; private set; }
         public string Host { get; private set; }
+        public string Port { get; private set; }
+        public string DatabaseName { get; private set; }
         public string Username { get; private set; }
         public string Password { get; private set; }
 

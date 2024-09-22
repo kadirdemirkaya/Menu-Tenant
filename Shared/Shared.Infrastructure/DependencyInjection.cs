@@ -1,7 +1,7 @@
 ﻿using Base.Caching;
 using Base.Caching.Configurations;
-using EventBusDomain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -12,32 +12,41 @@ using Shared.Application.Abstractions;
 using Shared.Domain.Models;
 using Shared.Domain.Models.Configs;
 using Shared.Infrastructure.Extensions;
+using Shared.Infrastructure.Middlewares;
 using Shared.Infrastructure.Services;
 using System.Text;
 
 namespace Shared.Infrastructure
 {
-    // Kendi içerinde kur
     public static class DependencyInjection
     {
-        public static IServiceCollection InfrastructureRegistration(this IServiceCollection services, IConfiguration configuration)
+
+        public static IServiceCollection SecretManagementRegistration(this IServiceCollection services)
         {
-            #region Secret management
             services.AddSingleton<ISecretManagementFactory, SecretManagementFactory>();
             services.AddSingleton<ISecretsManagerService, AwsSecretsManagerService>();
-            #endregion
 
+            return services;
+        }
+
+        public static IServiceCollection SeqRegistration(this IServiceCollection services, IConfiguration configuration)
+        {
             using (ISecretsManagerService secretsManagerService = new AwsSecretsManagerService(configuration))
             {
-                #region Seq
                 Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .WriteTo.Seq($"http://{secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.Seq)}")
                 .CreateLogger();
-                #endregion
+            }
 
-                #region Cache (maybe it can be found in the services own layer)
+            return services;
+        }
+
+        public static IServiceCollection CachingRegistration(this IServiceCollection services, IConfiguration configuration)
+        {
+            using (ISecretsManagerService secretsManagerService = new AwsSecretsManagerService(configuration))
+            {
                 services.AddCaching(configuration, new CacheConfiguration()
                 {
                     baseCacheConfiguration = new()
@@ -52,11 +61,12 @@ namespace Shared.Infrastructure
                         InstanceName = "Caching"
                     }
                 });
-                #endregion
-
             }
+            return services;
+        }
 
-            #region JWT 
+        public static IServiceCollection JwtRegistration(this IServiceCollection services)
+        {
             var jwtTokenConfig = services.GetOptions<JwtTokenConfig>("JwtTokenConfig");
 
             services.AddAuthentication(x =>
@@ -65,27 +75,38 @@ namespace Shared.Infrastructure
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-                    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, x =>
-                    {
-                        x.TokenValidationParameters = new TokenValidationParameters
+                        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, x =>
                         {
-                            ValidateIssuer = jwtTokenConfig.ValidateIssuer,
-                            ValidIssuer = jwtTokenConfig.ValidIssuer,
-                            ValidateAudience = jwtTokenConfig.ValidateAudience,
-                            ValidAudience = jwtTokenConfig.ValidAudience,
-                            ValidateLifetime = jwtTokenConfig.ValidateLifetime,
-                            ValidateIssuerSigningKey = jwtTokenConfig.ValidateIssuerSigningKey,
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtTokenConfig.SecretKey)),
-                            ClockSkew = TimeSpan.Zero
-                        };
-                    });
-            #endregion
-
-            #region Services
-            services.AddScoped<IJwtTokenService, JwtTokenService>();
-            #endregion
+                            x.TokenValidationParameters = new TokenValidationParameters
+                            {
+                                ValidateIssuer = jwtTokenConfig.ValidateIssuer,
+                                ValidIssuer = jwtTokenConfig.ValidIssuer,
+                                ValidateAudience = jwtTokenConfig.ValidateAudience,
+                                ValidAudience = jwtTokenConfig.ValidAudience,
+                                ValidateLifetime = jwtTokenConfig.ValidateLifetime,
+                                ValidateIssuerSigningKey = jwtTokenConfig.ValidateIssuerSigningKey,
+                                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtTokenConfig.SecretKey)),
+                                ClockSkew = TimeSpan.Zero
+                            };
+                        });
 
             return services;
+        }
+
+        public static IServiceCollection ServiceRegistration(this IServiceCollection services)
+        {
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
+
+            services.AddScoped<IWorkContext, WorkContext>();
+
+            return services;
+        }
+
+        public static WebApplication MiddlewareRegistration(this WebApplication app)
+        {
+            app.UseMiddleware<JwtMiddleware>();
+
+            return app;
         }
     }
 }

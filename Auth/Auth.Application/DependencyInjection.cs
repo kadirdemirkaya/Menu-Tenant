@@ -1,5 +1,5 @@
-﻿using EventBusDomain;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Shared.Application;
 
 namespace Auth.Application
 {
@@ -7,9 +7,7 @@ namespace Auth.Application
     {
         public static IServiceCollection AuthApplicationRegistration(this IServiceCollection services)
         {
-            #region Domain Event
-            services.AddEventBus(AssemblyReference.Assembly);
-            #endregion
+            services.EventBusRegistration(AssemblyReference.Assemblies);
 
             return services;
         }

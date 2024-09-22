@@ -3,6 +3,7 @@ using Shared.Application.Abstractions;
 using Shared.Domain.Aggregates.MenuAggregate.Entities;
 using Shared.Domain.Aggregates.UserAggregate;
 using Shared.Domain.Aggregates.UserAggregate.Entities;
+using Shared.Domain.BaseTypes;
 
 namespace Auth.Infrastructure.Data
 {
@@ -26,29 +27,35 @@ namespace Auth.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Shared.Infrastructure.AssemblyReference.Assembly); // Shared.Inf
-            modelBuilder.Entity<Product>().HasQueryFilter(p => p.TenantId == _workContext.Tenant.TenantId);
+
+            modelBuilder.Entity<AppUser>().HasQueryFilter(p => p.TenantId == _workContext.Tenant.TenantId);
+            modelBuilder.Entity<Company>().HasQueryFilter(p => p.TenantId == _workContext.Tenant.TenantId);
+            modelBuilder.Entity<ConnectionPool>().HasQueryFilter(p => p.TenantId == _workContext.Tenant.TenantId);
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var tenantConnectionString = _tenantService.GetConnectionString();
-            if (!string.IsNullOrEmpty(tenantConnectionString))
+            string host = _workContext.Tenant.Host;
+            string name = _workContext.Tenant.Name;
+            string userName = _workContext.Tenant.Username;
+            string password = _workContext.Tenant.Password;
+            string Port = _workContext.Tenant.Port;
+            string databaseName = _workContext.Tenant.DatabaseName;
+            string connectionString = $"Server={host};port={Port};Database={databaseName};User Id={userName};Password={password}";
+
+            if (!string.IsNullOrEmpty(connectionString))
             {
-                var dbProvider = _tenantService.GetDatabaseProvider();
-                if (dbProvider.ToLower() == "mssql")
-                    optionsBuilder.UseSqlServer(tenantConnectionString);
+                if (name.ToLower() == "postgresql")
+                    optionsBuilder.UseNpgsql(connectionString);
             }
         }
         public async override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            foreach (var entry in ChangeTracker.Entries<IMustHaveTenant>().ToList())
+            var entries = ChangeTracker.Entries<ITenantId>()
+                 .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+
+            foreach (var entry in entries)
             {
-                switch (entry.State)
-                {
-                    case EntityState.Added:
-                    case EntityState.Modified:
-                        entry.Entity.TenantId = tenantId;
-                        break;
-                }
+                entry.Entity.TenantId = _workContext.Tenant.TenantId;
             }
 
             return await base.SaveChangesAsync(cancellationToken);
