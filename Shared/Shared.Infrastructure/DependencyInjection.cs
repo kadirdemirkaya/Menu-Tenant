@@ -36,7 +36,7 @@ namespace Shared.Infrastructure
                 Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .WriteTo.Seq($"http://{secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.Seq)}")
+                .WriteTo.Seq($"http://{secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentSeq).GetAwaiter().GetResult()}")
                 .CreateLogger();
             }
 
@@ -57,7 +57,7 @@ namespace Shared.Infrastructure
                     baseDistributedCacheConfiguration = new()
                     {
                         Enabled = true,
-                        ConnectionString = secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.Redis).GetAwaiter().GetResult(),
+                        ConnectionString = secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentRedis).GetAwaiter().GetResult(),
                         InstanceName = "Caching"
                     }
                 });
@@ -95,7 +95,7 @@ namespace Shared.Infrastructure
 
         public static IServiceCollection ServiceRegistration(this IServiceCollection services)
         {
-            services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddSingleton<IJwtTokenService, JwtTokenService>();
 
             services.AddScoped<IWorkContext, WorkContext>();
 

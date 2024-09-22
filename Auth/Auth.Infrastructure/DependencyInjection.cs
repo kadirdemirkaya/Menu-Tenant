@@ -12,9 +12,9 @@ namespace Auth.Infrastructure
     {
         public static IServiceCollection AuthInfrastructureServiceRegistrations(this IServiceCollection services, IConfiguration configuration)
         {
-            services.ServiceRegistration();
-
             services.SecretManagementRegistration();
+
+            services.ServiceRegistration();
 
             services.SeqRegistration(configuration);
 
@@ -30,6 +30,7 @@ namespace Auth.Infrastructure
                 string password = _workContext.Tenant.Password;
                 string Port = _workContext.Tenant.Port;
                 string databaseName = _workContext.Tenant.DatabaseName;
+
                 string connectionString = $"Server={host};port={Port};Database={databaseName};User Id={userName};Password={password}";
 
                 options.UseNpgsql(connectionString);

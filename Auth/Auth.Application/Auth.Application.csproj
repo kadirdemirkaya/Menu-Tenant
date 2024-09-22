@@ -11,7 +11,6 @@
     <Folder Include="Cqrs\Commands\Requests\" />
     <Folder Include="Cqrs\Queries\RequestHandlers\" />
     <Folder Include="Cqrs\Queries\Requests\" />
-    <Folder Include="Configurations\" />
     <Folder Include="Services\" />
   </ItemGroup>
 

@@ -24,11 +24,11 @@ namespace Shared.Domain.Models
 
         public static class Secrets
         {
-            public const string Seq = "Seq";
-            public const string Redis = "Redis";
-            public const string Postgresql1 = "Postgresql1";
-            public const string Postgresql2 = "Postgresql2";
-            public const string SecretManagement = "SecretManagement";
+            public const string DevelopmentSeq = "Development_Seq";
+            public const string DevelopmentRedis = "Development_Redis";
+            public const string DevelopmentPostgresql1 = "Development_Postgresql1";
+            public const string DevelopmentPostgresql2 = "Development_Postgresql2";
+            public const string DevelopmentSecretManagement = "Development_SecretManagement";
         }
 
     }

@@ -4,15 +4,30 @@ export AWS_ACCESS_KEY_ID=test
 export AWS_SECRET_ACCESS_KEY=test
 export AWS_DEFAULT_REGION=eu-central-1
 
-add_secret() {
-	secret_name=$1 
-	secret_value=$2
-	aws --endpoint-url=http://localhost:4566 secretsmanager create-secret --name $secret_name --secret-string $secret_value
-	echo "Added secret $secret_name"
+add_or_update_secret() {
+    environment=$1
+    secret_name=$2
+    secret_value=$3
+    
+    # Secret adını environment ile birleştiriyoruz (örneğin: Development_Seq)
+    full_secret_name="${environment}_${secret_name}"
+    
+    existing_secret=$(aws --endpoint-url=http://localhost:4566 secretsmanager describe-secret --secret-id "$full_secret_name" 2>/dev/null)
+    
+    if [ -z "$existing_secret" ]; then
+        aws --endpoint-url=http://localhost:4566 secretsmanager create-secret \
+            --name "$full_secret_name" \
+            --secret-string "$secret_value" \
+            --tags Key=Environment,Value="$environment"
+        echo "Added secret $full_secret_name"
+    else
+        aws --endpoint-url=http://localhost:4566 secretsmanager update-secret \
+            --secret-id "$full_secret_name" \
+            --secret-string "$secret_value"
+        echo "Updated secret $full_secret_name"
+    fi
 }
 
-add_secret "Seq" "localhost:5341"
-add_secret "SecretManagement" "localhost:4566"
-add_secret "Redis" "localhost:6379,ssl=False,allowAdmin=true"
-add_secret "Postgresql1" "Server=localhost;port=5432;Database=AppDbContext;User Id=postgresql;Password=123"
-add_secret "Postgresql2" "Server=localhost;port=5432;Database=AppDbContext;User Id=postgresql;Password=123"
+add_or_update_secret "Development" "Seq" "localhost:5341"
+add_or_update_secret "Development" "SecretManagement" "localhost:4566"
+add_or_update_secret "Development" "Redis" "localhost:6379,ssl=False,allowAdmin=true"
