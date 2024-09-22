@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Folder Include="Cqrs\Commands\RequestHandlers\" />
+		<Folder Include="Cqrs\Commands\Requests\" />
+		<Folder Include="Cqrs\Queries\RequestHandlers\" />
+		<Folder Include="Cqrs\Queries\Requests\" />
+		<Folder Include="Configurations\" />
+		<Folder Include="Repository\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="6.0.0-preview.4.21253.5" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
+	</ItemGroup>
+
+</Project>
