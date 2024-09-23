@@ -17,5 +17,15 @@ namespace Shared.Domain.Aggregates.MenuAggregate.Entities
 
         public MenuId MenuId { get; set; }
         public Menu Menu { get; set; }
+
+        public Product()
+        {
+            
+        }
+
+        public Product(ProductId id) : base(id)
+        {
+            Id = id;
+        }
     }
 }

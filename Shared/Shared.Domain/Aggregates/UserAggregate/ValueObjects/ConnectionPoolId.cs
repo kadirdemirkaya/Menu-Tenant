@@ -1,9 +1,4 @@
 ﻿using Shared.Domain.BaseTypes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shared.Domain.Aggregates.UserAggregate.ValueObjects
 {
@@ -11,7 +6,10 @@ namespace Shared.Domain.Aggregates.UserAggregate.ValueObjects
     {
         public Guid Id { get; }
 
-
+        public ConnectionPoolId()
+        {
+            Id = Guid.NewGuid();
+        }
         public ConnectionPoolId(Guid id)
         {
             Id = id;

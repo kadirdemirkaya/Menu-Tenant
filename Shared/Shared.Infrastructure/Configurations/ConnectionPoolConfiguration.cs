@@ -1,15 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Application.Abstractions;
 using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
 using Shared.Domain.Models;
 
 namespace Shared.Infrastructure.Configurations
 {
-    public sealed class ConnectionPoolConfiguration : IEntityTypeConfiguration<ConnectionPool>
+    public sealed class ConnectionPoolConfiguration(IWorkContext _workContext) : IEntityTypeConfiguration<ConnectionPool>
     {
         public void Configure(EntityTypeBuilder<ConnectionPool> builder)
         {
+            builder.HasQueryFilter(p => p.TenantId == _workContext.Tenant.TenantId);
+
             builder.ToTable(Constants.Tables.ConnectionPool);
 
             builder.HasKey(m => m.Id);

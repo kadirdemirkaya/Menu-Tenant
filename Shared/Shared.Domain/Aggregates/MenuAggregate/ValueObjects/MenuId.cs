@@ -1,9 +1,4 @@
 ﻿using Shared.Domain.BaseTypes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shared.Domain.Aggregates.MenuAggregate.ValueObjects
 {
@@ -11,7 +6,10 @@ namespace Shared.Domain.Aggregates.MenuAggregate.ValueObjects
     {
         public Guid Id { get; }
 
-
+        public MenuId()
+        {
+            Id = Guid.NewGuid();
+        }
         public MenuId(Guid id)
         {
             Id = id;

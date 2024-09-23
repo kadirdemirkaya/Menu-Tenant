@@ -1,45 +1,45 @@
 services:
-  postgresql:
+  postgresqlauth:
     image: postgres:13
-    container_name: postgresqlwithsonar
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: 123
-      POSTGRES_DB: sonarqube_db
-    volumes:
-      - postgresql_data:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
-
-  postgresql2:
-    image: postgres:13
-    container_name: postgresql2
+    container_name: postgresqlauth
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: 321
-      POSTGRES_DB: menutenant
+      POSTGRES_DB: authdb
     volumes:
-      - postgresql_data2:/var/lib/postgresql/data
+      - postgresql_dataauth:/var/lib/postgresql/data
     ports:
       - "5434:5432"
 
-  sonarqube:
-    image: sonarqube:latest
-    container_name: sonarqube
-    depends_on:
-      - postgresql
-    ports:
-      - "9000:9000"
-    environment:
-      - SONAR_JDBC_URL=jdbc:postgresql://postgresql:5433/sonarqube_db
-      - SONAR_JDBC_USERNAME=admin
-      - SONAR_JDBC_PASSWORD=123
-      - SONARQUBE_JDBC_MAXACTIVE=60
-      - SONARQUBE_JDBC_MAXIDLE=5
-    volumes:
-      - sonarqube_data:/opt/sonarqube/data
-      - sonarqube_extensions:/opt/sonarqube/extensions
-      - sonarqube_logs:/opt/sonarqube/logs
+  # postgresql:
+  #   image: postgres:13
+  #   container_name: postgresqlwithsonar
+  #   environment:
+  #     POSTGRES_USER: admin
+  #     POSTGRES_PASSWORD: 123
+  #     POSTGRES_DB: sonarqube_db
+  #   volumes:
+  #     - postgresql_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5433:5432"
+
+  # sonarqube:
+  #   image: sonarqube:latest
+  #   container_name: sonarqube
+  #   depends_on:
+  #     - postgresql
+  #   ports:
+  #     - "9000:9000"
+  #   environment:
+  #     - SONAR_JDBC_URL=jdbc:postgresql://postgresql:5433/sonarqube_db
+  #     - SONAR_JDBC_USERNAME=admin
+  #     - SONAR_JDBC_PASSWORD=123
+  #     - SONARQUBE_JDBC_MAXACTIVE=60
+  #     - SONARQUBE_JDBC_MAXIDLE=5
+  #   volumes:
+  #     - sonarqube_data:/opt/sonarqube/data
+  #     - sonarqube_extensions:/opt/sonarqube/extensions
+  #     - sonarqube_logs:/opt/sonarqube/logs
 
   redis:
     image: redis:latest
@@ -77,7 +77,7 @@ volumes:
   sonarqube_extensions:
   sonarqube_logs:
   postgresql_data:
-  postgresql_data2:
+  postgresql_dataauth:
   seq_data:
 
 # Eğer redis için bir ağ tanımlamak isterseniz:

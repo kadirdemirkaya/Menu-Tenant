@@ -14,5 +14,15 @@ namespace Shared.Domain.Aggregates.ProductAggregate
 
         public List<Product> Products { get; private set; }
 
+        public Menu()
+        {
+            
+        }
+
+        public Menu(MenuId id) : base(id)
+        {
+            Id = id;
+        }
+
     }
 }

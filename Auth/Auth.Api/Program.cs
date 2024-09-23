@@ -1,7 +1,9 @@
 using Auth.Application;
 using Auth.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 using SecretManagement;
 using Shared.Domain.Models;
+using Shared.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,17 +21,6 @@ builder.Services.AuthApplicationRegistration();
 
 builder.Services.AuthInfrastructureServiceRegistrations(configuration);
 
-#region TEST
-//using (var sp = builder.Services.BuildServiceProvider())
-//{
-//    using (ISecretsManagerService secretsManagerService = new AwsSecretsManagerService(configuration))
-//    {
-//        var data = secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentSeq);
-//        Console.WriteLine(data.Result);
-//    }
-//}
-#endregion
-
 
 var app = builder.Build();
 
@@ -37,7 +28,7 @@ app.UseSwagger();
 
 app.UseSwaggerUI();
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.AuthInfrastructureWebApplicationRegistration();
 

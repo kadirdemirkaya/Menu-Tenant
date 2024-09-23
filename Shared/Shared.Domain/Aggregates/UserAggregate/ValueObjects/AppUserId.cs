@@ -6,7 +6,10 @@ namespace Shared.Domain.Aggregates.UserAggregate.ValueObjects
     {
         public Guid Id { get; }
 
-
+        public AppUserId()
+        {
+            Id = Guid.NewGuid();
+        }
         public AppUserId(Guid id)
         {
             Id = id;

@@ -1,4 +1,5 @@
-﻿using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
+﻿using Microsoft.Extensions.Primitives;
+using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
 using Shared.Domain.BaseTypes;
 using System.Security.Principal;
 
@@ -15,5 +16,15 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
 
         public CompanyId CompanyId { get; private set; }
         public Company Company { get; private set; }
+
+        public ConnectionPool()
+        {
+            
+        }
+
+        public ConnectionPool(ConnectionPoolId id) : base(id)
+        {
+            Id = id;
+        }
     }
 }

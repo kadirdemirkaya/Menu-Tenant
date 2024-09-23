@@ -21,5 +21,4 @@ get_secret() {
     fi
 }
 
-# Secret'ı alalım
 get_secret "Development" "Seq"

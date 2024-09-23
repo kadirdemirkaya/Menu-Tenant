@@ -13,5 +13,15 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
         public AppUser AppUser { get; private set; }
 
         public ConnectionPool ConnectionPool { get; private set; }
+
+        public Company()
+        {
+            
+        }
+
+        public Company(CompanyId id) : base(id)
+        {
+            Id = id;
+        }
     }
 }

@@ -8,6 +8,8 @@
         public bool IsDeleted { get; protected set; }
         public DateTime CreatedDateUTC { get; protected set; }
         public DateTime? UpdatedDateUTC { get; protected set; }
+
+
         public Entity()
         {
             IsDeleted = false;

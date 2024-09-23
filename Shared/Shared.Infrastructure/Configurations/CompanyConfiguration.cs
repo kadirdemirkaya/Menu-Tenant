@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Application.Abstractions;
 using Shared.Domain.Aggregates.MenuAggregate.ValueObjects;
 using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
@@ -7,10 +8,12 @@ using Shared.Domain.Models;
 
 namespace Shared.Infrastructure.Configurations
 {
-    public sealed class CompanyConfiguration : IEntityTypeConfiguration<Company>
+    public sealed class CompanyConfiguration(IWorkContext _workContext) : IEntityTypeConfiguration<Company>
     {
         public void Configure(EntityTypeBuilder<Company> builder)
         {
+            builder.HasQueryFilter(p => p.TenantId == _workContext.Tenant.TenantId);
+
             builder.ToTable(Constants.Tables.Company);
 
             builder.HasKey(m => m.Id);

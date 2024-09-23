@@ -1,24 +1,33 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SecretManagement;
 using Shared.Application.Abstractions;
-using Shared.Domain.Aggregates.MenuAggregate.Entities;
 using Shared.Domain.Aggregates.UserAggregate;
 using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.BaseTypes;
+using Shared.Domain.Models;
+using Shared.Infrastructure.Configurations;
+using Shared.Infrastructure.Extensions;
 
 namespace Auth.Infrastructure.Data
 {
     public class AuthDbContext : DbContext
     {
-        private IWorkContext _workContext;
+        private readonly IWorkContext _workContext;
+        private readonly ISecretsManagerService _secretManagement;
         public AuthDbContext()
         {
-
         }
 
-        public AuthDbContext(DbContextOptions options, IWorkContext workContext) : base(options)
+        public AuthDbContext(DbContextOptions options) : base(options)
+        {
+        }
+
+        public AuthDbContext(DbContextOptions options, IWorkContext workContext, ISecretsManagerService secretsManagerService) : base(options)
         {
             _workContext = workContext;
+            _secretManagement = secretsManagerService;
         }
+
 
         public DbSet<AppUser> Users { get; set; }
         public DbSet<Company> Companies { get; set; }
@@ -26,28 +35,25 @@ namespace Auth.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(Shared.Infrastructure.AssemblyReference.Assembly); // Shared.Inf
+            base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<AppUser>().HasQueryFilter(p => p.TenantId == _workContext.Tenant.TenantId);
-            modelBuilder.Entity<Company>().HasQueryFilter(p => p.TenantId == _workContext.Tenant.TenantId);
-            modelBuilder.Entity<ConnectionPool>().HasQueryFilter(p => p.TenantId == _workContext.Tenant.TenantId);
+            modelBuilder.ApplyConfiguration<AppUser>(new UserConfiguration(_workContext));
+            modelBuilder.ApplyConfiguration<Company>(new CompanyConfiguration(_workContext));
+            modelBuilder.ApplyConfiguration<ConnectionPool>(new ConnectionPoolConfiguration(_workContext));
+            //modelBuilder.ApplyConfigurationsFromAssembly(Shared.Infrastructure.AssemblyReference.Assembly); // Shared.Inf
+            //modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
         }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string host = _workContext.Tenant.Host;
-            string name = _workContext.Tenant.Name;
-            string userName = _workContext.Tenant.Username;
-            string password = _workContext.Tenant.Password;
-            string Port = _workContext.Tenant.Port;
-            string databaseName = _workContext.Tenant.DatabaseName;
-            string connectionString = $"Server={host};port={Port};Database={databaseName};User Id={userName};Password={password}";
+            base.OnConfiguring(optionsBuilder);
 
-            if (!string.IsNullOrEmpty(connectionString))
+            if (!optionsBuilder.IsConfigured)
             {
-                if (name.ToLower() == "postgresql")
-                    optionsBuilder.UseNpgsql(connectionString);
+                optionsBuilder.UseNpgsql("Server=localhost;port=5434;Database=authdb;User Id=admin;Password=321");
             }
         }
+
         public async override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var entries = ChangeTracker.Entries<ITenantId>()

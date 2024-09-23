@@ -6,7 +6,10 @@ namespace Shared.Domain.Aggregates.MenuAggregate.ValueObjects
     {
         public Guid Id { get; }
 
-
+        public ProductId()
+        {
+            Id = Guid.NewGuid();
+        }
         public ProductId(Guid id)
         {
             Id = id;

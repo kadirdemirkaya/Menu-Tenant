@@ -9,7 +9,6 @@ add_or_update_secret() {
     secret_name=$2
     secret_value=$3
     
-    # Secret adını environment ile birleştiriyoruz (örneğin: Development_Seq)
     full_secret_name="${environment}_${secret_name}"
     
     existing_secret=$(aws --endpoint-url=http://localhost:4566 secretsmanager describe-secret --secret-id "$full_secret_name" 2>/dev/null)
@@ -31,3 +30,9 @@ add_or_update_secret() {
 add_or_update_secret "Development" "Seq" "localhost:5341"
 add_or_update_secret "Development" "SecretManagement" "localhost:4566"
 add_or_update_secret "Development" "Redis" "localhost:6379,ssl=False,allowAdmin=true"
+#
+add_or_update_secret "Development" "PostgresAuth_Host" "localhost"
+add_or_update_secret "Development" "PostgresAuth_Port" "5434"
+add_or_update_secret "Development" "PostgresAuth_UserName" "admin"
+add_or_update_secret "Development" "PostgresAuth_Password" "321"
+add_or_update_secret "Development" "PostgresAuth_DatabaseName" "authdb"

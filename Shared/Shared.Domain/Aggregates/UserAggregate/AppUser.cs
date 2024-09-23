@@ -1,4 +1,5 @@
-﻿using Shared.Domain.Aggregates.UserAggregate.Entities;
+﻿using Shared.Domain.Aggregates.MenuAggregate.ValueObjects;
+using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
 using Shared.Domain.BaseTypes;
 
@@ -13,7 +14,15 @@ namespace Shared.Domain.Aggregates.UserAggregate
 
         public List<Company> Companies { get; private set; }
 
+        public AppUser()
+        {
+            
+        }
 
+        public AppUser(AppUserId id) : base(id)
+        {
+            Id = id;
+        }
         public void SetTenantIdForAppUser(string id)
         {
             SetTenantId(id);
