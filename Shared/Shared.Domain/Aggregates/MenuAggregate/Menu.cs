@@ -1,5 +1,6 @@
 ﻿using Shared.Domain.Aggregates.MenuAggregate.Entities;
 using Shared.Domain.Aggregates.MenuAggregate.ValueObjects;
+using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.BaseTypes;
 
 namespace Shared.Domain.Aggregates.ProductAggregate
@@ -12,7 +13,9 @@ namespace Shared.Domain.Aggregates.ProductAggregate
 
         public Address Address { get; private set; }
 
-        public List<Product> Products { get; private set; }
+
+        public readonly List<Product> Products = new();
+        public IReadOnlyCollection<Product> _products => Products.AsReadOnly();
 
         public Menu()
         {

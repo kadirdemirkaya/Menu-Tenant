@@ -20,12 +20,38 @@ namespace Shared.Domain.Aggregates.MenuAggregate.Entities
 
         public Product()
         {
-            
+
         }
 
         public Product(ProductId id) : base(id)
         {
             Id = id;
         }
+
+        public Product(string title, string name, decimal price, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
+        {
+            Id = ProductId.CreateUnique();
+            Title = title;
+            Name = name;
+            ProductDetails = productDetail;
+            MenuId = menuId;
+            ProductStatus = productStatus;
+        }
+
+        public Product(ProductId productId, string title, string name, decimal price, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock) : base(productId)
+        {
+            Id = productId;
+            Title = title;
+            Name = name;
+            ProductDetails = productDetail;
+            MenuId = menuId;
+            ProductStatus = productStatus;
+        }
+
+        public static Product Create(string title, string name, decimal price, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
+            => new(title, name, price, productDetail, menuId, productStatus);
+
+        public static Product Create(ProductId productId, string title, string name, decimal price, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
+           => new(productId, title, name, price, productDetail, menuId, productStatus);
     }
 }
