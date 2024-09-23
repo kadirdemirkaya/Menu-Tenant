@@ -1,4 +1,6 @@
-﻿namespace Auth.Api
+﻿using Shared.Application.Filters;
+
+namespace Auth.Api
 {
     public static class DependencyInjection
     {
@@ -13,6 +15,8 @@
             services.AddSwaggerGen();
 
             services.AddHttpContextAccessor();
+
+            services.AddScoped<HashPasswordActionFilter>();
 
             return services;
         }

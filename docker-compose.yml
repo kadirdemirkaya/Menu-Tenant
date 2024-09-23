@@ -19,6 +19,18 @@ services:
     ports:
       - "5434:5432"
 
+  postgresqlshared:
+    image: postgres:13
+    container_name: postgresqlshared
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 321
+      POSTGRES_DB: shareddb
+    volumes:
+      - postgresql_datashared:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+
   # postgresql:
   #   image: postgres:13
   #   container_name: postgresqlwithsonar
@@ -86,6 +98,7 @@ volumes:
   sonarqube_logs:
   postgresql_data:
   postgresql_dataauth:
+  postgresql_datashared:
   seq_data:
 
 # Eğer redis için bir ağ tanımlamak isterseniz:

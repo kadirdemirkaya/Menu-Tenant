@@ -7,6 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Filters\**" />
+	  <EmbeddedResource Remove="Filters\**" />
+	  <None Remove="Filters\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Folder Include="Cqrs\Commands\RequestHandlers\" />
 		<Folder Include="Cqrs\Commands\Requests\" />
 		<Folder Include="Cqrs\Queries\RequestHandlers\" />
@@ -17,10 +23,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="6.0.0-preview.4.21253.5" />
+
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Shared\Shared.Application\Shared.Application.csproj" />
+		<ProjectReference Include="..\..\Shared\Shared.Application\Shared.Application.csproj" />
 	</ItemGroup>
 
 </Project>

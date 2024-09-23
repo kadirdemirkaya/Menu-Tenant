@@ -53,7 +53,7 @@ namespace Shared.Domain.Aggregates.UserAggregate
 
         public void AddCompany(Company company)
         {
-            Companies.Add(Company.Create(company.Name, company.DatabaseName, company.AppUserId, company.ConnectionPool));
+            Companies.Add(company);
         }
 
         public void RemoveCompany(CompanyId companyId)

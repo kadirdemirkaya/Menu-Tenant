@@ -1,21 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Cqrs\Commands\RequestHandlers\" />
-    <Folder Include="Cqrs\Commands\Requests\" />
-    <Folder Include="Cqrs\Queries\RequestHandlers\" />
-    <Folder Include="Cqrs\Queries\Requests\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Cqrs\Queries\RequestHandlers\" />
+		<Folder Include="Cqrs\Queries\RequestsAndResponses\" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Shared.Application\Shared.Application.csproj" />
-  </ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Shared\Shared.Application\Shared.Application.csproj" />
+	</ItemGroup>
 
 </Project>

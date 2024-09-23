@@ -15,7 +15,7 @@ namespace Shared.Infrastructure.Services
     {
         private readonly JwtTokenConfig _jwtTokenConfig = _configuration.GetOptions<JwtTokenConfig>("JwtTokenConfig");
 
-        public string GenerateToken(TenantModel tenantInfo)
+        public Token GenerateToken(TenantModel tenantInfo)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtTokenConfig.SecretKey));
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -23,8 +23,8 @@ namespace Shared.Infrastructure.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("TenantModel", JsonExtension.SerialJson(tenantInfo))
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim("TenantModel", JsonExtension.SerialJson(tenantInfo))
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(_jwtTokenConfig.TokenLifeTime),
                 Issuer = _jwtTokenConfig.ValidIssuer,
@@ -36,7 +36,11 @@ namespace Shared.Infrastructure.Services
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return tokenHandler.WriteToken(token);
+            Shared.Domain.Models.Token tokenModel = new();
+            tokenModel.Expiration = DateTime.UtcNow.AddMinutes(_jwtTokenConfig.TokenLifeTime);
+            tokenModel.AccessToken = tokenHandler.WriteToken(token);
+
+            return tokenModel;
         }
 
         public string GetClaim(string token, string claimType)

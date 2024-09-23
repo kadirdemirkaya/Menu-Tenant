@@ -2,6 +2,7 @@
 {
     public static class StringExtension
     {
+        
         public static string SetDbUrl(this string str, string host, string port, string userName, string password, string databaseName)
         {
             if (string.IsNullOrEmpty(host))
