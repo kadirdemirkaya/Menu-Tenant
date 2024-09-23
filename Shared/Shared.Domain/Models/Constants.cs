@@ -33,8 +33,12 @@ namespace Shared.Domain.Models
             public const string DevelopmentPostgresAuthUserName = "Development_PostgresAuth_UserName";
             public const string DevelopmentPostgresAuthPassword = "Development_PostgresAuth_Password";
             public const string DevelopmentPostgresAuthDatabaseName = "Development_PostgresAuth_DatabaseName";
+
+            public const string DevelopmentPostgresSharedHost = "Development_PostgresShared_Host";
+            public const string DevelopmentPostgresSharedPort = "Development_PostgresShared_Port";
+            public const string DevelopmentPostgresSharedUserName = "Development_PostgresShared_UserName";
+            public const string DevelopmentPostgresSharedPassword = "Development_PostgresShared_Password";
+            public const string DevelopmentPostgresSharedDatabaseName = "Development_PostgresShared_DatabaseName";
         }
-
     }
-
 }

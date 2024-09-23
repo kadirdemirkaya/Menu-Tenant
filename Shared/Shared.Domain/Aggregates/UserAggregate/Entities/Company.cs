@@ -1,7 +1,5 @@
 ﻿using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
 using Shared.Domain.BaseTypes;
-using System.Security.Principal;
-using System.Xml.Linq;
 
 namespace Shared.Domain.Aggregates.UserAggregate.Entities
 {
@@ -25,7 +23,7 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
             Id = id;
         }
 
-        public Company(string name, string databaseName, AppUserId appUserId, ConnectionPool connectionPool)
+        public Company(string name, string databaseName, AppUserId appUserId)
         {
             Id = CompanyId.CreateUnique();
             Name = name;
@@ -33,7 +31,7 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
             AppUserId = appUserId;
         }
 
-        public Company(CompanyId companyId, string name, string databaseName, AppUserId appUserId, ConnectionPool connectionPool) : base(companyId)
+        public Company(CompanyId companyId, string name, string databaseName, AppUserId appUserId) : base(companyId)
         {
             Id = companyId;
             Name = name;
@@ -41,10 +39,26 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
             AppUserId = appUserId;
         }
 
-        public static Company Create(string name, string databaseName, AppUserId appUserId, ConnectionPool connectionPool)
-            => new(name, databaseName, appUserId, connectionPool);
+        public static Company Create(string name, string databaseName, AppUserId appUserId)
+            => new(name, databaseName, appUserId);
 
-        public static Company Create(CompanyId companyId, string name, string databaseName, AppUserId appUserId, ConnectionPool connectionPool)
-          => new(companyId, name, databaseName, appUserId, connectionPool);
+        public static Company Create(CompanyId companyId, string name, string databaseName, AppUserId appUserId)
+          => new(companyId, name, databaseName, appUserId);
+
+        public void AddConnectionPool(ConnectionPool connectionPool)
+        {
+            ConnectionPool = ConnectionPool;
+        }
+
+        public void RemoveConnectionPool()
+        {
+            if (ConnectionPool != null)
+                ConnectionPool = null;
+        }
+
+        public void AppUserIdSet(AppUserId appUserId)
+        {
+            AppUserId = appUserId;
+        }
     }
 }

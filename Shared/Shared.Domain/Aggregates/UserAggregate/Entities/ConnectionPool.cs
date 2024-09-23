@@ -27,7 +27,7 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
             Id = id;
         }
 
-        public ConnectionPool(string name, string host, string port, string databaseName, string userName, string password)
+        public ConnectionPool(string name, string host, string port, string databaseName, string userName, string password, CompanyId companyId)
         {
             Id = ConnectionPoolId.CreateUnique();
             Name = name;
@@ -36,9 +36,10 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
             DatabaseName = databaseName;
             Username = userName;
             Password = password;
+            CompanyId = companyId;
         }
 
-        public ConnectionPool(ConnectionPoolId connectionPoolId, string name, string host, string port, string databaseName, string userName, string password)
+        public ConnectionPool(ConnectionPoolId connectionPoolId, string name, string host, string port, string databaseName, string userName, string password, CompanyId companyId)
         {
             Id = connectionPoolId;
             Name = name;
@@ -47,12 +48,18 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
             DatabaseName = databaseName;
             Username = userName;
             Password = password;
+            CompanyId = companyId;
         }
 
-        public static ConnectionPool Create(string name, string host, string port, string databaseName, string userName, string password)
-            => new(name, host, port, databaseName, userName, password);
+        public static ConnectionPool Create(string name, string host, string port, string databaseName, string userName, string password, CompanyId companyId)
+            => new(name, host, port, databaseName, userName, password, companyId);
 
-        public static ConnectionPool Create(ConnectionPoolId connectionPoolId, string name, string host, string port, string databaseName, string userName, string password)
-            => new(connectionPoolId, name, host, port, databaseName, userName, password);
+        public static ConnectionPool Create(ConnectionPoolId connectionPoolId, string name, string host, string port, string databaseName, string userName, string password, CompanyId companyId)
+            => new(connectionPoolId, name, host, port, databaseName, userName, password, companyId);
+
+        public void CompanyIdSet(CompanyId companyId)
+        {
+            CompanyId = companyId;
+        }
     }
 }
