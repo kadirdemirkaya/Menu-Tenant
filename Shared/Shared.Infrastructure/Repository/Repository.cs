@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Shared.Application.Abstractions;
 using Shared.Application.Services;
 using System.Linq.Expressions;
@@ -56,6 +57,52 @@ namespace Shared.Application.Repository
             }
         }
 
+        public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> expression = null, bool tracking = true, params Expression<Func<TEntity, object>>[] includeEntity)
+        {
+            try
+            {
+                var query = _dbSet.AsQueryable();
+                if (!tracking)
+                    query = query.AsNoTracking();
+
+                if (includeEntity.Any())
+                    foreach (var include in includeEntity)
+                        query = query.Include(include);
+
+                if (expression != null)
+                    query = query.Where(expression);
+
+                return await query.ToListAsync();
+            }
+            catch (System.Exception)
+            {
+                return default;
+            }
+        }
+
+        public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> expression = null, bool tracking = true, params Expression<Func<TEntity, object>>[] includeEntity)
+        {
+            try
+            {
+                var query = _dbSet.AsQueryable();
+                if (!tracking)
+                    query = query.AsNoTracking();
+
+                if (includeEntity.Any())
+                    foreach (var include in includeEntity)
+                        query = query.Include(include);
+
+                if (expression != null)
+                    query = query.Where(expression);
+
+                return await query.SingleOrDefaultAsync();
+            }
+            catch (System.Exception)
+            {
+                return default;
+            }
+        }
+
         public async Task<PaginatedList<TEntity>> GetPaginatedAsync(int pageIndex, int pageSize, Expression<Func<TEntity, bool>> predicate = null)
         {
             var query = predicate == null ? _dbSet : _dbSet.Where(predicate);
@@ -63,6 +110,11 @@ namespace Shared.Application.Repository
             var items = await query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
 
             return new PaginatedList<TEntity>(items, totalItems, pageIndex, pageSize);
+        }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

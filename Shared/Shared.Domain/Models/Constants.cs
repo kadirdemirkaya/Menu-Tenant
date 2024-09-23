@@ -28,17 +28,16 @@ namespace Shared.Domain.Models
             public const string DevelopmentRedis = "Development_Redis";
             public const string DevelopmentSecretManagement = "Development_SecretManagement";
 
-            public const string DevelopmentPostgresAuthHost = "Development_PostgresAuth_Host";
-            public const string DevelopmentPostgresAuthPort = "Development_PostgresAuth_Port";
-            public const string DevelopmentPostgresAuthUserName = "Development_PostgresAuth_UserName";
-            public const string DevelopmentPostgresAuthPassword = "Development_PostgresAuth_Password";
-            public const string DevelopmentPostgresAuthDatabaseName = "Development_PostgresAuth_DatabaseName";
+            public const string DevelopmentPOSTGRES_Host = "Development_POSTGRES_Host";
+            public const string DevelopmentPOSTGRES_Port = "Development_POSTGRES_Port";
+            public const string DevelopmentPOSTGRES_POSTGRES_User = "Development_POSTGRES_POSTGRES_User";
+            public const string DevelopmentPOSTGRES_POSTGRES_Password = "Development_POSTGRES_POSTGRES_Password";
+            public const string DevelopmentPOSTGRES_POSTGRES_AuthDb = "Development_POSTGRES_POSTGRES_AuthDb";
+            public const string DevelopmentPOSTGRES_POSTGRES_SharedDb = "Development_POSTGRES_POSTGRES_SharedDb";
 
-            public const string DevelopmentPostgresSharedHost = "Development_PostgresShared_Host";
-            public const string DevelopmentPostgresSharedPort = "Development_PostgresShared_Port";
-            public const string DevelopmentPostgresSharedUserName = "Development_PostgresShared_UserName";
-            public const string DevelopmentPostgresSharedPassword = "Development_PostgresShared_Password";
-            public const string DevelopmentPostgresSharedDatabaseName = "Development_PostgresShared_DatabaseName";
+            // this section maybe could change while improve
+            public const string DevelopmentPOSTGRES_POSTGRES_PersonalDb1 = "Development_POSTGRES_POSTGRES_PersonalDb1";
+            public const string DevelopmentPOSTGRES_POSTGRES_PersonalDb2 = "Development_POSTGRES_POSTGRES_PersonalDb2";
         }
     }
 }
