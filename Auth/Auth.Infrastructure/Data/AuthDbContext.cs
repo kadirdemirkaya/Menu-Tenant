@@ -40,8 +40,6 @@ namespace Auth.Infrastructure.Data
             modelBuilder.ApplyConfiguration<AppUser>(new UserConfiguration(_workContext));
             modelBuilder.ApplyConfiguration<Company>(new CompanyConfiguration(_workContext));
             modelBuilder.ApplyConfiguration<ConnectionPool>(new ConnectionPoolConfiguration(_workContext));
-            //modelBuilder.ApplyConfigurationsFromAssembly(Shared.Infrastructure.AssemblyReference.Assembly); // Shared.Inf
-            //modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -50,7 +48,7 @@ namespace Auth.Infrastructure.Data
 
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql("Server=localhost;port=5434;Database=authdb;User Id=admin;Password=321");
+                optionsBuilder.UseNpgsql("Server=localhost;port=5432;Database=authdb;User Id=admin;Password=passw00rd");
             }
         }
 

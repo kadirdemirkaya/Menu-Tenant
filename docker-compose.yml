@@ -7,29 +7,18 @@ services:
     ports:
       - "8080:80"
 
-  postgresqlauth:
+  postgres:
     image: postgres:13
-    container_name: postgresqlauth
+    restart: always
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: 321
       POSTGRES_DB: authdb
-    volumes:
-      - postgresql_dataauth:/var/lib/postgresql/data
-    ports:
-      - "5434:5432"
-
-  postgresqlshared:
-    image: postgres:13
-    container_name: postgresqlshared
-    environment:
       POSTGRES_USER: admin
-      POSTGRES_PASSWORD: 321
-      POSTGRES_DB: shareddb
-    volumes:
-      - postgresql_datashared:/var/lib/postgresql/data
+      POSTGRES_PASSWORD: passw00rd
     ports:
-      - "5435:5432"
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
 
   # postgresql:
   #   image: postgres:13
@@ -97,8 +86,7 @@ volumes:
   sonarqube_extensions:
   sonarqube_logs:
   postgresql_data:
-  postgresql_dataauth:
-  postgresql_datashared:
+  pgdata:
   seq_data:
 
 # Eğer redis için bir ağ tanımlamak isterseniz:

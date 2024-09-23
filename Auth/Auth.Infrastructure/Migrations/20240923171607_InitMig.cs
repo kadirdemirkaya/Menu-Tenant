@@ -22,8 +22,8 @@ namespace Auth.Infrastructure.Migrations
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
                     TenantId = table.Column<string>(type: "text", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
-                    CreatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 9, 23, 10, 50, 31, 955, DateTimeKind.Utc).AddTicks(5514)),
-                    UpdatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValue: new DateTime(2024, 9, 23, 10, 50, 31, 955, DateTimeKind.Utc).AddTicks(4572))
+                    CreatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 9, 23, 17, 16, 6, 877, DateTimeKind.Utc).AddTicks(812)),
+                    UpdatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValue: new DateTime(2024, 9, 23, 17, 16, 6, 876, DateTimeKind.Utc).AddTicks(9848))
                 },
                 constraints: table =>
                 {
@@ -38,10 +38,11 @@ namespace Auth.Infrastructure.Migrations
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     DatabaseName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     AppUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AppUserId1 = table.Column<Guid>(type: "uuid", nullable: true),
                     TenantId = table.Column<string>(type: "text", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
-                    CreatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 9, 23, 10, 50, 31, 958, DateTimeKind.Utc).AddTicks(2122)),
-                    UpdatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValue: new DateTime(2024, 9, 23, 10, 50, 31, 958, DateTimeKind.Utc).AddTicks(1257))
+                    CreatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 9, 23, 17, 16, 6, 883, DateTimeKind.Utc).AddTicks(5976)),
+                    UpdatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValue: new DateTime(2024, 9, 23, 17, 16, 6, 883, DateTimeKind.Utc).AddTicks(5004))
                 },
                 constraints: table =>
                 {
@@ -52,6 +53,11 @@ namespace Auth.Infrastructure.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Companies_Users_AppUserId1",
+                        column: x => x.AppUserId1,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -68,8 +74,8 @@ namespace Auth.Infrastructure.Migrations
                     CompanyId = table.Column<Guid>(type: "uuid", nullable: false),
                     TenantId = table.Column<string>(type: "text", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
-                    CreatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 9, 23, 10, 50, 31, 961, DateTimeKind.Utc).AddTicks(4360)),
-                    UpdatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValue: new DateTime(2024, 9, 23, 10, 50, 31, 961, DateTimeKind.Utc).AddTicks(3322))
+                    CreatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 9, 23, 17, 16, 6, 887, DateTimeKind.Utc).AddTicks(980)),
+                    UpdatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValue: new DateTime(2024, 9, 23, 17, 16, 6, 887, DateTimeKind.Utc).AddTicks(19))
                 },
                 constraints: table =>
                 {
@@ -86,6 +92,11 @@ namespace Auth.Infrastructure.Migrations
                 name: "IX_Companies_AppUserId",
                 table: "Companies",
                 column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Companies_AppUserId1",
+                table: "Companies",
+                column: "AppUserId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ConnectionPools_CompanyId",

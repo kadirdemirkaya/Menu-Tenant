@@ -26,19 +26,21 @@ add_or_update_secret() {
         echo "Updated secret $full_secret_name"
     fi
 }
-
+#
 add_or_update_secret "Development" "Seq" "localhost:5341"
+#
 add_or_update_secret "Development" "SecretManagement" "localhost:4566"
+#
 add_or_update_secret "Development" "Redis" "localhost:6379,ssl=False,allowAdmin=true"
 #
-add_or_update_secret "Development" "PostgresAuth_Host" "localhost"
-add_or_update_secret "Development" "PostgresAuth_Port" "5434"
-add_or_update_secret "Development" "PostgresAuth_UserName" "admin"
-add_or_update_secret "Development" "PostgresAuth_Password" "321"
-add_or_update_secret "Development" "PostgresAuth_DatabaseName" "authdb"
+add_or_update_secret "Development" "POSTGRES_Host" "localhost"
+add_or_update_secret "Development" "POSTGRES_Port" "5432" 
+add_or_update_secret "Development" "POSTGRES_User" "admin"
+add_or_update_secret "Development" "POSTGRES_Password" "passw00rd"
+add_or_update_secret "Development" "POSTGRES_AuthDb" "authdb"
+add_or_update_secret "Development" "POSTGRES_SharedDb" "shareddb"
+add_or_update_secret "Development" "POSTGRES_PersonalDb1" "personaldb1"
+add_or_update_secret "Development" "POSTGRES_PersonalDb2" "personaldb2"
 #
-add_or_update_secret "Development" "PostgresShared_Host" "localhost"
-add_or_update_secret "Development" "PostgresShared_Port" "5435"
-add_or_update_secret "Development" "PostgresShared_UserName" "admin"
-add_or_update_secret "Development" "PostgresShared_Password" "321"
-add_or_update_secret "Development" "PostgresShared_DatabaseName" "shareddb"
+
+#aws --endpoint-url=http://localhost:4566 secretsmanager list-secrets

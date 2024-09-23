@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Auth.Infrastructure.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20240923105032_InitMig")]
+    [Migration("20240923171607_InitMig")]
     partial class InitMig
     {
         /// <inheritdoc />
@@ -33,7 +33,7 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 23, 10, 50, 31, 955, DateTimeKind.Utc).AddTicks(5514));
+                        .HasDefaultValue(new DateTime(2024, 9, 23, 17, 16, 6, 877, DateTimeKind.Utc).AddTicks(812));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -59,7 +59,7 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 23, 10, 50, 31, 955, DateTimeKind.Utc).AddTicks(4572));
+                        .HasDefaultValue(new DateTime(2024, 9, 23, 17, 16, 6, 876, DateTimeKind.Utc).AddTicks(9848));
 
                     b.Property<string>("Username")
                         .HasColumnType("text");
@@ -77,10 +77,13 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<Guid>("AppUserId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("AppUserId1")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 23, 10, 50, 31, 958, DateTimeKind.Utc).AddTicks(2122));
+                        .HasDefaultValue(new DateTime(2024, 9, 23, 17, 16, 6, 883, DateTimeKind.Utc).AddTicks(5976));
 
                     b.Property<string>("DatabaseName")
                         .IsRequired()
@@ -104,11 +107,13 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 23, 10, 50, 31, 958, DateTimeKind.Utc).AddTicks(1257));
+                        .HasDefaultValue(new DateTime(2024, 9, 23, 17, 16, 6, 883, DateTimeKind.Utc).AddTicks(5004));
 
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId");
+
+                    b.HasIndex("AppUserId1");
 
                     b.ToTable("Companies", (string)null);
                 });
@@ -124,7 +129,7 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 23, 10, 50, 31, 961, DateTimeKind.Utc).AddTicks(4360));
+                        .HasDefaultValue(new DateTime(2024, 9, 23, 17, 16, 6, 887, DateTimeKind.Utc).AddTicks(980));
 
                     b.Property<string>("DatabaseName")
                         .IsRequired()
@@ -161,7 +166,7 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 23, 10, 50, 31, 961, DateTimeKind.Utc).AddTicks(3322));
+                        .HasDefaultValue(new DateTime(2024, 9, 23, 17, 16, 6, 887, DateTimeKind.Utc).AddTicks(19));
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -184,6 +189,10 @@ namespace Auth.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Shared.Domain.Aggregates.UserAggregate.AppUser", null)
+                        .WithMany("_companies")
+                        .HasForeignKey("AppUserId1");
+
                     b.Navigation("AppUser");
                 });
 
@@ -201,6 +210,8 @@ namespace Auth.Infrastructure.Migrations
             modelBuilder.Entity("Shared.Domain.Aggregates.UserAggregate.AppUser", b =>
                 {
                     b.Navigation("Companies");
+
+                    b.Navigation("_companies");
                 });
 
             modelBuilder.Entity("Shared.Domain.Aggregates.UserAggregate.Entities.Company", b =>
