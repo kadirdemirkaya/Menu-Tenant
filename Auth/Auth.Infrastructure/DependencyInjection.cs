@@ -23,6 +23,8 @@ namespace Auth.Infrastructure
     {
         public static IServiceCollection AuthInfrastructureServiceRegistrations(this IServiceCollection services, IConfiguration configuration)
         {
+            services.SeqRegistration(configuration);
+
             services.SecretManagementRegistration();
 
             services.ServiceRegistration();
@@ -31,12 +33,6 @@ namespace Auth.Infrastructure
             {
                 options.UseNpgsql("Server=localhost;port=5432;Database=authdb;User Id=admin;Password=passw00rd");
             });
-
-
-
-            services.SeqRegistration(configuration);
-
-            services.JwtRegistration();
 
             ApplySeeds(services.BuildServiceProvider());
 
@@ -50,7 +46,7 @@ namespace Auth.Infrastructure
             //services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
             services.AddScoped<IRepository<Company, CompanyId>, Repository<Company, CompanyId>>();
-            
+
             services.AddScoped<IRepository<ConnectionPool, ConnectionPoolId>, Repository<ConnectionPool, ConnectionPoolId>>();
 
             services.AddScoped<IUserService, UserService>();

@@ -2,6 +2,7 @@
 using Auth.Application.Dtos.User;
 using Auth.Infrastructure.Data;
 using Auth.Infrastructure.Repository;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using SecretManagement;
@@ -10,6 +11,7 @@ using Shared.Domain.Aggregates.UserAggregate;
 using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
 using Shared.Domain.Models;
+using VaultSharp.V1.AuthMethods.AWS;
 
 namespace Auth.Infrastructure.Services
 {
@@ -66,7 +68,7 @@ namespace Auth.Infrastructure.Services
 
         public async Task<Token?> UserLoginAsync(UserLoginModelDto userLoginModelDto)
         {
-            if (userLoginModelDto.CompanyName is null) // user have one companies
+            if (string.IsNullOrEmpty(userLoginModelDto.CompanyName)) // user have one companies
             {
                 AppUser user = await GetAsync(u => u.Email == userLoginModelDto.Email && u.Password == userLoginModelDto.Password, false, true, u => u.Companies); // !!!
 
@@ -84,7 +86,7 @@ namespace Auth.Infrastructure.Services
                     DatabaseName = user.Companies.FirstOrDefault().DatabaseName
                 };
 
-                ConnectionPool connectionPool = await _connectionRepository.GetAsync(cp => cp.TenantId == user.TenantId, false, true, null); // !!!
+                ConnectionPool connectionPool = await _dbContext.ConnectionPools.IgnoreQueryFilters().Where(cp => cp.TenantId == user.TenantId).FirstOrDefaultAsync();
 
                 tenantModel.Name = connectionPool.Name;
                 tenantModel.Host = connectionPool.Host;

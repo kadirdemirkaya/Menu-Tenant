@@ -13,12 +13,14 @@ namespace Auth.Infrastructure.Repository
             where TId : ValueObject
     {
         private readonly AuthDbContext _dbContext;
-        private DbSet<T> Table => _dbContext.Set<T>();
+        public DbSet<T> Table;
 
         public Repository(AuthDbContext dbContext)
         {
             _dbContext = dbContext;
+            Table = _dbContext.Set<T>();
         }
+
         public async Task<bool> AnyAsync(Expression<Func<T, bool>> expression, bool tracking = true, bool ignoreQueryFilter = false)
         {
             try
