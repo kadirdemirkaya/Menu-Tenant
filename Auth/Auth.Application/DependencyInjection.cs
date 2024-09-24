@@ -7,7 +7,7 @@ namespace Auth.Application
     {
         public static IServiceCollection AuthApplicationRegistration(this IServiceCollection services)
         {
-            services.EventBusRegistration(AssemblyReference.Assemblies);
+            services.EventBusRegistration(AssemblyReference.Assembly);
 
             return services;
         }

@@ -1,25 +1,31 @@
 ﻿using Shared.Application.Services;
+using Shared.Domain.BaseTypes;
 using System.Linq.Expressions;
 
 namespace Shared.Application.Abstractions
 {
-    public interface IRepository<TEntity>
-        where TEntity : class
+    public interface IRepository<T, TId>
+      where T : Entity<TId>
+      where TId : ValueObject
     {
-        Task<TEntity> GetByIdAsync(int id);
-        Task<IEnumerable<TEntity>> GetAllAsync();
-        Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<PaginatedList<T>> GetAllAsync(Expression<Func<T, bool>> expression = null, bool tracking = true, int pageIndex = 1,
+    int pageSize = 10, bool ignoreQueryFilter = false, params Expression<Func<T, object>>[] includeEntity);
+        Task<PaginatedList<T>> GetAllAsync(bool tracking = true, int pageIndex = 1,
+    int pageSize = 10, bool ignoreQueryFilter = false, params Expression<Func<T, object>>[] includeEntity);
 
-        Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> expression = null, bool tracking = true, params Expression<Func<TEntity, object>>[] includeEntity);
+        Task<List<T>> GetAllAsync(bool tracking = true,bool ignoreQueryFilter = false);
+        Task<T> GetAsync(Expression<Func<T, bool>> expression = null, bool tracking = true, bool ignoreQueryFilter = false, params Expression<Func<T, object>>[] includeEntity);
+        Task<bool> AnyAsync(Expression<Func<T, bool>> expression, bool tracking = true, bool ignoreQueryFilter = false);
+        Task<int> CountAsync(Expression<Func<T, bool>> expression = null, bool tracking = true, bool ignoreQueryFilter = false);
+        Task<bool> AnyAsync(bool ignoreQueryFilter = false);
+        Task<int> CountAsync(bool ignoreQueryFilter = false);
 
-        Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> expression = null, bool tracking = true, params Expression<Func<TEntity, object>>[] includeEntity);
 
-        Task<TEntity> AddAsync(TEntity entity);
-        Task<TEntity> UpdateAsync(TEntity entity);
-        Task DeleteAsync(int id);
+        public Task<bool> CreateAsync(T entity);
+        public bool Delete(T entity);
+        public Task<bool> DeleteByIdAsync(T entityId);
+        public bool UpdateAsync(T entity);
 
-        Task<bool> SaveChangesAsync();
-
-        Task<PaginatedList<TEntity>> GetPaginatedAsync(int pageIndex, int pageSize, Expression<Func<TEntity, bool>> predicate = null);
+        Task<bool> SaveCahangesAsync();
     }
 }

@@ -21,17 +21,17 @@ namespace Shared.Infrastructure.Configurations
                     id => id.Id,
                     value => ProductId.Create(value));
 
-            builder.Property(p => p.TenantId).IsRequired();
+            builder.Property(p => p.TenantId);
 
             builder.Property(p => p.UpdatedDateUTC).HasDefaultValue(DateTime.UtcNow);
 
-            builder.Property(p => p.CreatedDateUTC).IsRequired().HasDefaultValue(DateTime.UtcNow);
+            builder.Property(p => p.CreatedDateUTC).HasDefaultValue(DateTime.UtcNow);
 
-            builder.Property(p => p.IsDeleted).IsRequired().HasDefaultValue(true);
+            builder.Property(p => p.IsDeleted).HasDefaultValue(true);
 
-            builder.Property(p => p.Name).IsRequired().HasMaxLength(100);
+            builder.Property(p => p.Name).HasMaxLength(100);
 
-            builder.Property(p => p.Price).IsRequired().HasDefaultValue(0).HasColumnType("decimal(18,2)").HasPrecision(18, 2);
+            builder.Property(p => p.Price).HasDefaultValue(0).HasColumnType("decimal(18,2)").HasPrecision(18, 2);
 
             builder.Property(p => p.Title).HasDefaultValue("NONE");
 
@@ -47,7 +47,7 @@ namespace Shared.Infrastructure.Configurations
                    .WithMany(m => m.Products)
                    .HasForeignKey(p => p.MenuId);
 
-            builder.Property(p => p.MenuId).IsRequired();
+            builder.Property(p => p.MenuId);
         }
     }
 }

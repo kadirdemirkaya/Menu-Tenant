@@ -1,4 +1,4 @@
-﻿namespace Shared.Application.Models.Dtos.User
+﻿namespace Auth.Application.Dtos.User
 {
     public class ConnectionPoolModelDto
     {

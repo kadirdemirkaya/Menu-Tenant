@@ -30,14 +30,14 @@ namespace Shared.Domain.Models
 
             public const string DevelopmentPOSTGRES_Host = "Development_POSTGRES_Host";
             public const string DevelopmentPOSTGRES_Port = "Development_POSTGRES_Port";
-            public const string DevelopmentPOSTGRES_POSTGRES_User = "Development_POSTGRES_POSTGRES_User";
-            public const string DevelopmentPOSTGRES_POSTGRES_Password = "Development_POSTGRES_POSTGRES_Password";
-            public const string DevelopmentPOSTGRES_POSTGRES_AuthDb = "Development_POSTGRES_POSTGRES_AuthDb";
-            public const string DevelopmentPOSTGRES_POSTGRES_SharedDb = "Development_POSTGRES_POSTGRES_SharedDb";
+            public const string DevelopmentPOSTGRES_POSTGRES_User = "Development_POSTGRES_User";
+            public const string DevelopmentPOSTGRES_POSTGRES_Password = "Development_POSTGRES_Password";
+            public const string DevelopmentPOSTGRES_POSTGRES_AuthDb = "Development_POSTGRES_AuthDb";
+            public const string DevelopmentPOSTGRES_POSTGRES_SharedDb = "Development_POSTGRES_SharedDb";
 
             // this section maybe could change while improve
-            public const string DevelopmentPOSTGRES_POSTGRES_PersonalDb1 = "Development_POSTGRES_POSTGRES_PersonalDb1";
-            public const string DevelopmentPOSTGRES_POSTGRES_PersonalDb2 = "Development_POSTGRES_POSTGRES_PersonalDb2";
+            public const string DevelopmentPOSTGRES_POSTGRES_PersonalDb1 = "Development_POSTGRES_PersonalDb1";
+            public const string DevelopmentPOSTGRES_POSTGRES_PersonalDb2 = "Development_POSTGRES_PersonalDb2";
         }
     }
 }

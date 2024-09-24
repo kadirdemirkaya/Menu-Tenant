@@ -1,8 +1,8 @@
 ﻿using Auth.Application.Cqrs.Commands.RequestsAndResponses;
+using Auth.Application.Dtos.User;
 using EventBusDomain;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.Filters;
-using Shared.Application.Models.Dtos.User;
 using Shared.Domain.Models;
 
 namespace Auth.Api.Controllers

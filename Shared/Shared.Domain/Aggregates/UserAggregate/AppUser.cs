@@ -30,7 +30,7 @@ namespace Shared.Domain.Aggregates.UserAggregate
         public AppUser(string userName, string email, string password, string phoneNumber)
         {
             Id = AppUserId.CreateUnique();
-            Username = Username;
+            Username = userName;
             Email = email;
             Password = password;
             PhoneNumber = phoneNumber;
@@ -39,17 +39,30 @@ namespace Shared.Domain.Aggregates.UserAggregate
         public AppUser(AppUserId appUserId, string userName, string email, string password, string phoneNumber)
         {
             Id = appUserId;
-            Username = Username;
+            Username = userName;
             Email = email;
             Password = password;
             PhoneNumber = phoneNumber;
         }
 
-        public static AppUser Create(string userName, string email, string password, string phoneNumber, List<Company> companies)
+        public AppUser(AppUserId appUserId, string userName, string email, string password, string phoneNumber,string tenantId)
+        {
+            Id = appUserId;
+            Username = userName;
+            Email = email;
+            Password = password;
+            PhoneNumber = phoneNumber;
+            SetTenantIdForEntity(tenantId);
+        }
+
+        public static AppUser Create(string userName, string email, string password, string phoneNumber)
             => new(userName, email, password, phoneNumber);
 
         public static AppUser Create(AppUserId appUserId, string userName, string email, string password, string phoneNumber)
             => new(appUserId, userName, email, password, phoneNumber);
+
+        public static AppUser Create(AppUserId appUserId, string userName, string email, string password, string phoneNumber, string tenantId)
+            => new(appUserId, userName, email, password, phoneNumber, tenantId);
 
         public void AddCompany(Company company)
         {
@@ -62,7 +75,7 @@ namespace Shared.Domain.Aggregates.UserAggregate
             Companies.Remove(company);
         }
 
-        public void SetTenantIdForAppUser(string id)
+        public void SetTenantIdForEntity(string id)
         {
             SetTenantId(id);
         }

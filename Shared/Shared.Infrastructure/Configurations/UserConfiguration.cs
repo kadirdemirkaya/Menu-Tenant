@@ -24,21 +24,21 @@ namespace Shared.Infrastructure.Configurations
                     id => id.Id,
                     value => AppUserId.Create(value));
 
-            builder.Property(p => p.TenantId).IsRequired();
+            builder.Property(p => p.TenantId);
 
             builder.Property(p => p.UpdatedDateUTC).HasDefaultValue(DateTime.UtcNow);
 
-            builder.Property(p => p.CreatedDateUTC).IsRequired().HasDefaultValue(DateTime.UtcNow);
+            builder.Property(p => p.CreatedDateUTC).HasDefaultValue(DateTime.UtcNow);
 
-            builder.Property(p => p.IsDeleted).IsRequired().HasDefaultValue(true);
+            builder.Property(p => p.IsDeleted).HasDefaultValue(true);
 
             builder.Property(p => p.Username);
 
-            builder.Property(p => p.Email).IsRequired();
+            builder.Property(p => p.Email);
 
-            builder.Property(p => p.Password).IsRequired();
+            builder.Property(p => p.Password);
 
-            builder.Property(p => p.PhoneNumber).IsRequired();
+            builder.Property(p => p.PhoneNumber);
 
             builder.HasMany(u => u.Companies)
                    .WithOne(u => u.AppUser)

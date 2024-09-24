@@ -20,15 +20,15 @@ namespace Shared.Infrastructure.Configurations
                     id => id.Id,
                     value => MenuId.Create(value));
 
-            builder.Property(p => p.TenantId).IsRequired();
+            builder.Property(p => p.TenantId);
 
             builder.Property(p => p.UpdatedDateUTC).HasDefaultValue(DateTime.UtcNow);
 
-            builder.Property(p => p.CreatedDateUTC).IsRequired().HasDefaultValue(DateTime.UtcNow);
+            builder.Property(p => p.CreatedDateUTC).HasDefaultValue(DateTime.UtcNow);
 
-            builder.Property(p => p.IsDeleted).IsRequired().HasDefaultValue(true);
+            builder.Property(p => p.IsDeleted).HasDefaultValue(true);
 
-            builder.Property(p => p.Name).IsRequired().HasMaxLength(100);
+            builder.Property(p => p.Name).HasMaxLength(100);
 
             builder.Property(p => p.Description).HasDefaultValue("NONE").HasMaxLength(250);
 

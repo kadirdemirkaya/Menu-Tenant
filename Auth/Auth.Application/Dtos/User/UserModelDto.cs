@@ -1,7 +1,7 @@
 ﻿using Shared.Application.Filters.Attributes;
 using System.ComponentModel.DataAnnotations;
 
-namespace Shared.Application.Models.Dtos.User
+namespace Auth.Application.Dtos.User
 {
     public class UserModelDto
     {

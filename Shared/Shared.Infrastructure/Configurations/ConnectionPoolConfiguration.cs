@@ -23,27 +23,27 @@ namespace Shared.Infrastructure.Configurations
                     id => id.Id,
                     value => ConnectionPoolId.Create(value));
 
-            builder.Property(p => p.TenantId).IsRequired();
+            builder.Property(p => p.TenantId);
 
             builder.Property(p => p.UpdatedDateUTC).HasDefaultValue(DateTime.UtcNow);
 
-            builder.Property(p => p.CreatedDateUTC).IsRequired().HasDefaultValue(DateTime.UtcNow);
+            builder.Property(p => p.CreatedDateUTC).HasDefaultValue(DateTime.UtcNow);
 
-            builder.Property(p => p.IsDeleted).IsRequired().HasDefaultValue(true);
+            builder.Property(p => p.IsDeleted).HasDefaultValue(true);
 
-            builder.Property(p => p.Name).IsRequired().HasMaxLength(150);
+            builder.Property(p => p.Name).HasMaxLength(150);
 
-            builder.Property(p => p.Host).IsRequired().HasMaxLength(150);
+            builder.Property(p => p.Host).HasMaxLength(150);
 
-            builder.Property(p => p.Username).IsRequired().HasMaxLength(150);
+            builder.Property(p => p.Username).HasMaxLength(150);
 
-            builder.Property(p => p.Password).IsRequired().HasMaxLength(150);
+            builder.Property(p => p.Password).HasMaxLength(150);
 
             builder.HasOne(cp => cp.Company)
                  .WithOne(c => c.ConnectionPool)
                  .HasForeignKey<ConnectionPool>(cp => cp.CompanyId);
 
-            builder.Property(p => p.CompanyId).IsRequired();
+            builder.Property(p => p.CompanyId);
         }
     }
 }

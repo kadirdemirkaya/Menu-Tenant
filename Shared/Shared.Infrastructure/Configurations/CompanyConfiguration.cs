@@ -24,17 +24,17 @@ namespace Shared.Infrastructure.Configurations
                     id => id.Id,
                     value => CompanyId.Create(value));
 
-            builder.Property(p => p.TenantId).IsRequired();
+            builder.Property(p => p.TenantId);
 
             builder.Property(p => p.UpdatedDateUTC).HasDefaultValue(DateTime.UtcNow);
 
-            builder.Property(p => p.CreatedDateUTC).IsRequired().HasDefaultValue(DateTime.UtcNow);
+            builder.Property(p => p.CreatedDateUTC).HasDefaultValue(DateTime.UtcNow);
 
-            builder.Property(p => p.IsDeleted).IsRequired().HasDefaultValue(true);
+            builder.Property(p => p.IsDeleted).HasDefaultValue(true);
 
-            builder.Property(p => p.Name).IsRequired().HasMaxLength(100);
+            builder.Property(p => p.Name).HasMaxLength(100);
 
-            builder.Property(p => p.DatabaseName).IsRequired().HasMaxLength(100);
+            builder.Property(p => p.DatabaseName).HasMaxLength(100);
 
             builder.HasOne(c => c.AppUser)
                    .WithMany(u => u.Companies)
@@ -44,7 +44,7 @@ namespace Shared.Infrastructure.Configurations
               .WithOne(cp => cp.Company)
               .HasForeignKey<ConnectionPool>(cp => cp.CompanyId);
 
-            builder.Property(p => p.AppUserId).IsRequired();
+            builder.Property(p => p.AppUserId);
         }
     }
 }

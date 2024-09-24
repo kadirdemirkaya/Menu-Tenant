@@ -1,8 +1,38 @@
-﻿namespace Shared.Infrastructure.Extensions
+﻿using System.Text;
+
+namespace Shared.Infrastructure.Extensions
 {
     public static class StringExtension
     {
-        
+        private static Random _random = new Random();
+
+        private static string GenerateRandomWord(int length)
+        {
+            const string chars = "abcdefghijklmnopqrstuvwxyz";
+            StringBuilder result = new StringBuilder(length);
+
+            for (int i = 0; i < length; i++)
+            {
+                result.Append(chars[_random.Next(chars.Length)]);
+            }
+
+            return result.ToString();
+        }
+
+        public static string GenerateTemporaryDatabaseName()
+        {
+            string randomWord = GenerateRandomWord(6);
+            string tempDbName = $"personaldb_{randomWord}";
+            return tempDbName;
+        }
+
+        public static bool IsTemporaryDatabaseName(string dbName)
+        {
+            return dbName.StartsWith("personaldb_");
+        }
+
+
+
         public static string SetDbUrl(this string str, string host, string port, string userName, string password, string databaseName)
         {
             if (string.IsNullOrEmpty(host))

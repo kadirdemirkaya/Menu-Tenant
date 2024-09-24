@@ -1,5 +1,5 @@
-﻿using EventBusDomain;
-using Shared.Application.Models.Dtos.User;
+﻿using Auth.Application.Dtos.User;
+using EventBusDomain;
 
 namespace Auth.Application.Cqrs.Commands.RequestsAndResponses
 {

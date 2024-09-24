@@ -3,6 +3,7 @@ using System;
 using Auth.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Auth.Infrastructure.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    partial class AuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240924085748_fluentapi_changed")]
+    partial class fluentapi_changed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,7 +33,7 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 24, 9, 39, 44, 154, DateTimeKind.Utc).AddTicks(5889));
+                        .HasDefaultValue(new DateTime(2024, 9, 24, 8, 57, 47, 126, DateTimeKind.Utc).AddTicks(8151));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -56,7 +59,7 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 24, 9, 39, 44, 154, DateTimeKind.Utc).AddTicks(4896));
+                        .HasDefaultValue(new DateTime(2024, 9, 24, 8, 57, 47, 126, DateTimeKind.Utc).AddTicks(6914));
 
                     b.Property<string>("Username")
                         .HasColumnType("text");
@@ -80,7 +83,7 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 24, 9, 39, 44, 163, DateTimeKind.Utc).AddTicks(8732));
+                        .HasDefaultValue(new DateTime(2024, 9, 24, 8, 57, 47, 134, DateTimeKind.Utc).AddTicks(4284));
 
                     b.Property<string>("DatabaseName")
                         .IsRequired()
@@ -104,7 +107,7 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 24, 9, 39, 44, 163, DateTimeKind.Utc).AddTicks(7646));
+                        .HasDefaultValue(new DateTime(2024, 9, 24, 8, 57, 47, 134, DateTimeKind.Utc).AddTicks(3188));
 
                     b.HasKey("Id");
 
@@ -126,7 +129,7 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 24, 9, 39, 44, 167, DateTimeKind.Utc).AddTicks(4899));
+                        .HasDefaultValue(new DateTime(2024, 9, 24, 8, 57, 47, 138, DateTimeKind.Utc).AddTicks(3337));
 
                     b.Property<string>("DatabaseName")
                         .IsRequired()
@@ -163,7 +166,7 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 24, 9, 39, 44, 167, DateTimeKind.Utc).AddTicks(3846));
+                        .HasDefaultValue(new DateTime(2024, 9, 24, 8, 57, 47, 138, DateTimeKind.Utc).AddTicks(2273));
 
                     b.Property<string>("Username")
                         .IsRequired()

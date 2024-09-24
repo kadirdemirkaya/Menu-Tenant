@@ -4,16 +4,14 @@ using Shared.Application.Abstractions;
 using Shared.Domain.Aggregates.UserAggregate;
 using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.BaseTypes;
-using Shared.Domain.Models;
 using Shared.Infrastructure.Configurations;
-using Shared.Infrastructure.Extensions;
 
 namespace Auth.Infrastructure.Data
 {
     public class AuthDbContext : DbContext
     {
         private readonly IWorkContext _workContext;
-        private readonly ISecretsManagerService _secretManagement;
+
         public AuthDbContext()
         {
         }
@@ -22,10 +20,9 @@ namespace Auth.Infrastructure.Data
         {
         }
 
-        public AuthDbContext(DbContextOptions options, IWorkContext workContext, ISecretsManagerService secretsManagerService) : base(options)
+        public AuthDbContext(DbContextOptions options, IWorkContext workContext) : base(options)
         {
             _workContext = workContext;
-            _secretManagement = secretsManagerService;
         }
 
 
@@ -59,9 +56,11 @@ namespace Auth.Infrastructure.Data
 
             foreach (var entry in entries)
             {
-                entry.Entity.TenantId = _workContext.Tenant.TenantId;
+                if (_workContext?.Tenant?.TenantId != null || entry.Entity.TenantId == null)
+                {
+                    entry.Entity.TenantId = _workContext.Tenant.TenantId;
+                }
             }
-
             return await base.SaveChangesAsync(cancellationToken);
         }
     }

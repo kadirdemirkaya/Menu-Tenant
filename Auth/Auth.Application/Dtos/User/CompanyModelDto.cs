@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Shared.Application.Models.Dtos.User
+namespace Auth.Application.Dtos.User
 {
     public class CompanyModelDto
     {
         [Required]
         public string name { get; set; }
-        [Required]
-        public string? databaseName { get; set; }
+        
+        //[Required]
+        //public string? databaseName { get; set; }
     }
 }

@@ -39,15 +39,27 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
             AppUserId = appUserId;
         }
 
+        public Company(CompanyId companyId, string name, string databaseName, AppUserId appUserId,string tenantId) : base(companyId)
+        {
+            Id = companyId;
+            Name = name;
+            DatabaseName = databaseName;
+            AppUserId = appUserId;
+            SetTenantIdForEntity(tenantId);
+        }
+
         public static Company Create(string name, string databaseName, AppUserId appUserId)
             => new(name, databaseName, appUserId);
 
         public static Company Create(CompanyId companyId, string name, string databaseName, AppUserId appUserId)
           => new(companyId, name, databaseName, appUserId);
 
+        public static Company Create(CompanyId companyId, string name, string databaseName, AppUserId appUserId, string tenantId)
+        => new(companyId, name, databaseName, appUserId, tenantId);
+
         public void AddConnectionPool(ConnectionPool connectionPool)
         {
-            ConnectionPool = ConnectionPool;
+            ConnectionPool = connectionPool;
         }
 
         public void RemoveConnectionPool()
@@ -59,6 +71,11 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
         public void AppUserIdSet(AppUserId appUserId)
         {
             AppUserId = appUserId;
+        }
+
+        public void SetTenantIdForEntity(string id)
+        {
+            SetTenantId(id);
         }
     }
 }

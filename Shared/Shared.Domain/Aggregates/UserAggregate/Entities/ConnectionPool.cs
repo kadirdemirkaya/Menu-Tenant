@@ -51,15 +51,36 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
             CompanyId = companyId;
         }
 
+        public ConnectionPool(ConnectionPoolId connectionPoolId, string name, string host, string port, string databaseName, string userName, string password, CompanyId companyId,string tenantId)
+        {
+            Id = connectionPoolId;
+            Name = name;
+            Host = host;
+            Port = port;
+            DatabaseName = databaseName;
+            Username = userName;
+            Password = password;
+            CompanyId = companyId;
+            SetTenantIdForEntity(tenantId);
+        }
+
         public static ConnectionPool Create(string name, string host, string port, string databaseName, string userName, string password, CompanyId companyId)
             => new(name, host, port, databaseName, userName, password, companyId);
 
         public static ConnectionPool Create(ConnectionPoolId connectionPoolId, string name, string host, string port, string databaseName, string userName, string password, CompanyId companyId)
             => new(connectionPoolId, name, host, port, databaseName, userName, password, companyId);
 
+        public static ConnectionPool Create(ConnectionPoolId connectionPoolId, string name, string host, string port, string databaseName, string userName, string password, CompanyId companyId,string tenantId)
+            => new(connectionPoolId, name, host, port, databaseName, userName, password, companyId, tenantId);
+
         public void CompanyIdSet(CompanyId companyId)
         {
             CompanyId = companyId;
+        }
+
+        public void SetTenantIdForEntity(string id)
+        {
+            SetTenantId(id);
         }
     }
 }

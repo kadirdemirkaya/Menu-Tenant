@@ -1,9 +1,10 @@
 ﻿using Auth.Application.Abstractions;
-using Microsoft.EntityFrameworkCore;
+using Auth.Application.Dtos.User;
+using Auth.Infrastructure.Data;
+using Auth.Infrastructure.Repository;
 using Microsoft.Extensions.Logging;
 using SecretManagement;
-using Shared.Application.Models.Dtos.User;
-using Shared.Application.Repository;
+using Shared.Application.Abstractions;
 using Shared.Domain.Aggregates.UserAggregate;
 using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
@@ -11,50 +12,46 @@ using Shared.Domain.Models;
 
 namespace Auth.Infrastructure.Services
 {
-    public class UserService : Repository<AppUser>, IUserService
+    public class UserService : Repository<AppUser, AppUserId>, IUserService, IRepository<AppUser, AppUserId>
     {
-        private DbContext _dbContext;
+        private AuthDbContext _dbContext;
         private readonly ILogger<UserService> _logger;
-        private readonly IUserService _userService;
         private ISecretsManagerService _secretsManagerService;
-        public UserService(DbContext context, ISecretsManagerService secretsManagerService, IUserService userService, ILogger<UserService> logger) : base(context)
+        public UserService(AuthDbContext context, ISecretsManagerService secretsManagerService, ILogger<UserService> logger) : base(context)
         {
             _dbContext = context;
             _secretsManagerService = secretsManagerService;
-            _userService = userService;
             _logger = logger;
         }
 
         public async Task<bool> UserRegisterAsync(UserRegisterModelDto userRegisterModelDto)
         {
-            AppUser user = AppUser.Create(AppUserId.CreateUnique(), userRegisterModelDto.userModelDto.username, userRegisterModelDto.userModelDto.email, userRegisterModelDto.userModelDto.password, userRegisterModelDto.userModelDto.phoneNumber);
+            if (await AnyAsync(u => u.Email == userRegisterModelDto.userModelDto.email, false, true))
+            {
+                _logger.LogError("User alread exists.");
+                return false;
+            }
+
+            string tenantId = Guid.NewGuid().ToString();
+            AppUser user = AppUser.Create(AppUserId.CreateUnique(), userRegisterModelDto.userModelDto.username, userRegisterModelDto.userModelDto.email, userRegisterModelDto.userModelDto.password, userRegisterModelDto.userModelDto.phoneNumber, tenantId);
 
             ConnectionPool connectionPool = null;
 
-            Company company = Company.Create(userRegisterModelDto.companyModelDto.name, userRegisterModelDto.companyModelDto.databaseName, user.Id);
+            string dbName = Shared.Infrastructure.Extensions.StringExtension.GenerateTemporaryDatabaseName();
 
-            AppUser? appUser = await _userService.GetAsync(null, false, u => u.Companies);
+            Company company = Company.Create(CompanyId.CreateUnique(), userRegisterModelDto.companyModelDto.name, userRegisterModelDto.connectionPoolModelDto.IsWantShared is true ? Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_SharedDb : dbName, user.Id, tenantId);
 
-            if (!userRegisterModelDto.connectionPoolModelDto.IsWantShared)
-                if (appUser is not null)
-                    foreach (var companyItem in appUser.Companies)
-                        if (companyItem.DatabaseName == userRegisterModelDto.companyModelDto.databaseName)
-                        {
-                            _logger.LogError("databasename already exists! Your can select other database names");
-                            return false;
-                        }
+            if (userRegisterModelDto.connectionPoolModelDto.IsWantShared)
+                connectionPool = ConnectionPool.Create(ConnectionPoolId.CreateUnique(), "postgresql", await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_Host), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_Port), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_SharedDb), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_User), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Password), company.Id, tenantId);
+            else
+                connectionPool = ConnectionPool.Create(ConnectionPoolId.CreateUnique(), "postgresql", await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_Host), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_Port), dbName, await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_User), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Password), company.Id, tenantId);
 
             company.AddConnectionPool(connectionPool);
 
             user.AddCompany(company);
 
-            if (userRegisterModelDto.connectionPoolModelDto.IsWantShared)
-                connectionPool = ConnectionPool.Create("postgresql", await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_Host), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_Port), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_SharedDb), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_User), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Password), company.Id);
-            else
-                connectionPool = ConnectionPool.Create("postgresql", await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_Host), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_Port), userRegisterModelDto.companyModelDto.databaseName, await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_User), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Password), company.Id);
-
-            if (await _userService.AddAsync(user) != null)
-                return await _userService.SaveChangesAsync();
+            if (await CreateAsync(user))
+                return await SaveCahangesAsync();
 
             return false;
         }

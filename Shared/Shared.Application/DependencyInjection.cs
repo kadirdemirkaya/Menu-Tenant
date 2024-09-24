@@ -6,7 +6,7 @@ namespace Shared.Application
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection EventBusRegistration(this IServiceCollection services, Assembly[] assemblies)
+        public static IServiceCollection EventBusRegistration(this IServiceCollection services, Assembly assemblies)
         {
             services.AddEventBus(assemblies);
 
