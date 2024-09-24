@@ -64,35 +64,6 @@ namespace Shared.Infrastructure
             }
             return services;
         }
-
-        public static IServiceCollection JwtRegistration(this IServiceCollection services)
-        {
-            var jwtTokenConfig = services.GetOptions<JwtTokenConfigs>("JwtTokenConfig");
-
-            services.AddAuthentication(x =>
-            {
-                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, x =>
-                        {
-                            x.TokenValidationParameters = new TokenValidationParameters
-                            {
-                                ValidateIssuer = jwtTokenConfig.ValidateIssuer,
-                                ValidIssuer = jwtTokenConfig.ValidIssuer,
-                                ValidateAudience = jwtTokenConfig.ValidateAudience,
-                                ValidAudience = jwtTokenConfig.ValidAudience,
-                                ValidateLifetime = jwtTokenConfig.ValidateLifetime,
-                                ValidateIssuerSigningKey = jwtTokenConfig.ValidateIssuerSigningKey,
-                                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtTokenConfig.SecretKey)),
-                                ClockSkew = TimeSpan.Zero
-                            };
-                        });
-
-            return services;
-        }
-
         public static IServiceCollection ServiceRegistration(this IServiceCollection services)
         {
             services.AddSingleton<IJwtTokenService, JwtTokenService>();

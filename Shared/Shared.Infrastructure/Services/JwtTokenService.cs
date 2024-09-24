@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Shared.Application.Abstractions;
+using Shared.Application.Extensions;
 using Shared.Domain.Models;
 using Shared.Domain.Models.Configs;
 using Shared.Infrastructure.Extensions;
