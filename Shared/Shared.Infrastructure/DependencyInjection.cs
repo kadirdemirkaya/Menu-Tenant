@@ -106,6 +106,8 @@ namespace Shared.Infrastructure
         {
             app.UseMiddleware<JwtMiddleware>();
 
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
+
             return app;
         }
     }
