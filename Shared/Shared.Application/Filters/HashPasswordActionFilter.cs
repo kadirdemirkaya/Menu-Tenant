@@ -15,21 +15,39 @@ namespace Shared.Application.Filters
             {
                 if (parameter == null) continue;
 
-                var properties = parameter.GetType().GetProperties()
-                    .Where(prop => prop.IsDefined(typeof(HashPasswordAttribute), false));
+                ProcessProperties(parameter);
+            }
 
-                foreach (var property in properties)
+            base.OnActionExecuting(context);
+        }
+
+        private void ProcessProperties(object parameter)
+        {
+            if (parameter == null) return;
+
+            var properties = parameter.GetType().GetProperties();
+
+            foreach (var property in properties)
+            {
+                if (property.IsDefined(typeof(HashPasswordAttribute), false))
                 {
                     var passwordValue = property.GetValue(parameter) as string;
                     if (passwordValue != null)
                     {
-                        // Hash password
-                        var hashedPassword = HashPassword(passwordValue);
+                        var hashedPassword = HashPassword(passwordValue); // hash
                         property.SetValue(parameter, hashedPassword);
                     }
                 }
+
+                else if (property.PropertyType.IsClass && property.PropertyType != typeof(string)) // is it class  ? 
+                {
+                    var nestedProperty = property.GetValue(parameter);
+                    if (nestedProperty != null)
+                    {
+                        ProcessProperties(nestedProperty); // for nested class recursive (models)
+                    }
+                }
             }
-            base.OnActionExecuting(context);
         }
 
         private string HashPassword(string password)

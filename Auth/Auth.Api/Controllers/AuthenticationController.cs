@@ -29,6 +29,7 @@ namespace Auth.Api.Controllers
 
         [HttpPost]
         [Route("Auth/Login")]
+        [ServiceFilter(typeof(HashPasswordActionFilter))]
         public async Task<ActionResult<bool>> UserLogin()
         {
             UserLoginCommandRequest request = new();
