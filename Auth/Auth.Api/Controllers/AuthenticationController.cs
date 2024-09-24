@@ -1,12 +1,14 @@
 ﻿using Auth.Application.Cqrs.Commands.RequestsAndResponses;
 using Auth.Application.Dtos.User;
 using EventBusDomain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.Filters;
 using Shared.Domain.Models;
 
 namespace Auth.Api.Controllers
 {
+    [AllowAnonymous]
     public class AuthenticationController : BaseController
     {
         private readonly EventBus _eventBus;

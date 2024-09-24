@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 using var configuration = builder.Configuration;
 
-builder.Services.AuthApiRegistration();
+builder.Services.AuthApiRegistration(configuration);
 
 builder.Services.AuthApplicationRegistration(configuration);
 
@@ -14,9 +14,11 @@ builder.Services.AuthInfrastructureServiceRegistrations(configuration);
 
 var app = builder.Build();
 
-app.AuthApiWebApplicationRegistration();
+app.AuthApiWebApplicationRegistration(configuration);
 
 app.AuthInfrastructureWebApplicationRegistration();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

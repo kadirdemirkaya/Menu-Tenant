@@ -32,7 +32,7 @@ namespace Shared.Infrastructure.Middlewares
                 if (string.IsNullOrWhiteSpace(tenantModel))
                     return;
 
-                context.Items["TenantInfo"] = JsonConvert.DeserializeObject<TenantModel>(tenantModel);
+                context.Items["TenantModel"] = JsonConvert.DeserializeObject<TenantModel>(tenantModel);
             }
 
             await _next(context);
