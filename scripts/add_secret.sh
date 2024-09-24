@@ -32,6 +32,7 @@ add_or_update_secret "Development" "Seq" "localhost:5341"
 add_or_update_secret "Development" "SecretManagement" "localhost:4566"
 #
 add_or_update_secret "Development" "Redis" "localhost:6379,ssl=False,allowAdmin=true"
+add_or_update_secret "Development" "Redis2" "localhost:6379"
 #
 add_or_update_secret "Development" "POSTGRES_Host" "localhost"
 add_or_update_secret "Development" "POSTGRES_Port" "5432" 
@@ -42,5 +43,8 @@ add_or_update_secret "Development" "POSTGRES_SharedDb" "shareddb"
 add_or_update_secret "Development" "POSTGRES_PersonalDb1" "personaldb1"
 add_or_update_secret "Development" "POSTGRES_PersonalDb2" "personaldb2"
 #
+add_or_update_secret "Development" "AuthApi" "https://localhost:7001"
+add_or_update_secret "Development" "TenantApi" "https://localhost:7100"
+add_or_update_secret "Development" "Xabarihealthcheck" "http://localhost:5286"
 
 #aws --endpoint-url=http://localhost:4566 secretsmanager list-secrets

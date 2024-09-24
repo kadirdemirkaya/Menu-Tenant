@@ -1,6 +1,9 @@
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using SecretManagement;
+using Shared.Domain.Models;
 using Shared.HealthCheck;
+using Shared.Infrastructure;
 using Steeltoe.Common.Http.Discovery;
 using Steeltoe.Discovery.Client;
 using Steeltoe.Discovery.Consul;
@@ -11,39 +14,44 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddDiscoveryClient();
 
+builder.Services.SecretManagementRegistration();
+
 builder.Services.AddServiceDiscovery(o => o.UseConsul());
 
-builder.Services.AddHttpClient("xabarihealthcheck", client =>
+using (ISecretsManagerService secretsManagerService = new AwsSecretsManagerService(builder.Configuration))
 {
-    client.BaseAddress = new Uri("http://localhost:5286");
-})
+    builder.Services.AddHttpClient("xabarihealthcheck", client =>
+    {
+        client.BaseAddress = new Uri(secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentXabarihealthcheck).GetAwaiter().GetResult());
+    })
 .AddServiceDiscovery()
 .AddRoundRobinLoadBalancer();
 
-builder.Services.AddHealthChecks()
-    .AddNpgSql("localhost:5432")
-    .AddRedis(
-        redisConnectionString: "localhost:6379",
-        name: "Redis",
-        tags: ["Docker-Compose", "Redis"])
-    .AddCheck(
-        name: "Auth Api",
-        instance: new HealthChecker2("https://localhost:7001"),
-        tags: ["Auth.Api", "REST"]
-    )
-    .AddCheck(
-        name: "Tenant Api",
-        instance: new HealthChecker2("https://localhost:7100"),
-        tags: ["Tenant.Api", "REST"]
-    );
+    builder.Services.AddHealthChecks()
+        .AddNpgSql($"{await secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_Host)}:{await secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_Port)}")
+        .AddRedis(
+            redisConnectionString: await secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentRedis2),
+            name: "Redis",
+            tags: ["Docker-Compose", "Redis"])
+        .AddCheck(
+            name: "Auth Api",
+            instance: new HealthChecker2(await secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentAuthApi)),
+            tags: ["Auth.Api", "REST"]
+        )
+        .AddCheck(
+            name: "Tenant Api",
+            instance: new HealthChecker2(await secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentTenantApi)),
+            tags: ["Tenant.Api", "REST"]
+        );
 
-builder.Services.AddHealthChecksUI(setupSettings =>
-{
-    setupSettings.SetHeaderText("Health Check");
-    setupSettings.AddHealthCheckEndpoint("Basic Health Check", "/health");
-    setupSettings.SetEvaluationTimeInSeconds(10);
-    setupSettings.SetApiMaxActiveRequests(2);
-}).AddInMemoryStorage();
+    builder.Services.AddHealthChecksUI(setupSettings =>
+    {
+        setupSettings.SetHeaderText("Health Check");
+        setupSettings.AddHealthCheckEndpoint("Basic Health Check", "/health");
+        setupSettings.SetEvaluationTimeInSeconds(10);
+        setupSettings.SetApiMaxActiveRequests(2);
+    }).AddInMemoryStorage();
+}
 
 
 var app = builder.Build();
