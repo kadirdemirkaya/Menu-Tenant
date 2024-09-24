@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using SecretManagement;
 using Shared.Application.Abstractions;
 using Shared.Domain.Aggregates.UserAggregate;
+using Shared.Domain.Aggregates.UserAggregate.Entities;
+using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
 using Shared.Infrastructure;
 using System.Diagnostics.Metrics;
 
@@ -21,14 +23,16 @@ namespace Auth.Infrastructure
     {
         public static IServiceCollection AuthInfrastructureServiceRegistrations(this IServiceCollection services, IConfiguration configuration)
         {
+            services.SecretManagementRegistration();
+
+            services.ServiceRegistration();
+
             services.AddDbContext<AuthDbContext>(options =>
             {
                 options.UseNpgsql("Server=localhost;port=5432;Database=authdb;User Id=admin;Password=passw00rd");
             });
 
-            services.SecretManagementRegistration();
 
-            services.ServiceRegistration();
 
             services.SeqRegistration(configuration);
 
@@ -43,7 +47,11 @@ namespace Auth.Infrastructure
 
         private static IServiceCollection AddServices(this IServiceCollection services)
         {
-            services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+            //services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+
+            services.AddScoped<IRepository<Company, CompanyId>, Repository<Company, CompanyId>>();
+            
+            services.AddScoped<IRepository<ConnectionPool, ConnectionPoolId>, Repository<ConnectionPool, ConnectionPoolId>>();
 
             services.AddScoped<IUserService, UserService>();
 

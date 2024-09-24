@@ -67,7 +67,7 @@ namespace Shared.Infrastructure
 
         public static IServiceCollection JwtRegistration(this IServiceCollection services)
         {
-            var jwtTokenConfig = services.GetOptions<JwtTokenConfig>("JwtTokenConfig");
+            var jwtTokenConfig = services.GetOptions<JwtTokenConfigs>("JwtTokenConfig");
 
             services.AddAuthentication(x =>
             {

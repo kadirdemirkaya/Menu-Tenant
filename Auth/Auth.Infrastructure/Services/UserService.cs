@@ -3,6 +3,7 @@ using Auth.Application.Dtos.User;
 using Auth.Infrastructure.Data;
 using Auth.Infrastructure.Repository;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using SecretManagement;
 using Shared.Application.Abstractions;
 using Shared.Domain.Aggregates.UserAggregate;
@@ -16,17 +17,24 @@ namespace Auth.Infrastructure.Services
     {
         private AuthDbContext _dbContext;
         private readonly ILogger<UserService> _logger;
+        private readonly IJwtTokenService _jwtTokenService;
         private ISecretsManagerService _secretsManagerService;
-        public UserService(AuthDbContext context, ISecretsManagerService secretsManagerService, ILogger<UserService> logger) : base(context)
+        private readonly IRepository<Company, CompanyId> _companyRepository;
+        private readonly IRepository<ConnectionPool, ConnectionPoolId> _connectionRepository;
+
+        public UserService(AuthDbContext context, ISecretsManagerService secretsManagerService, ILogger<UserService> logger, IJwtTokenService jwtTokenService, IRepository<ConnectionPool, ConnectionPoolId> connectionRepository, IRepository<Company, CompanyId> companyRepository) : base(context)
         {
             _dbContext = context;
             _secretsManagerService = secretsManagerService;
             _logger = logger;
+            _jwtTokenService = jwtTokenService;
+            _connectionRepository = connectionRepository;
+            _companyRepository = companyRepository;
         }
 
         public async Task<bool> UserRegisterAsync(UserRegisterModelDto userRegisterModelDto)
         {
-            if (await AnyAsync(u => u.Email == userRegisterModelDto.userModelDto.email, false, true))
+            if (await AnyAsync(u => u.Email == userRegisterModelDto.userModelDto.email, false, true)) // !!!
             {
                 _logger.LogError("User alread exists.");
                 return false;
@@ -54,6 +62,69 @@ namespace Auth.Infrastructure.Services
                 return await SaveCahangesAsync();
 
             return false;
+        }
+
+        public async Task<Token?> UserLoginAsync(UserLoginModelDto userLoginModelDto)
+        {
+            if (userLoginModelDto.CompanyName is null) // user have one companies
+            {
+                AppUser user = await GetAsync(u => u.Email == userLoginModelDto.Email && u.Password == userLoginModelDto.Password, false, true, u => u.Companies); // !!!
+
+                if (user is null)
+                {
+                    _logger.LogError("User is not exists.");
+                    return null;
+                }
+
+                TenantModel tenantModel = new()
+                {
+                    TenantId = user.TenantId,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    DatabaseName = user.Companies.FirstOrDefault().DatabaseName
+                };
+
+                ConnectionPool connectionPool = await _connectionRepository.GetAsync(cp => cp.TenantId == user.TenantId, false, true, null); // !!!
+
+                tenantModel.Name = connectionPool.Name;
+                tenantModel.Host = connectionPool.Host;
+                tenantModel.Port = connectionPool.Port;
+                tenantModel.Password = connectionPool.Password;
+
+                Token token = _jwtTokenService.GenerateToken(tenantModel);
+
+                return token;
+            }
+            else // user have one of more companies
+            {
+
+                AppUser user = await GetAsync(u => u.Email == userLoginModelDto.Email && u.Password == userLoginModelDto.Password, false, true); // !!!
+
+                if (user is null)
+                {
+                    _logger.LogError("User is not exists.");
+                    return null;
+                }
+
+                Company company = await _companyRepository.GetAsync(c => c.Name == userLoginModelDto.CompanyName && c.TenantId == user.TenantId, false, true, c => c.ConnectionPool); // !!!
+
+
+                TenantModel tenantModel = new()
+                {
+                    TenantId = user.TenantId,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    DatabaseName = user.Companies.FirstOrDefault().DatabaseName,
+                    Name = company.ConnectionPool.Name,
+                    Host = company.ConnectionPool.Host,
+                    Port = company.ConnectionPool.Port,
+                    Password = company.ConnectionPool.Password,
+                };
+
+                Token token = _jwtTokenService.GenerateToken(tenantModel);
+
+                return token;
+            }
         }
     }
 }

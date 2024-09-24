@@ -1,11 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Auth.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Shared.Application.Abstractions;
 using Shared.Application.Services;
 using Shared.Domain.BaseTypes;
 using System.Linq.Expressions;
-using VaultSharp.V1.SecretsEngines.Identity;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Auth.Infrastructure.Repository
 {
@@ -13,11 +12,10 @@ namespace Auth.Infrastructure.Repository
             where T : Entity<TId>
             where TId : ValueObject
     {
-        private readonly DbContext _dbContext;
+        private readonly AuthDbContext _dbContext;
         private DbSet<T> Table => _dbContext.Set<T>();
 
-
-        public Repository(DbContext dbContext)
+        public Repository(AuthDbContext dbContext)
         {
             _dbContext = dbContext;
         }

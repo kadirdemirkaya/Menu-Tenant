@@ -13,7 +13,7 @@ namespace Shared.Infrastructure.Services
 {
     public class JwtTokenService(IConfiguration _configuration) : IJwtTokenService
     {
-        private readonly JwtTokenConfig _jwtTokenConfig = _configuration.GetOptions<JwtTokenConfig>("JwtTokenConfig");
+        private readonly JwtTokenConfigs _jwtTokenConfig = _configuration.GetOptions<JwtTokenConfigs>("JwtTokenConfigs");
 
         public Token GenerateToken(TenantModel tenantInfo)
         {

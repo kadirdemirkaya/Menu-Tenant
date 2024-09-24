@@ -30,12 +30,12 @@ namespace Auth.Api.Controllers
         [HttpPost]
         [Route("Auth/Login")]
         [ServiceFilter(typeof(HashPasswordActionFilter))]
-        public async Task<ActionResult<bool>> UserLogin()
+        public async Task<ActionResult<bool>> UserLogin([FromBody] UserLoginModelDto userLoginModelDto)
         {
-            UserLoginCommandRequest request = new();
+            UserLoginCommandRequest request = new(userLoginModelDto);
             UserLoginCommandResponse response = await _eventBus.PublishAsync(request) as UserLoginCommandResponse;
 
-            return Ok(response);
+            return Ok(response.ApiResponseModel);
         }
     }
 }

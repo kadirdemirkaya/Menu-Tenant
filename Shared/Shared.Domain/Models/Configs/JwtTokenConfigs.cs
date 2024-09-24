@@ -1,6 +1,6 @@
 ﻿namespace Shared.Domain.Models.Configs
 {
-    public class JwtTokenConfig
+    public class JwtTokenConfigs
     {
         public bool ValidateAudience { get; set; }
         public string ValidAudience { get; set; }
