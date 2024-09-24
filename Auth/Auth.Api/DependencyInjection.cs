@@ -1,4 +1,5 @@
-﻿using Shared.Application.Filters;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Shared.Application.Filters;
 
 namespace Auth.Api
 {
@@ -18,6 +19,8 @@ namespace Auth.Api
 
             services.AddScoped<HashPasswordActionFilter>();
 
+            services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
+
             return services;
         }
 
@@ -28,6 +31,8 @@ namespace Auth.Api
             app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
+
+            app.MapHealthChecks("/health");
 
             return app;
         }
