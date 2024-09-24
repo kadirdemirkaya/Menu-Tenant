@@ -31,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{835FEA01-C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NUnit.MenuTest", "Test\NUnit.MenuTest\NUnit.MenuTest.csproj", "{D6E0DFAE-34B2-4122-ADF7-EA0947EC1D5B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.HealthCheck", "Shared\Shared.HealthCheck\Shared.HealthCheck.csproj", "{9A25971E-DD78-4DC5-80BC-B9A4094CDF67}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{D6E0DFAE-34B2-4122-ADF7-EA0947EC1D5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6E0DFAE-34B2-4122-ADF7-EA0947EC1D5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6E0DFAE-34B2-4122-ADF7-EA0947EC1D5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A25971E-DD78-4DC5-80BC-B9A4094CDF67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A25971E-DD78-4DC5-80BC-B9A4094CDF67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A25971E-DD78-4DC5-80BC-B9A4094CDF67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A25971E-DD78-4DC5-80BC-B9A4094CDF67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +98,7 @@ Global
 		{47C51A94-7A6B-458B-B97B-F01CA1AD97D8} = {AE814EF2-D8C0-4A5F-9827-49E88E3CEB0B}
 		{B30EF0D2-104B-40D8-9212-A29B2F9647DD} = {6377027D-F9EB-48FF-B2B3-9A5C3CDAF35E}
 		{D6E0DFAE-34B2-4122-ADF7-EA0947EC1D5B} = {835FEA01-C18D-4D0F-A88D-13CDBCE96DC7}
+		{9A25971E-DD78-4DC5-80BC-B9A4094CDF67} = {6377027D-F9EB-48FF-B2B3-9A5C3CDAF35E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {09710863-5F80-4F4F-B9F9-FE945B079D00}

@@ -19,6 +19,15 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  consul:
+    image: consul:1.15.4
+    container_name: consul
+    ports:
+      - "8500:8500" 
+      - "8600:8600/udp"
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+    command: "agent -dev -client=0.0.0.0" 
 
   # postgresql:
   #   image: postgres:13
@@ -88,7 +97,3 @@ volumes:
   postgresql_data:
   pgdata:
   seq_data:
-
-# Eğer redis için bir ağ tanımlamak isterseniz:
-# networks:
-#   redis-network:
