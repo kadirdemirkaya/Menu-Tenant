@@ -8,7 +8,7 @@ using var configuration = builder.Configuration;
 
 builder.Services.AuthApiRegistration();
 
-builder.Services.AuthApplicationRegistration();
+builder.Services.AuthApplicationRegistration(configuration);
 
 builder.Services.AuthInfrastructureServiceRegistrations(configuration);
 

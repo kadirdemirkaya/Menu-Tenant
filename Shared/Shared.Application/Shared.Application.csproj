@@ -9,6 +9,7 @@
 	<ItemGroup>
 		<PackageReference Include="EventBusDomain" Version="1.0.5" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
