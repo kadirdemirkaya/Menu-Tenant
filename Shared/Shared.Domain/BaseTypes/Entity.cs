@@ -1,6 +1,6 @@
 ﻿namespace Shared.Domain.BaseTypes
 {
-    public abstract class Entity<TId> : IEquatable<Entity<TId>> , ITenantId
+    public abstract class Entity<TId> : IEquatable<Entity<TId>>, ITenantId
         where TId : notnull
     {
         public TId Id { get; protected set; }
@@ -24,10 +24,27 @@
             UpdatedDateUTC = null;
         }
 
-        protected void SetTenantId(string tenantId)
+        public void SetIsDeleted(bool isDeleted)
+        {
+            IsDeleted = isDeleted;
+        }
+
+        public void SetCreatedDateUTC(DateTime createdDateUTC)
+        {
+            CreatedDateUTC = createdDateUTC;
+        }
+
+        public void SetUpdatedDateUTC(DateTime updatedDateUTC)
+        {
+            UpdatedDateUTC = updatedDateUTC;
+        }
+
+        public void SetTenantId(string tenantId)
         {
             TenantId = tenantId;
         }
+
+
 
         public override bool Equals(object? obj)
         {

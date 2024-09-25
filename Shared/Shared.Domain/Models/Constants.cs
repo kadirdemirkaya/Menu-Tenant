@@ -39,10 +39,6 @@ namespace Shared.Domain.Models
 
             public const string DevelopmentAuthApi = "Development_AuthApi";
             public const string DevelopmentTenantApi = "Development_TenantApi";
-
-            // this section maybe could change while improve
-            public const string DevelopmentPOSTGRES_POSTGRES_PersonalDb1 = "Development_POSTGRES_PersonalDb1";
-            public const string DevelopmentPOSTGRES_POSTGRES_PersonalDb2 = "Development_POSTGRES_PersonalDb2";
         }
     }
 }
