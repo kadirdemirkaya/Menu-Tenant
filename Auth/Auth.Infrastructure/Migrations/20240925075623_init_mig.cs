@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Auth.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitMig : Migration
+    public partial class init_mig : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,8 +22,8 @@ namespace Auth.Infrastructure.Migrations
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
                     TenantId = table.Column<string>(type: "text", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
-                    CreatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 9, 23, 17, 16, 6, 877, DateTimeKind.Utc).AddTicks(812)),
-                    UpdatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValue: new DateTime(2024, 9, 23, 17, 16, 6, 876, DateTimeKind.Utc).AddTicks(9848))
+                    CreatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 9, 25, 7, 56, 22, 711, DateTimeKind.Utc).AddTicks(9038)),
+                    UpdatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValue: new DateTime(2024, 9, 25, 7, 56, 22, 711, DateTimeKind.Utc).AddTicks(7900))
                 },
                 constraints: table =>
                 {
@@ -41,8 +41,8 @@ namespace Auth.Infrastructure.Migrations
                     AppUserId1 = table.Column<Guid>(type: "uuid", nullable: true),
                     TenantId = table.Column<string>(type: "text", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
-                    CreatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 9, 23, 17, 16, 6, 883, DateTimeKind.Utc).AddTicks(5976)),
-                    UpdatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValue: new DateTime(2024, 9, 23, 17, 16, 6, 883, DateTimeKind.Utc).AddTicks(5004))
+                    CreatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 9, 25, 7, 56, 22, 718, DateTimeKind.Utc).AddTicks(1101)),
+                    UpdatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValue: new DateTime(2024, 9, 25, 7, 56, 22, 718, DateTimeKind.Utc).AddTicks(81))
                 },
                 constraints: table =>
                 {
@@ -71,11 +71,12 @@ namespace Auth.Infrastructure.Migrations
                     DatabaseName = table.Column<string>(type: "text", nullable: false),
                     Username = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     Password = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     CompanyId = table.Column<Guid>(type: "uuid", nullable: false),
                     TenantId = table.Column<string>(type: "text", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
-                    CreatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 9, 23, 17, 16, 6, 887, DateTimeKind.Utc).AddTicks(980)),
-                    UpdatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValue: new DateTime(2024, 9, 23, 17, 16, 6, 887, DateTimeKind.Utc).AddTicks(19))
+                    CreatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 9, 25, 7, 56, 22, 721, DateTimeKind.Utc).AddTicks(3856)),
+                    UpdatedDateUTC = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValue: new DateTime(2024, 9, 25, 7, 56, 22, 721, DateTimeKind.Utc).AddTicks(2914))
                 },
                 constraints: table =>
                 {

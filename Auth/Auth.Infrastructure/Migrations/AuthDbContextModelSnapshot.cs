@@ -30,7 +30,7 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 24, 9, 39, 44, 154, DateTimeKind.Utc).AddTicks(5889));
+                        .HasDefaultValue(new DateTime(2024, 9, 25, 7, 56, 22, 711, DateTimeKind.Utc).AddTicks(9038));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -56,7 +56,7 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 24, 9, 39, 44, 154, DateTimeKind.Utc).AddTicks(4896));
+                        .HasDefaultValue(new DateTime(2024, 9, 25, 7, 56, 22, 711, DateTimeKind.Utc).AddTicks(7900));
 
                     b.Property<string>("Username")
                         .HasColumnType("text");
@@ -80,7 +80,7 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 24, 9, 39, 44, 163, DateTimeKind.Utc).AddTicks(8732));
+                        .HasDefaultValue(new DateTime(2024, 9, 25, 7, 56, 22, 718, DateTimeKind.Utc).AddTicks(1101));
 
                     b.Property<string>("DatabaseName")
                         .IsRequired()
@@ -104,7 +104,7 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 24, 9, 39, 44, 163, DateTimeKind.Utc).AddTicks(7646));
+                        .HasDefaultValue(new DateTime(2024, 9, 25, 7, 56, 22, 718, DateTimeKind.Utc).AddTicks(81));
 
                     b.HasKey("Id");
 
@@ -126,7 +126,7 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 24, 9, 39, 44, 167, DateTimeKind.Utc).AddTicks(4899));
+                        .HasDefaultValue(new DateTime(2024, 9, 25, 7, 56, 22, 721, DateTimeKind.Utc).AddTicks(3856));
 
                     b.Property<string>("DatabaseName")
                         .IsRequired()
@@ -136,6 +136,9 @@ namespace Auth.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -163,7 +166,7 @@ namespace Auth.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedDateUTC")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 9, 24, 9, 39, 44, 167, DateTimeKind.Utc).AddTicks(3846));
+                        .HasDefaultValue(new DateTime(2024, 9, 25, 7, 56, 22, 721, DateTimeKind.Utc).AddTicks(2914));
 
                     b.Property<string>("Username")
                         .IsRequired()
