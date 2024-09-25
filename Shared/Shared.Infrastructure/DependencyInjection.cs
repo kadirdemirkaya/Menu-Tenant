@@ -20,7 +20,6 @@ namespace Shared.Infrastructure
 {
     public static class DependencyInjection
     {
-
         public static IServiceCollection SecretManagementRegistration(this IServiceCollection services)
         {
             services.AddSingleton<ISecretManagementFactory, SecretManagementFactory>();

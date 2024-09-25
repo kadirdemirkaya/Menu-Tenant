@@ -43,8 +43,6 @@ namespace Shared.Infrastructure.Configurations
             builder.HasOne(c => c.ConnectionPool)
               .WithOne(cp => cp.Company)
               .HasForeignKey<ConnectionPool>(cp => cp.CompanyId);
-
-            builder.Property(p => p.AppUserId);
         }
     }
 }

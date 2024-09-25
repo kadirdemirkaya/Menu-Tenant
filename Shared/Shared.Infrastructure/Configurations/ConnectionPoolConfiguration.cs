@@ -31,6 +31,8 @@ namespace Shared.Infrastructure.Configurations
 
             builder.Property(p => p.IsDeleted).HasDefaultValue(true);
 
+            builder.Property(p => p.IsActive).IsRequired();
+
             builder.Property(p => p.Name).HasMaxLength(150);
 
             builder.Property(p => p.Host).HasMaxLength(150);
