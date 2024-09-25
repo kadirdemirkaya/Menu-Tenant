@@ -31,7 +31,7 @@ namespace NUnit.MenuTest
             });
 
             var builder = new ConfigurationBuilder()
-               .SetBasePath("C:/Users/Casper/Desktop/GitHub Projects/MenuTenant/Test/NUnit.MenuTest")
+               .SetBasePath(Directory.GetCurrentDirectory())
                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
             _configuration = builder.Build();
