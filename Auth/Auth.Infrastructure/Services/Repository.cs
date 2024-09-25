@@ -91,6 +91,26 @@ namespace Auth.Infrastructure.Repository
 
             return await Table.ToListAsync();
         }
+
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> expression = null, bool tracking = true, bool ignoreQueryFilter = false, params Expression<Func<T, object>>[] includeEntity)
+        {
+            var query = Table.AsQueryable();
+            if (!tracking)
+                query = query.AsNoTracking();
+
+            if (ignoreQueryFilter)
+                query = query.IgnoreQueryFilters();
+
+            if (includeEntity.Any())
+                foreach (var include in includeEntity)
+                    query = query.Include(include);
+
+            if (expression != null)
+                query = query.Where(expression);
+
+            return await Table.ToListAsync();
+        }
+
         public async Task<PaginatedList<T>> GetAllAsync(Expression<Func<T, bool>> expression = null, bool tracking = true, int pageIndex = 1,
     int pageSize = 10, bool ignoreQueryFilter = false, params Expression<Func<T, object>>[] includeEntity)
         {
@@ -239,7 +259,7 @@ namespace Auth.Infrastructure.Repository
             }
         }
 
-        public bool UpdateAsync(T entity)
+        public bool Update(T entity)
         {
             try
             {

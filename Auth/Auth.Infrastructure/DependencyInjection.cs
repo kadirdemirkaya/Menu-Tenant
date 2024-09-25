@@ -29,10 +29,7 @@ namespace Auth.Infrastructure
 
             services.ServiceRegistration();
 
-            services.AddDbContext<AuthDbContext>(options =>
-            {
-                options.UseNpgsql("Server=localhost;port=5432;Database=authdb;User Id=admin;Password=passw00rd");
-            });
+            services.AddDatabase();
 
             ApplySeeds(services.BuildServiceProvider());
 
@@ -41,10 +38,18 @@ namespace Auth.Infrastructure
             return services;
         }
 
+        private static IServiceCollection AddDatabase(this IServiceCollection services)
+        {
+            services.AddDbContext<AuthDbContext>(options =>
+            {
+                options.UseNpgsql("Server=localhost;port=5432;Database=authdb;User Id=admin;Password=passw00rd");
+            });
+
+            return services;
+        }
+
         private static IServiceCollection AddServices(this IServiceCollection services)
         {
-            //services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
-
             services.AddScoped<IRepository<Company, CompanyId>, Repository<Company, CompanyId>>();
 
             services.AddScoped<IRepository<ConnectionPool, ConnectionPoolId>, Repository<ConnectionPool, ConnectionPoolId>>();
