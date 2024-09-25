@@ -40,8 +40,6 @@ add_or_update_secret "Development" "POSTGRES_User" "admin"
 add_or_update_secret "Development" "POSTGRES_Password" "passw00rd"
 add_or_update_secret "Development" "POSTGRES_AuthDb" "authdb"
 add_or_update_secret "Development" "POSTGRES_SharedDb" "shareddb"
-add_or_update_secret "Development" "POSTGRES_PersonalDb1" "personaldb1"
-add_or_update_secret "Development" "POSTGRES_PersonalDb2" "personaldb2"
 #
 add_or_update_secret "Development" "AuthApi" "https://localhost:7001"
 add_or_update_secret "Development" "TenantApi" "https://localhost:7100"
