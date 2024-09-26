@@ -24,6 +24,8 @@ namespace Shared.Stream
                 }
             }
 
+            services.AddSingleton<RedisStreamService>();
+
             services.AddSingleton(sp =>
             {
                 var logger = sp.GetRequiredService<ILogger<StreamBus>>();
