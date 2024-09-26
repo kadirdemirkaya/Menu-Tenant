@@ -4,7 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.MenuTest.Events.Event;
 using NUnit.MenuTest.Events.Response;
+using NUnit.MenuTest.StreamEvents;
 using SecretManagement;
+using Shared.Domain.Models;
+using Shared.Stream;
+using StackExchange.Redis;
 using System;
 
 namespace NUnit.MenuTest
@@ -35,6 +39,10 @@ namespace NUnit.MenuTest
                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
             _configuration = builder.Build();
+
+            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6379"));
+
+            services.AddSingleton<RedisStreamService>();
         }
 
         [OneTimeTearDown]
@@ -80,7 +88,27 @@ namespace NUnit.MenuTest
 
             string? value = await secretManagerService.GetSecretValueAsStringAsync(strKey);
 
-            Assert.AreEqual(strSecret, value,"expected str value and incoming data are equals");
+            Assert.AreEqual(strSecret, value, "expected str value and incoming data are equals");
+        }
+
+        [Test]
+        public async Task redis_stream_publisher_test()
+        {
+            var serviceProvider = services.BuildServiceProvider();
+            var redisStreamService = serviceProvider.GetRequiredService<RedisStreamService>();
+
+            await redisStreamService.PublishEventAsync(new StreamEvent() { Message = "naifa7ggbdf" });
+
+            Assert.Pass();
+        }
+
+        [Test]
+        public async Task redis_event_handler_test()
+        {
+            var serviceProvider = services.BuildServiceProvider();
+            var redisStreamService = serviceProvider.GetRequiredService<RedisStreamService>();
+
+            await redisStreamService.PublishEventAsync(new ConnectionPoolUpdateStreamEvent() { Message = "naifa7ggbdf" });
         }
 
     }
