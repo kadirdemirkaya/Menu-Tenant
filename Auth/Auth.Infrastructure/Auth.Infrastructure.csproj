@@ -22,6 +22,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
+		<ProjectReference Include="..\..\Shared\Shared.Stream\Shared.Stream.csproj" />
 		<ProjectReference Include="..\Auth.Application\Auth.Application.csproj" />
 	</ItemGroup>
 

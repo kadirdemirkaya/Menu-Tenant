@@ -40,7 +40,7 @@ namespace Auth.Infrastructure.Seeds
 
                 await _dbContext.Set<AppUser>().AddAsync(appUser);
 
-                await _dbContext.SaveChangesAsync();
+                //await _dbContext.SaveChangesAsync();
             }
 
             return this;

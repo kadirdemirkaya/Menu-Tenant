@@ -4,18 +4,18 @@ using Auth.Infrastructure.Repository;
 using Auth.Infrastructure.Seeds;
 using Auth.Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SecretManagement;
 using Shared.Application.Abstractions;
-using Shared.Domain.Aggregates.UserAggregate;
 using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
+using Shared.Domain.Models;
 using Shared.Infrastructure;
-using System.Diagnostics.Metrics;
+using Shared.Stream;
+using StackExchange.Redis;
 
 namespace Auth.Infrastructure
 {
@@ -31,9 +31,58 @@ namespace Auth.Infrastructure
 
             services.AddDatabase();
 
-            ApplySeeds(services.BuildServiceProvider());
+            services.ApplySeeds(sp =>
+            {
+                using (var context = sp.GetRequiredService<AuthDbContext>())
+                {
+                    context.SaveChangesAsync().GetAwaiter().GetResult();
+                }
+            });
 
             services.AddServices();
+
+            services.AddRedis();
+
+            services.AddStreamEvent();
+
+            return services;
+        }
+
+        private static IServiceCollection ApplySeeds(this IServiceCollection services, Action<IServiceProvider> seedAction)
+        {
+            using (var serviceProvider = services.BuildServiceProvider())
+            {
+                SeedData seedData;
+
+                var dbContext = serviceProvider.GetRequiredService<AuthDbContext>();
+                var logger = serviceProvider.GetRequiredService<ILogger<SeedData>>();
+                var secretManagement = serviceProvider.GetRequiredService<ISecretsManagerService>();
+
+                seedData = new(dbContext, logger, secretManagement);
+
+                seedData.MigApply().SeedDataApply().GetAwaiter().GetResult();
+
+                seedAction(serviceProvider);
+            }
+
+            return services;
+        }
+
+        private static IServiceCollection AddStreamEvent(this IServiceCollection services)
+        {
+            services.AddStreamBus(AssemblyReference.Assembly);
+
+            return services;
+        }
+
+        private static IServiceCollection AddRedis(this IServiceCollection services)
+        {
+            services.AddSingleton<IConnectionMultiplexer>(sp =>
+            {
+                var secretsManagerService = sp.GetRequiredService<ISecretsManagerService>();
+
+                return ConnectionMultiplexer.Connect(secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentRedis2).GetAwaiter().GetResult());
+            });
 
             return services;
         }
@@ -42,6 +91,7 @@ namespace Auth.Infrastructure
         {
             services.AddDbContext<AuthDbContext>(options =>
             {
+                // this part datas could take in secret management
                 options.UseNpgsql("Server=localhost;port=5432;Database=authdb;User Id=admin;Password=passw00rd");
             });
 
@@ -57,20 +107,6 @@ namespace Auth.Infrastructure
             services.AddScoped<IUserService, UserService>();
 
             return services;
-        }
-
-        private static void ApplySeeds(IServiceProvider serviceProvider)
-        {
-            using var scope = serviceProvider.CreateScope();
-
-            SeedData seedData;
-            var dbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
-            var logger = scope.ServiceProvider.GetRequiredService<ILogger<SeedData>>();
-            var secretManagement = scope.ServiceProvider.GetRequiredService<ISecretsManagerService>();
-
-            seedData = new(dbContext, logger, secretManagement);
-
-            seedData.MigApply().SeedDataApply().GetAwaiter().GetResult();
         }
 
         public static WebApplication AuthInfrastructureWebApplicationRegistration(this WebApplication app)

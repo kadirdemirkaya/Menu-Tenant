@@ -4,7 +4,7 @@ using Auth.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-using var configuration = builder.Configuration;
+var configuration = builder.Configuration;
 
 builder.Services.AuthApiRegistration(configuration);
 
