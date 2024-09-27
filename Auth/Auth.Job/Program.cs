@@ -1,40 +1,65 @@
-﻿using Auth.Job;
+﻿using Auth.Application.Abstractions;
+using Auth.Infrastructure.Data;
+using Auth.Infrastructure.Repository;
+using Auth.Job;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Quartz;
+using SecretManagement;
+using Shared.Application.Abstractions;
+using Shared.Application.Extensions;
+using Shared.Domain.Aggregates.UserAggregate.Entities;
+using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
+using Shared.Domain.Models;
+using Shared.Domain.Models.Configs;
+using Shared.Infrastructure;
+using Shared.Stream;
+using StackExchange.Redis;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
-        IConfiguration configuration;
+        IConfiguration configuration = hostContext.Configuration;
+
+        var currentDirectory = Directory.GetCurrentDirectory();
+
+        var projectDirectory = Directory.GetParent(currentDirectory).Parent.Parent.FullName;
 
         var builder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
+            .SetBasePath(projectDirectory)
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
         configuration = builder.Build();
 
-        var sp = services.BuildServiceProvider();
+        services.AddSingleton<IConfiguration>(configuration);
 
-        #region Unnecassery
-        //using (ISecretsManagerService sManagerService = new AwsSecretsManagerService(configuration))
-        //{
-        //    services.AddDbContext<AuthDbContext>(options =>
-        //    {
-        //        options.UseNpgsql("Server=localhost;port=5432;Database=authdb;User Id=admin;Password=passw00rd");
-        //        options.UseNpgsql($"Server={Constants.Secrets.DevelopmentPOSTGRES_Host};port={Constants.Secrets.DevelopmentPOSTGRES_Port};Database={Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_AuthDb};User Id={Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_User};Password={Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Password}");
-        //    });
-        //}
+        var conf = configuration.GetOptions<StreamConfigs>("StreamConfigs");
 
-        //services.AddScoped<IRepository<Company, CompanyId>, Repository<Company, CompanyId>>();
+        services.SeqRegistration(configuration);
 
-        //services.AddScoped<IRepository<ConnectionPool, ConnectionPoolId>, Repository<ConnectionPool, ConnectionPoolId>>();
+        services.SecretManagementRegistration();
 
-        //services.SeqRegistration(configuration);
+        services.AddSingleton<IConnectionMultiplexer>(sp =>
+        {
+            var secretsManagerService = sp.GetRequiredService<ISecretsManagerService>();
 
-        //services.SecretManagementRegistration();
-        #endregion
+            return ConnectionMultiplexer.Connect(secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentRedis2).GetAwaiter().GetResult());
+        });
+
+        services.AddStreamBus(Auth.Job.AssemblyReference.Assembly);
+
+        services.AddDbContext<AuthDbContext>(options =>
+        {
+            options.UseNpgsql("Server=localhost;port=5432;Database=authdb;User Id=admin;Password=passw00rd");
+        });
+
+        services.AddScoped<IRepository<Company, CompanyId>, Repository<Company, CompanyId>>();
+
+        services.AddScoped<IRepository<ConnectionPool, ConnectionPoolId>, Repository<ConnectionPool, ConnectionPoolId>>();
+
+
         services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
 
         services.AddQuartz(configurator =>
@@ -49,10 +74,10 @@ IHost host = Host.CreateDefaultBuilder(args)
 
             configurator.AddTrigger(options => options.ForJob(jobKey)
                         .WithIdentity(triggerKey)
-                        .StartAt(DateTime.UtcNow)
+                        .StartAt(DateTime.UtcNow.AddSeconds(1))
                         .WithSimpleSchedule
                         (
-                            builder => builder.WithIntervalInSeconds(30)
+                            builder => builder.WithIntervalInSeconds(120)
                                               .RepeatForever()
                         ));
         });
