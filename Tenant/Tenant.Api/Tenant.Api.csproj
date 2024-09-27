@@ -12,10 +12,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Tenant.Application\Tenant.Application.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Controllers\" />
+		<ProjectReference Include="..\Tenant.Infrastructure\Tenant.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>
