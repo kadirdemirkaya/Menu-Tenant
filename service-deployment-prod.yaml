@@ -1,0 +1,276 @@
+# not full tested !
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgadmin
+  template:
+    metadata:
+      labels:
+        app: pgadmin
+    spec:
+      containers:
+        - name: pgadmin
+          image: dpage/pgadmin4:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              value: "admin@admin.com"
+            - name: PGADMIN_DEFAULT_PASSWORD
+              value: "admin"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgadmin
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      nodePort: 30080
+  selector:
+    app: pgadmin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:13
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "authdb"
+            - name: POSTGRES_USER
+              value: "admin"
+            - name: POSTGRES_PASSWORD
+              value: "passw00rd"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-storage
+  volumes:
+    - name: postgres-storage
+      persistentVolumeClaim:
+        claimName: postgres-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: postgres
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consul
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consul
+  template:
+    metadata:
+      labels:
+        app: consul
+    spec:
+      containers:
+        - name: consul
+          image: consul:1.15.4
+          ports:
+            - containerPort: 8500
+            - containerPort: 8600
+          env:
+            - name: CONSUL_BIND_INTERFACE
+              value: "eth0"
+          command: ["agent", "-dev", "-client=0.0.0.0"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul
+spec:
+  ports:
+    - port: 8500
+    - port: 8600
+  selector:
+    app: consul
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:latest
+          ports:
+            - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  ports:
+    - port: 6379
+  selector:
+    app: redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: localstack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: localstack
+  template:
+    metadata:
+      labels:
+        app: localstack
+    spec:
+      containers:
+        - name: localstack
+          image: localstack/localstack:latest
+          ports:
+            - containerPort: 4566
+            - containerPort: 4571
+          env:
+            - name: SERVICES
+              value: "secretsmanager"
+            - name: EDGE_PORT
+              value: "4566"
+            - name: DEFAULT_REGION
+              value: "us-east-1"
+            - name: AWS_ACCESS_KEY_ID
+              value: "test"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "test"
+          volumeMounts:
+            - mountPath: /var/lib/localstack
+              name: localstack-storage
+            - mountPath: /var/run/docker.sock
+              name: docker-sock
+  volumes:
+    - name: localstack-storage
+      persistentVolumeClaim:
+        claimName: localstack-pvc
+    - name: docker-sock
+      hostPath:
+        path: /var/run/docker.sock
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: localstack
+spec:
+  ports:
+    - port: 4566
+    - port: 4571
+  selector:
+    app: localstack
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: localstack-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seq
+  template:
+    metadata:
+      labels:
+        app: seq
+    spec:
+      containers:
+        - name: seq
+          image: datalust/seq:latest
+          ports:
+            - containerPort: 5341
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+          volumeMounts:
+            - mountPath: /data
+              name: seq-storage
+  volumes:
+    - name: seq-storage
+      persistentVolumeClaim:
+        claimName: seq-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seq
+spec:
+  ports:
+    - port: 5341
+  selector:
+    app: seq
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: seq-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+#
