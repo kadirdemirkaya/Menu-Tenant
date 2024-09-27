@@ -5,6 +5,7 @@ namespace Shared.Infrastructure.Extensions
     public static class StringExtension
     {
         private static Random _random = new Random();
+        private const string _chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
         private static string GenerateRandomWord(int length)
         {
@@ -16,6 +17,17 @@ namespace Shared.Infrastructure.Extensions
                 result.Append(chars[_random.Next(chars.Length)]);
             }
 
+            return result.ToString();
+        }
+
+        public static string GenerateRandomDbName(int length = 7)
+        {
+            var result = new StringBuilder(length);
+            for (int i = 0; i < length; i++)
+            {
+                int index = _random.Next(_chars.Length);
+                result.Append(_chars[index]);
+            }
             return result.ToString();
         }
 

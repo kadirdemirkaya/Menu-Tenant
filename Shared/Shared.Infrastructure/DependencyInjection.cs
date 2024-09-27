@@ -63,6 +63,7 @@ namespace Shared.Infrastructure
             }
             return services;
         }
+
         public static IServiceCollection ServiceRegistration(this IServiceCollection services)
         {
             services.AddSingleton<IJwtTokenService, JwtTokenService>();
