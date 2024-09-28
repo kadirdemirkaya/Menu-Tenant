@@ -1,15 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Application.Abstractions;
 using Shared.Domain.Aggregates.MenuAggregate.ValueObjects;
 using Shared.Domain.Aggregates.ProductAggregate;
 using Shared.Domain.Models;
 
 namespace Shared.Infrastructure.Configurations
 {
-    public sealed class MenuConfiguration : IEntityTypeConfiguration<Menu>
+    public sealed class MenuConfiguration(IWorkContext _workContext) : IEntityTypeConfiguration<Menu>
     {
         public void Configure(EntityTypeBuilder<Menu> builder)
         {
+            builder.HasQueryFilter(p => p.TenantId == _workContext.Tenant.TenantId);
+
             builder.ToTable(Constants.Tables.Menu);
 
             builder.HasKey(m => m.Id);

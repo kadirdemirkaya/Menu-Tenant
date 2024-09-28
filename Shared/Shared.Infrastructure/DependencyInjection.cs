@@ -14,6 +14,7 @@ using Shared.Domain.Models.Configs;
 using Shared.Infrastructure.Extensions;
 using Shared.Infrastructure.Middlewares;
 using Shared.Infrastructure.Services;
+using StackExchange.Redis;
 using System.Text;
 
 namespace Shared.Infrastructure
@@ -39,6 +40,15 @@ namespace Shared.Infrastructure
                 .CreateLogger();
             }
 
+            return services;
+        }
+
+        public static IServiceCollection AddRedisRegistration(this IServiceCollection services, IConfiguration configuration)
+        {
+            using (ISecretsManagerService secretsManagerService = new AwsSecretsManagerService(configuration))
+            {
+                services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentRedis2).GetAwaiter().GetResult()));
+            }
             return services;
         }
 
@@ -78,6 +88,8 @@ namespace Shared.Infrastructure
             app.UseMiddleware<JwtMiddleware>();
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+            app.UseMiddleware<CompanyNameMiddleware>();
 
             return app;
         }

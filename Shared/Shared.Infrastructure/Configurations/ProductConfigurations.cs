@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Application.Abstractions;
 using Shared.Domain.Aggregates.MenuAggregate.Entities;
 using Shared.Domain.Aggregates.MenuAggregate.Enums;
 using Shared.Domain.Aggregates.MenuAggregate.ValueObjects;
@@ -7,10 +8,12 @@ using Shared.Domain.Models;
 
 namespace Shared.Infrastructure.Configurations
 {
-    public sealed class ProductConfigurations : IEntityTypeConfiguration<Product>
+    public sealed class ProductConfigurations(IWorkContext _workContext) : IEntityTypeConfiguration<Product>
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
+            builder.HasQueryFilter(p => p.TenantId == _workContext.Tenant.TenantId);
+
             builder.ToTable(Constants.Tables.Product);
 
             builder.HasKey(m => m.Id);
@@ -30,6 +33,8 @@ namespace Shared.Infrastructure.Configurations
             builder.Property(p => p.IsDeleted).HasDefaultValue(true);
 
             builder.Property(p => p.Name).HasMaxLength(100);
+
+            builder.Property(p => p.Image).IsRequired();
 
             builder.Property(p => p.Price).HasDefaultValue(0).HasColumnType("decimal(18,2)").HasPrecision(18, 2);
 

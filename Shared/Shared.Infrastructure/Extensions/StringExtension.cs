@@ -45,7 +45,7 @@ namespace Shared.Infrastructure.Extensions
 
 
 
-        public static string SetDbUrl(this string str, string host, string port, string userName, string password, string databaseName)
+        public static string SetDbUrl(string host, string port, string userName, string password, string databaseName)
         {
             if (string.IsNullOrEmpty(host))
                 throw new ArgumentNullException(nameof(host), "Host cannot be null or empty.");

@@ -14,6 +14,16 @@ namespace Shared.Infrastructure.Extensions
             return JsonConvert.DeserializeObject<T>(data);
         }
 
+        public static T JsonSerializerDeserializeJson<T>(this string data) where T : class
+        {
+            return System.Text.Json.JsonSerializer.Deserialize<T>(data);
+        }
+
+        public static string JsonSerializerJson(this object data)
+        {
+            return System.Text.Json.JsonSerializer.Serialize(data);
+        }
+
         public static object DeserializeJson(string json, Type targetType)
         {
             if (targetType == typeof(int))
