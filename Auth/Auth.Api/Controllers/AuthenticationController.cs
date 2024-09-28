@@ -26,18 +26,18 @@ namespace Auth.Api.Controllers
             UserRegisterCommandRequest request = new(userRegisterModelDto);
             UserRegisterCommandResponse response = await _eventBus.PublishAsync(request) as UserRegisterCommandResponse;
 
-            return Ok(response.ApiResponseModel);
+            return response.ApiResponseModel;
         }
 
         [HttpPost]
         [Route("Auth/Login")]
         [ServiceFilter(typeof(HashPasswordActionFilter))]
-        public async Task<ActionResult<bool>> UserLogin([FromBody] UserLoginModelDto userLoginModelDto)
+        public async Task<ActionResult<ApiResponseModel<Token>>> UserLogin([FromBody] UserLoginModelDto userLoginModelDto)
         {
             UserLoginCommandRequest request = new(userLoginModelDto);
             UserLoginCommandResponse response = await _eventBus.PublishAsync(request) as UserLoginCommandResponse;
 
-            return Ok(response.ApiResponseModel);
+            return response.ApiResponseModel;
         }
     }
 }

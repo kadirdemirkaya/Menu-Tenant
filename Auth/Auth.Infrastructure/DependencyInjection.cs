@@ -12,10 +12,8 @@ using SecretManagement;
 using Shared.Application.Abstractions;
 using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
-using Shared.Domain.Models;
 using Shared.Infrastructure;
 using Shared.Stream;
-using StackExchange.Redis;
 
 namespace Auth.Infrastructure
 {
@@ -26,6 +24,8 @@ namespace Auth.Infrastructure
             services.SeqRegistration(configuration);
 
             services.SecretManagementRegistration();
+
+            services.AddRedisRegistration(configuration);
 
             services.ServiceRegistration();
 
@@ -40,8 +40,6 @@ namespace Auth.Infrastructure
             });
 
             services.AddServices();
-
-            services.AddRedis();
 
             services.AddStreamEvent();
 
@@ -75,23 +73,10 @@ namespace Auth.Infrastructure
             return services;
         }
 
-        private static IServiceCollection AddRedis(this IServiceCollection services)
-        {
-            services.AddSingleton<IConnectionMultiplexer>(sp =>
-            {
-                var secretsManagerService = sp.GetRequiredService<ISecretsManagerService>();
-
-                return ConnectionMultiplexer.Connect(secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentRedis2).GetAwaiter().GetResult());
-            });
-
-            return services;
-        }
-
         private static IServiceCollection AddDatabase(this IServiceCollection services)
         {
-            services.AddDbContext<AuthDbContext>(options =>
+            services.AddDbContext<AuthDbContext>((sp, options) =>
             {
-                // this part datas could take in secret management
                 options.UseNpgsql("Server=localhost;port=5432;Database=authdb;User Id=admin;Password=passw00rd");
             });
 
