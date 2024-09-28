@@ -1,5 +1,7 @@
 ﻿using Auth.Infrastructure.Data;
 using Auth.Job.Events;
+using Base.Caching.Key;
+using Base.Caching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Quartz;
@@ -15,13 +17,15 @@ namespace Auth.Job
 {
     public class DatabaseRegisterJobService : IJob
     {
+        CacheKey cacheKey = CacheKey.Create("connectionwithcompany");
         private readonly AuthDbContext _context;
         private IRepository<ConnectionPool, ConnectionPoolId> _repository;
         private ISecretsManagerService _secretsManagerService;
         private ILogger<DatabaseRegisterJobService> _logger;
         private StreamBus _streamBus;
         private RedisStreamService _redisStreamService;
-        public DatabaseRegisterJobService(IRepository<ConnectionPool, ConnectionPoolId> repository, ISecretsManagerService secretsManagerService, ILogger<DatabaseRegisterJobService> logger, StreamBus streamBus, AuthDbContext context, RedisStreamService redisStreamService)
+        private ICacheManager _cacheManager;
+        public DatabaseRegisterJobService(IRepository<ConnectionPool, ConnectionPoolId> repository, ISecretsManagerService secretsManagerService, ILogger<DatabaseRegisterJobService> logger, StreamBus streamBus, AuthDbContext context, RedisStreamService redisStreamService, ICacheManager cacheManager)
         {
             _repository = repository;
             _secretsManagerService = secretsManagerService;
@@ -29,13 +33,14 @@ namespace Auth.Job
             _streamBus = streamBus;
             _context = context;
             _redisStreamService = redisStreamService;
+            _cacheManager = cacheManager;
         }
 
         public async Task Execute(IJobExecutionContext context)
         {
             try
             {
-                List<ConnectionPool>? connectionPools = await _context.Set<ConnectionPool>().IgnoreQueryFilters().AsNoTracking().Where(c => c.IsActive == false && c.DatabaseName.StartsWith("personaldb_")).Include(c => c.Company).ToListAsync();
+                List<ConnectionPool>? connectionPools = await _context.Set<ConnectionPool>().IgnoreQueryFilters().AsNoTracking().Where(c => c.DatabaseName.StartsWith("personaldb_")).Include(c => c.Company).ToListAsync();
 
                 #region got error then will fixed
                 //List<ConnectionPool>? connectionPools = await _repository.GetAllAsync(c => c.IsActive == false || c.DatabaseName.StartsWith("personaldb_"), false, true, c => c.Company, com => com.Company.AppUser);
@@ -47,7 +52,7 @@ namespace Auth.Job
                     {
                         if (con.IsActive == false && con.DatabaseName.StartsWith("personaldb_"))
                         {
-                            string personalDbName = $"{con.Company.Name}{StringExtension.GenerateRandomDbName()}db";
+                            string personalDbName = $"{con.Company.Name}{StringExtension.GenerateRandomDbName()}db".ToLower();
 
                             con.SetDatabaseName(personalDbName);
                             con.SetUpdatedDateUTC(DateTime.UtcNow);
@@ -70,14 +75,15 @@ namespace Auth.Job
                                     Password = con.Password,
                                     Port = con.Port,
                                     TenantId = con.TenantId,
-                                    Username = con.Username
+                                    Username = con.Username,
+                                    CompnayName = con.Company.Name
                                 };
 
                                 await _redisStreamService.PublishEventAsync(new ConnectionPoolUpdateStreamEvent(connectionPoolUpdate), StreamEnum.DatabaseEventGateway);
                                 _logger.LogInformation("{DateTime} : event is sended in job servis", DateTime.UtcNow);
                             }
                         }
-                        else
+                        else if (con.IsActive == false && !con.DatabaseName.StartsWith("personaldb_"))
                         {
                             string personalDbName = con.DatabaseName;
 
@@ -91,15 +97,25 @@ namespace Auth.Job
                                 Password = con.Password,
                                 Port = con.Port,
                                 TenantId = con.TenantId,
-                                Username = con.Username
+                                Username = con.Username,
+                                CompnayName = con.Company.Name
                             };
 
                             await _redisStreamService.PublishEventAsync(new ConnectionPoolUpdateStreamEvent(connectionPoolUpdate), StreamEnum.DatabaseEventGateway);
                             _logger.LogInformation("{DateTime} : event is sended in job servis", DateTime.UtcNow);
                         }
-
                     }
                 }
+
+                #region this could a other job service 
+                List<ConnectionPool> connectionPoolsForCache = await _context.ConnectionPools.IgnoreQueryFilters().AsNoTracking().Include(cp => cp.Company).ToListAsync();
+                List<ConnectionPoolWithCompanyModel> poolCompanyModel = new();
+                foreach (var con in connectionPools)
+                {
+                    poolCompanyModel.Add(new(con.Company.Name, StringExtension.SetDbUrl(con.Host, con.Port, con.Username, con.Password, con.DatabaseName)));
+                }
+                await _cacheManager.SetAsync(cacheKey, poolCompanyModel);
+                #endregion
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
 ﻿using Database.EventGateway.Data;
+using Database.EventGateway.Seed;
 using Database.EventGateway.Services;
 using Microsoft.EntityFrameworkCore;
 using SecretManagement;
@@ -28,6 +29,8 @@ namespace Database.EventGateway
 
             services.SecretManagementRegistration();
 
+            services.AddRedisRegistration(configuration);
+
             services.AddSingleton<IConnectionMultiplexer>(sp =>
             {
                 var secretsManagerService = sp.GetRequiredService<ISecretsManagerService>();
@@ -35,11 +38,42 @@ namespace Database.EventGateway
                 return ConnectionMultiplexer.Connect(secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentRedis2).GetAwaiter().GetResult());
             });
 
+            services.CachingRegistration(configuration);
+
             services.ServiceRegistration();
 
             services.AddStreamBus(Database.EventGateway.AssemblyReference.Assembly);
 
             services.AddScoped<IDatabaseService, DatabaseService>();
+
+            services.ApplySeeds(sp =>
+            {
+                using (var context = sp.GetRequiredService<DatabaseContext>())
+                {
+                    context.SaveChangesAsync().GetAwaiter().GetResult();
+                }
+            });
+
+
+            return services;
+        }
+
+        private static IServiceCollection ApplySeeds(this IServiceCollection services, Action<IServiceProvider> seedAction)
+        {
+            using (var serviceProvider = services.BuildServiceProvider())
+            {
+                SeedData seedData;
+
+                var dbContext = serviceProvider.GetRequiredService<DatabaseContext>();
+                var logger = serviceProvider.GetRequiredService<ILogger<SeedData>>();
+                var secretManagement = serviceProvider.GetRequiredService<ISecretsManagerService>();
+
+                seedData = new(dbContext, logger, secretManagement);
+
+                seedData.MigApply().SeedDataApply().GetAwaiter().GetResult();
+
+                seedAction(serviceProvider);
+            }
 
             return services;
         }

@@ -1,15 +1,19 @@
-﻿using Database.EventGateway.Data;
+﻿using Base.Caching;
+using Base.Caching.Key;
+using Database.EventGateway.Data;
 using Database.EventGateway.Services;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using SecretManagement;
 using Shared.Domain.Aggregates.MenuDatabaseAggregate;
+using Shared.Domain.Models.ConnectionPools;
+using Shared.Infrastructure.Extensions;
 using Shared.Stream;
 using System.Data.SqlClient;
 
 namespace Database.EventGateway.Events
 {
-    public class ConnectionPoolUpdateStreamEventHandler(ISecretsManagerService _secretsManager, StreamBus _streamBus, RedisStreamService _redisStreamService, DatabaseContext _context, ILogger<ConnectionPoolUpdateStreamEventHandler> _logger, IDatabaseService _databaseService) : IStreamEventHandler<ConnectionPoolUpdateStreamEvent>
+    public class ConnectionPoolUpdateStreamEventHandler(ISecretsManagerService _secretsManager, StreamBus _streamBus, RedisStreamService _redisStreamService, DatabaseContext _context, ILogger<ConnectionPoolUpdateStreamEventHandler> _logger, IDatabaseService _databaseService, ICacheManager _cacheManager) : IStreamEventHandler<ConnectionPoolUpdateStreamEvent>
     {
         private string updateConnectionPoolQuery = @"
             UPDATE ""ConnectionPools""
@@ -26,7 +30,9 @@ namespace Database.EventGateway.Events
 
         public async Task StreamHandler(ConnectionPoolUpdateStreamEvent @event)
         {
-            if (!await _context.Databases.IgnoreQueryFilters().AsNoTracking().AnyAsync(d => d.DatabaseName == @event.ConnectionPoolUpdate.DatabaseName && d.IsActive == true && d.IsDeleted == false))
+            bool anyResponse = await _context.Databases.IgnoreQueryFilters().AsNoTracking().AnyAsync(d => d.DatabaseName == @event.ConnectionPoolUpdate.DatabaseName && d.IsDeleted == false);
+
+            if (!anyResponse)
             {
                 await _databaseService.SetConnectionStringAsync("Server=localhost;port=5432;Database=authdb;User Id=admin;Password=passw00rd");
 
@@ -91,6 +97,8 @@ namespace Database.EventGateway.Events
                                 updateCompany = false;
                             }
                         }
+                        await connection.CloseAsync();
+                        await connection.DisposeAsync();
                     }
                     if (updateConPool is true && updateCompany is true)
                     {
@@ -104,7 +112,7 @@ namespace Database.EventGateway.Events
                 }
                 else
                 {
-                    await _redisStreamService.PublishEventAsync(new DatabaseCreatedProcessStreamEvent(@event.ConnectionPoolUpdate.TenantId, true), StreamEnum.AuthJob);
+                    //await _redisStreamService.PublishEventAsync(new DatabaseCreatedProcessStreamEvent(@event.ConnectionPoolUpdate.TenantId, true), StreamEnum.AuthJob);
 
                     _logger.LogCritical("{DateTime} : Database already exists !", DateTime.UtcNow);
                 }
@@ -113,6 +121,12 @@ namespace Database.EventGateway.Events
             {
                 _logger.LogError("{DateTime} : {Datebase} already exists. You are try the other database name", DateTime.UtcNow, @event.ConnectionPoolUpdate.DatabaseName);
             }
+
+            #region
+            List<ConnectionPoolWithCompanyModel>? withCompanyModels = await _cacheManager.GetAsync<List<ConnectionPoolWithCompanyModel>>(CacheKey.Create("connectionwithcompany"), () => new List<ConnectionPoolWithCompanyModel>());
+
+            await _redisStreamService.PublishEventAsync(new DatabaseNotificationStreamEvent(withCompanyModels.Select(cm => cm.DbUrls).ToList()), StreamEnum.TenantApi);
+            #endregion
         }
     }
 }

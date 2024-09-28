@@ -1,5 +1,4 @@
-﻿using Auth.Application.Abstractions;
-using Auth.Infrastructure.Data;
+﻿using Auth.Infrastructure.Data;
 using Auth.Infrastructure.Repository;
 using Auth.Job;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +8,9 @@ using Microsoft.Extensions.Hosting;
 using Quartz;
 using SecretManagement;
 using Shared.Application.Abstractions;
-using Shared.Application.Extensions;
 using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
 using Shared.Domain.Models;
-using Shared.Domain.Models.Configs;
 using Shared.Infrastructure;
 using Shared.Stream;
 using StackExchange.Redis;
@@ -35,18 +32,13 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         services.AddSingleton<IConfiguration>(configuration);
 
-        var conf = configuration.GetOptions<StreamConfigs>("StreamConfigs");
+        services.AddHttpContextAccessor();
 
         services.SeqRegistration(configuration);
 
         services.SecretManagementRegistration();
 
-        services.AddSingleton<IConnectionMultiplexer>(sp =>
-        {
-            var secretsManagerService = sp.GetRequiredService<ISecretsManagerService>();
-
-            return ConnectionMultiplexer.Connect(secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentRedis2).GetAwaiter().GetResult());
-        });
+        services.AddRedisRegistration(configuration);
 
         services.AddStreamBus(Auth.Job.AssemblyReference.Assembly);
 
@@ -59,6 +51,16 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         services.AddScoped<IRepository<ConnectionPool, ConnectionPoolId>, Repository<ConnectionPool, ConnectionPoolId>>();
 
+        services.AddSingleton<IConnectionMultiplexer>(sp =>
+        {
+            var secretsManagerService = sp.GetRequiredService<ISecretsManagerService>();
+
+            return ConnectionMultiplexer.Connect(secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentRedis2).GetAwaiter().GetResult());
+        });
+
+        services.CachingRegistration(configuration);
+
+        //-------
 
         services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
 
@@ -67,19 +69,20 @@ IHost host = Host.CreateDefaultBuilder(args)
             configurator.UseMicrosoftDependencyInjectionJobFactory();
 
             JobKey jobKey = new("Auth.Job.Service.Key");
+            //JobKey jobCacheKey = new("Auth.Job.Cache.Service.Key");
 
             configurator.AddJob<DatabaseRegisterJobService>(options => options.WithIdentity(jobKey));
+            //configurator.AddJob<DatabaseCacheJobService>(options =>options.WithIdentity(jobCacheKey));
 
-            TriggerKey triggerKey = new("Auth.Job.Service.Trigger.Key");
+            //configurator.AddTrigger(options => options.ForJob(jobCacheKey)
+            //    .StartAt(DateTime.UtcNow)
+            //    .WithSimpleSchedule(builder => builder.WithIntervalInHours(2).RepeatForever()));
 
             configurator.AddTrigger(options => options.ForJob(jobKey)
-                        .WithIdentity(triggerKey)
-                        .StartAt(DateTime.UtcNow.AddSeconds(1))
-                        .WithSimpleSchedule
-                        (
-                            builder => builder.WithIntervalInSeconds(120)
-                                              .RepeatForever()
-                        ));
+                .StartAt(DateTime.UtcNow.AddSeconds(10))
+                .WithSimpleSchedule(builder => builder.WithIntervalInHours(2).RepeatForever()));
+
+            //configurator.AddJobListener<JobChainingListener>();
         });
     })
     .Build();
