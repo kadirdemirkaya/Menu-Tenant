@@ -9,7 +9,7 @@ namespace Shared.Domain.Aggregates.ProductAggregate
     {
         public string Name { get; private set; }
         public string? Description { get; private set; }
-        public string? WebUrl { get; private set; }
+        public string? WebUrl { get; private set; } // name for route 
 
         public Address Address { get; private set; }
 
@@ -19,7 +19,7 @@ namespace Shared.Domain.Aggregates.ProductAggregate
 
         public Menu()
         {
-            
+
         }
 
         public Menu(MenuId id) : base(id)
@@ -27,5 +27,34 @@ namespace Shared.Domain.Aggregates.ProductAggregate
             Id = id;
         }
 
+        public Menu(string name, string? description, string? webUrl)
+        {
+            Name = name;
+            Description = description;
+            WebUrl = webUrl;
+        }
+
+        public Menu(MenuId id, string name, string? description, string? webUrl) : base(id)
+        {
+            Name = name;
+            Description = description;
+            WebUrl = webUrl;
+        }
+
+        public static Menu Create(string name, string? description, string? webUrl)
+            => new(name, description, webUrl);
+
+        public static Menu Create(MenuId id, string name, string? description, string? webUrl)
+            => new(id, name, description, webUrl);
+
+        public void AddAddress(Address address)
+        {
+            Address = address;
+        }
+
+        public void AddProduct(Product product)
+        {
+            Products.Add(product);
+        }
     }
 }

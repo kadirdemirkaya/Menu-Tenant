@@ -11,6 +11,7 @@ namespace Shared.Domain.Aggregates.MenuAggregate.Entities
         public string Name { get; private set; }
         public decimal Price { get; private set; }
         public ProductStatus ProductStatus { get; private set; }
+        public byte[] Image { get; private set; }
 
         public ProductDetail ProductDetails { get; set; }
 
@@ -28,7 +29,7 @@ namespace Shared.Domain.Aggregates.MenuAggregate.Entities
             Id = id;
         }
 
-        public Product(string title, string name, decimal price, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
+        public Product(string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
         {
             Id = ProductId.CreateUnique();
             Title = title;
@@ -36,9 +37,10 @@ namespace Shared.Domain.Aggregates.MenuAggregate.Entities
             ProductDetails = productDetail;
             MenuId = menuId;
             ProductStatus = productStatus;
+            Image = image;
         }
 
-        public Product(ProductId productId, string title, string name, decimal price, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock) : base(productId)
+        public Product(ProductId productId, string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock) : base(productId)
         {
             Id = productId;
             Title = title;
@@ -46,12 +48,28 @@ namespace Shared.Domain.Aggregates.MenuAggregate.Entities
             ProductDetails = productDetail;
             MenuId = menuId;
             ProductStatus = productStatus;
+            Image = image;
         }
 
-        public static Product Create(string title, string name, decimal price, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
-            => new(title, name, price, productDetail, menuId, productStatus);
+        public static Product Create(string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
+            => new(title, name, price, image, productDetail, menuId, productStatus);
 
-        public static Product Create(ProductId productId, string title, string name, decimal price, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
-           => new(productId, title, name, price, productDetail, menuId, productStatus);
+        public static Product Create(ProductId productId, string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
+           => new(productId, title, name, price, image, productDetail, menuId, productStatus);
+
+        public void SetMenuId(MenuId menuId)
+        {
+            MenuId = menuId;
+        }
+
+        public void SetImage(byte[] image)
+        {
+            Image = image;
+        }
+
+        public void SetProductStatus(ProductStatus productStatus)
+        {
+            ProductStatus = productStatus;
+        }
     }
 }

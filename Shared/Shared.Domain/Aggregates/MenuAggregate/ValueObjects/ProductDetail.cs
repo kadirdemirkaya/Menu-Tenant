@@ -9,6 +9,10 @@ namespace Shared.Domain.Aggregates.MenuAggregate.ValueObjects
         public string? Description { get; private set; } // content
         public double? WeightInGrams { get; private set; } // gr bv.
 
+        public ProductDetail()
+        {
+            
+        }
 
         public ProductDetail(string description, double weightInGrams)
         {

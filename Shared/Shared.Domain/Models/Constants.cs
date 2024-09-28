@@ -37,6 +37,7 @@ namespace Shared.Domain.Models
             public const string DevelopmentPOSTGRES_POSTGRES_Password = "Development_POSTGRES_Password";
             public const string DevelopmentPOSTGRES_POSTGRES_AuthDb = "Development_POSTGRES_AuthDb";
             public const string DevelopmentPOSTGRES_POSTGRES_SharedDb = "Development_POSTGRES_SharedDb";
+            public const string DevelopmentPOSTGRES_POSTGRES_SharedDb_TenantId = "23B7F25B-D97F-4B20-8608-7F2C55ACFA4E";
             public const string DevelopmentPOSTGRES_POSTGRES_Database = "Development_POSTGRES_Database";
 
             public const string DevelopmentAuthApi = "Development_AuthApi";
