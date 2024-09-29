@@ -10,6 +10,7 @@ namespace Shared.Domain.Aggregates.ProductAggregate
         public string Name { get; private set; }
         public string? Description { get; private set; }
         public string? WebUrl { get; private set; } // name for route 
+        public bool IsActive { get; set; } = false;
 
         public Address Address { get; private set; }
 
@@ -46,6 +47,11 @@ namespace Shared.Domain.Aggregates.ProductAggregate
 
         public static Menu Create(MenuId id, string name, string? description, string? webUrl)
             => new(id, name, description, webUrl);
+
+        public void SetActive(bool activeState)
+        {
+            IsActive = activeState;
+        }
 
         public void AddAddress(Address address)
         {

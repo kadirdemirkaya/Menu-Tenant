@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices;
 
 namespace Shared.Domain.Aggregates.MenuAggregate.ValueObjects
 {
@@ -20,5 +21,8 @@ namespace Shared.Domain.Aggregates.MenuAggregate.ValueObjects
             City = city;
             Country = county;
         }
+
+        public static Address Create(string street, string city, string county)
+            => new(street, city, county);
     }
 }
