@@ -57,5 +57,21 @@ namespace Tenant.Infrastructure.Data
             }
             return await base.SaveChangesAsync(cancellationToken);
         }
+
+        public override int SaveChanges()
+        {
+            var entries = ChangeTracker.Entries<ITenantId>()
+                 .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+
+            foreach (var entry in entries)
+            {
+                if (_workContext?.Tenant?.TenantId != null || entry.Entity.TenantId == null)
+                {
+                    entry.Entity.TenantId = _workContext.Tenant.TenantId;
+                }
+            }
+
+            return base.SaveChanges();
+        }
     }
 }

@@ -24,6 +24,8 @@ namespace Tenant.Infrastructure
     {
         public static IServiceCollection TenantInfrastructureRegistration(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddPollyPolicies();
+
             services.SeqRegistration(configuration);
 
             services.SecretManagementRegistration();
@@ -36,17 +38,17 @@ namespace Tenant.Infrastructure
 
             services.AddDatabase();
 
-            //services.ApplySeeds(sp =>
-            //{
-            //    using (var context = sp.GetRequiredService<MenuDbContext>())
-            //    {
-            //        context.SaveChangesAsync().GetAwaiter().GetResult();
-            //    }
-            //});
-
             services.AddServices();
 
             services.AddStreamEvent();
+
+            services.ApplySeeds(sp =>
+            {
+                using (var context = sp.GetRequiredService<MenuDbContext>())
+                {
+                    context.SaveChanges();
+                }
+            });
 
             return services;
         }
@@ -60,10 +62,12 @@ namespace Tenant.Infrastructure
                 var dbContext = serviceProvider.GetRequiredService<MenuDbContext>();
                 var logger = serviceProvider.GetRequiredService<ILogger<SeedData>>();
                 var secretManagement = serviceProvider.GetRequiredService<ISecretsManagerService>();
+                var cacheManager = serviceProvider.GetRequiredService<ICacheManager>();
+                var polyService = serviceProvider.GetRequiredService<IPollyPolicyService>();
 
-                seedData = new(dbContext, logger, secretManagement);
+                seedData = new(dbContext, logger, secretManagement, cacheManager, polyService);
 
-                seedData.MigApply().SeedDataApply().GetAwaiter().GetResult();
+                seedData.MigApplyFromCache().SeedDataApply().GetAwaiter().GetResult();
 
                 seedAction(serviceProvider);
             }
