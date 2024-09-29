@@ -100,8 +100,11 @@ namespace Tenant.Infrastructure
 
                 string? companyName = httpContextAccessor.HttpContext?.Items["CompanyName"]?.ToString();
 
+                // companyName is empty and if not come tenantid |||| we are didn't matching to urls 
+                // shareddb tenantId value not equals connectionpools tenantId value !!!
                 if (conCompModels != null)
                     if (conCompModels.Count() != 0 && companyName != null)
+                    {
                         foreach (var conCompModel in conCompModels)
                         {
                             if (conCompModel.CompanyName == companyName)
@@ -111,6 +114,22 @@ namespace Tenant.Infrastructure
                                 break;
                             }
                         }
+                    }
+                    else
+                    {
+                        foreach (var conCompModel in conCompModels)
+                        {
+                            if (workContext.Tenant?.TenantId is null)
+                                return;
+                            else if (workContext.Tenant.TenantId == conCompModel.TenantId)
+                            {
+                                options.UseNpgsql(conCompModel.DbUrls);
+                                isConfigure = true;
+                                break;
+                            }
+                        }
+                    }
+
                 if (!isConfigure)
                     options.UseNpgsql("Server=localhost;port=5432;Database=shareddb;User Id=admin;Password=passw00rd");
             });
