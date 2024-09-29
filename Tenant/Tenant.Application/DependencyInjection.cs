@@ -1,15 +1,17 @@
 ﻿using EventBusDomain;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Application;
 
 namespace Tenant.Application
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection TenantApplicationRegistration(this IServiceCollection services)
+        public static IServiceCollection TenantApplicationRegistration(this IServiceCollection services,IConfiguration configuration)
         {
-            #region Domain Event
             services.AddEventBus(AssemblyReference.Assembly);
-            #endregion
+
+            services.JwtRegistration(configuration);
 
             return services;
         }
