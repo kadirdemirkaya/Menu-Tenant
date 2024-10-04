@@ -1,10 +1,13 @@
 #!/bin/bash
 
-# SonarScanner başlangıç komutunu çalıştır
-dotnet sonarscanner begin /k:"Local-Microservice-Dockerize-Demo" /d:sonar.host.url="http://localhost:9000"  /d:sonar.token="sqp_918506e30e26ef0d3adf127678a600d74e10bc14"
-# Projeyi build et
-dotnet build ../Microservice-Dockerize-Demo.sln
+cd "../"
 
-# SonarScanner bitiş komutunu çalıştır
-# dotnet sonarscanner end /d:sonar.login="sqp_918506e30e26ef0d3adf127678a600d74e10bc14"
-dotnet sonarscanner end /d:sonar.token="sqp_918506e30e26ef0d3adf127678a600d74e10bc14"
+echo "Current working directory: $(pwd)"
+
+dotnet sonarscanner begin /k:"Menu" /d:sonar.host.url="http://localhost:9000" /d:sonar.login="sqp_b5b681fe8b64d3a30360e45c1332ea4a59d10503"
+
+dotnet build
+
+dotnet sonarscanner end /d:sonar.login="sqp_b5b681fe8b64d3a30360e45c1332ea4a59d10503"
+
+read -p "Press enter to exit"
