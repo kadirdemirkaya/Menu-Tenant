@@ -387,3 +387,5 @@ FodyWeavers.xsd
 /BlogWeb.Mvc/Data/Seeds/BlogDbSeedContext.cs
 
 volume/
+
+sonarqube/*
