@@ -389,3 +389,4 @@ FodyWeavers.xsd
 volume/
 
 sonarqube/*
+.sonarqube/*
