@@ -39,7 +39,7 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
             AppUserId = appUserId;
         }
 
-        public Company(CompanyId companyId, string name, string databaseName, AppUserId appUserId,string tenantId) : base(companyId)
+        public Company(CompanyId companyId, string name, string databaseName, AppUserId appUserId, string tenantId) : base(companyId)
         {
             Id = companyId;
             Name = name;
@@ -57,7 +57,39 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
         public static Company Create(CompanyId companyId, string name, string databaseName, AppUserId appUserId, string tenantId)
         => new(companyId, name, databaseName, appUserId, tenantId);
 
-        public void AddConnectionPool(ConnectionPool connectionPool)
+        public void SetName(string name)
+        {
+            Name = name;
+        }
+
+        public void SetDatabaseName(string databaseName)
+        {
+            DatabaseName = databaseName;
+        }
+
+        public void UpdateCompany(string name, string databaseName, AppUserId appUserId)
+        {
+            SetName(name);
+            SetDatabaseName(databaseName);
+            SetAppUserId(appUserId);
+        }
+        public void UpdateCompany(CompanyId companyId, string name, string databaseName, AppUserId appUserId)
+        {
+            Id = companyId;
+            SetName(name);
+            SetDatabaseName(databaseName);
+            SetAppUserId(appUserId);
+        }
+        public void UpdateCompany(CompanyId companyId, string name, string databaseName, AppUserId appUserId, string tenantId)
+        {
+            Id = companyId;
+            SetName(name);
+            SetDatabaseName(databaseName);
+            SetAppUserId(appUserId);
+            SetTenantId(tenantId);
+        }
+
+        public void AddOrUpdateConnectionPool(ConnectionPool connectionPool)
         {
             ConnectionPool = connectionPool;
         }
@@ -68,7 +100,7 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
                 ConnectionPool = null;
         }
 
-        public void AppUserIdSet(AppUserId appUserId)
+        public void SetAppUserId(AppUserId appUserId)
         {
             AppUserId = appUserId;
         }

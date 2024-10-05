@@ -30,6 +30,7 @@ namespace Shared.Domain.Aggregates.ProductAggregate
 
         public Menu(string name, string? description, string? webUrl)
         {
+            Id = MenuId.CreateUnique();
             Name = name;
             Description = description;
             WebUrl = webUrl;
@@ -48,9 +49,47 @@ namespace Shared.Domain.Aggregates.ProductAggregate
         public static Menu Create(MenuId id, string name, string? description, string? webUrl)
             => new(id, name, description, webUrl);
 
+        public void SetName(string name)
+        {
+            Name = name;
+        }
+
+        public void SetDescription(string description)
+        {
+            Description = description;
+        }
+
+        public void SetWebUrl(string webUrl)
+        {
+            WebUrl = webUrl;
+        }
+
         public void SetActive(bool activeState)
         {
             IsActive = activeState;
+        }
+
+        public void UpdateMenu(string name, string? description, string? webUrl)
+        {
+            SetName(name);
+            SetDescription(description);
+            SetWebUrl(webUrl);
+        }
+
+        public void UpdateMenu(MenuId id, string name, string? description, string? webUrl)
+        {
+            Id = id;
+            SetName(name);
+            SetDescription(description);
+            SetWebUrl(webUrl);
+        }
+        public void UpdateMenu(MenuId id, string name, string? description, string? webUrl, string tenantId)
+        {
+            Id = id;
+            SetName(name);
+            SetDescription(description);
+            SetWebUrl(webUrl);
+            SetTenantId(tenantId);
         }
 
         public void AddAddress(Address address)

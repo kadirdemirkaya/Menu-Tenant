@@ -4,10 +4,12 @@
     {
         public string CompanyName { get; set; }
         public string DbUrls { get; set; }
-        public ConnectionPoolWithCompanyModel(string companyName, string dbUrls)
+        public string TenantId { get; set; }
+        public ConnectionPoolWithCompanyModel(string companyName, string dbUrls, string tenantId)
         {
             CompanyName = companyName;
             DbUrls = dbUrls;
+            TenantId = tenantId;
         }
     }
 }

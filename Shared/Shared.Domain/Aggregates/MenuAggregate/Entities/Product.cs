@@ -57,6 +57,26 @@ namespace Shared.Domain.Aggregates.MenuAggregate.Entities
         public static Product Create(ProductId productId, string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
            => new(productId, title, name, price, image, productDetail, menuId, productStatus);
 
+        public void SetTitle(string title)
+        {
+            Title = title;
+        }
+
+        public void SetName(string name)
+        {
+            Name = name;
+        }
+
+        public void SetPrice(decimal price)
+        {
+            Price = price;
+        }
+
+        public void SetProductStatus(ProductStatus productStatus)
+        {
+            ProductStatus = productStatus;
+        }
+
         public void SetMenuId(MenuId menuId)
         {
             MenuId = menuId;
@@ -67,9 +87,46 @@ namespace Shared.Domain.Aggregates.MenuAggregate.Entities
             Image = image;
         }
 
-        public void SetProductStatus(ProductStatus productStatus)
+        public void AddProductDetail(ProductDetail productDetail)
         {
-            ProductStatus = productStatus;
+            ProductDetails = productDetail;
+        }
+
+
+        public void UpdateProduct(string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
+        {
+            SetTitle(title);
+            SetName(name);
+            SetPrice(price);
+            SetImage(image);
+            AddProductDetail(productDetail);
+            SetMenuId(menuId);
+            SetProductStatus(productStatus);
+        }
+
+        public void UpdateProduct(ProductId productId, string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
+        {
+            Id = productId;
+            SetTitle(title);
+            SetName(name);
+            SetPrice(price);
+            SetImage(image);
+            AddProductDetail(productDetail);
+            SetMenuId(menuId);
+            SetProductStatus(productStatus);
+        }
+
+        public void UpdateProduct(ProductId productId, string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId,string tenantId, ProductStatus productStatus = ProductStatus.InStock)
+        {
+            Id = productId;
+            SetTitle(title);
+            SetName(name);
+            SetPrice(price);
+            SetImage(image);
+            AddProductDetail(productDetail);
+            SetMenuId(menuId);
+            SetProductStatus(productStatus);
+            SetTenantId(tenantId);
         }
     }
 }

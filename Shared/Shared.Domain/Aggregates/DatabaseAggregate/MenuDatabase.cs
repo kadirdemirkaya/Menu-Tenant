@@ -49,12 +49,54 @@ namespace Shared.Domain.Aggregates.MenuDatabaseAggregate
         public static MenuDatabase Create(string host, string port, string databaseName, string userName, string password, string tenantid, bool isActive = true)
           => new(host, port, databaseName, userName, password, tenantid, isActive);
 
-        public static MenuDatabase Create(MenuDatabaseId MenuDatabaseId, string host, string port, string databaseName, string userName, string password, string tenantid, bool isActive = true)
-          => new(MenuDatabaseId, host, port, databaseName, userName, password, tenantid, isActive);
+        public static MenuDatabase Create(MenuDatabaseId menuDatabaseId, string host, string port, string databaseName, string userName, string password, string tenantid, bool isActive = true)
+          => new(menuDatabaseId, host, port, databaseName, userName, password, tenantid, isActive);
 
-        public void SetMenuDatabaseName(string databaseName)
+        public void UpdateMenuDatabase(string host, string port, string databaseName, string userName, string password, string tenantid, bool isActive = true)
+        {
+            SetHost(host);
+            SetPort(port);
+            SetDatabaseName(databaseName);
+            SetUsername(userName);
+            SetPassword(password);
+            SetTenantId(tenantid);
+            SetIsActive(isActive);
+        }
+        public void UpdateMenuDatabase(MenuDatabaseId menuDatabaseId, string host, string port, string databaseName, string userName, string password, string tenantid, bool isActive = true)
+        {
+            Id = menuDatabaseId;
+            SetHost(host);
+            SetPort(port);
+            SetDatabaseName(databaseName);
+            SetUsername(userName);
+            SetPassword(password);
+            SetTenantId(tenantid);
+            SetIsActive(isActive);
+        }
+
+        public void SetHost(string host)
+        {
+            Host = host;
+        }
+
+        public void SetPort(string port)
+        {
+            Port = port;
+        }
+
+        public void SetDatabaseName(string databaseName)
         {
             DatabaseName = databaseName;
+        }
+
+        public void SetUsername(string userName)
+        {
+            Username = userName;
+        }
+
+        public void SetPassword(string password)
+        {
+            Password = password;
         }
 
         public void SetIsActive(bool isActive)

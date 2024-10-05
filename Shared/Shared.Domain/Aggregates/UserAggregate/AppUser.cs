@@ -1,7 +1,7 @@
-﻿using Shared.Domain.Aggregates.MenuAggregate.ValueObjects;
-using Shared.Domain.Aggregates.UserAggregate.Entities;
+﻿using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
 using Shared.Domain.BaseTypes;
+using Shared.Domain.Models;
 
 namespace Shared.Domain.Aggregates.UserAggregate
 {
@@ -45,7 +45,7 @@ namespace Shared.Domain.Aggregates.UserAggregate
             PhoneNumber = phoneNumber;
         }
 
-        public AppUser(AppUserId appUserId, string userName, string email, string password, string phoneNumber,string tenantId)
+        public AppUser(AppUserId appUserId, string userName, string email, string password, string phoneNumber, string tenantId)
         {
             Id = appUserId;
             Username = userName;
@@ -64,6 +64,53 @@ namespace Shared.Domain.Aggregates.UserAggregate
         public static AppUser Create(AppUserId appUserId, string userName, string email, string password, string phoneNumber, string tenantId)
             => new(appUserId, userName, email, password, phoneNumber, tenantId);
 
+        public void SetUsername(string userName)
+        {
+            Username = userName;
+        }
+        public void SetEmail(string email)
+        {
+            Email = email;
+        }
+
+        public void SetPassword(string password)
+        {
+            Password = HashProvider.HashPassword(password);
+        }
+
+        public void SetPhoneNumber(string phoneNumber)
+        {
+            PhoneNumber = phoneNumber;
+        }
+
+        public void UpdateUser(string userName, string email, string password, string phoneNumber)
+        {
+            SetUsername(userName);
+            SetEmail(email);
+            SetPassword(password);
+            SetPhoneNumber(phoneNumber);
+        }
+
+        public void UpdateUser(AppUserId appUserId, string userName, string email, string password, string phoneNumber)
+        {
+            Id = appUserId;
+            SetUsername(userName);
+            SetEmail(email);
+            SetPassword(password);
+            SetPhoneNumber(phoneNumber);
+        }
+
+        public void UpdateUser(AppUserId appUserId, string userName, string email, string password, string phoneNumber, string tenantId)
+        {
+            Id = appUserId;
+            SetUsername(userName);
+            SetEmail(email);
+            SetPassword(password);
+            SetPhoneNumber(phoneNumber);
+            SetTenantId(tenantId);
+        }
+
+
         public void AddCompany(Company company)
         {
             Companies.Add(company);
@@ -73,6 +120,19 @@ namespace Shared.Domain.Aggregates.UserAggregate
         {
             Company company = Companies.FirstOrDefault(c => c.Id == companyId);
             Companies.Remove(company);
+        }
+
+        public void UpdateCompany(Company company)
+        {
+            Company? updateEntity = Companies.FirstOrDefault(c => c.Id == company.Id);
+
+            if (updateEntity is null)
+                return;
+
+            updateEntity.UpdateCompany(company.Id, company.Name, company.DatabaseName, company.AppUserId);
+
+            if (company.TenantId is not null)
+                updateEntity.UpdateCompany(company.Id, company.Name, company.DatabaseName, company.AppUserId, company.TenantId);
         }
 
         public void SetTenantIdForEntity(string id)
