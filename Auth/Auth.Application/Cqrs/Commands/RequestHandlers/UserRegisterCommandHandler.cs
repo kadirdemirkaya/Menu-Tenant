@@ -1,5 +1,6 @@
 ﻿using Auth.Application.Abstractions;
-using Auth.Application.Cqrs.Commands.RequestsAndResponses;
+using Auth.Application.Cqrs.Commands.Requests;
+using Auth.Application.Cqrs.Commands.Responses;
 using EventBusDomain;
 using Shared.Domain.Models;
 

@@ -12,6 +12,8 @@ namespace Auth.Application
 
             services.JwtRegistration(configuration);
 
+            services.AddAuthorization();
+
             return services;
         }
     }

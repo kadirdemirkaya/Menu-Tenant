@@ -1,7 +1,7 @@
 ﻿using Auth.Application.Dtos.User;
 using EventBusDomain;
 
-namespace Auth.Application.Cqrs.Commands.RequestsAndResponses
+namespace Auth.Application.Cqrs.Commands.Requests
 {
     public class UserRegisterCommandRequest : IEventRequest
     {

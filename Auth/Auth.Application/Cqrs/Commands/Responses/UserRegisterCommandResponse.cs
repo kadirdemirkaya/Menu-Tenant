@@ -1,7 +1,7 @@
 ﻿using EventBusDomain;
 using Shared.Domain.Models;
 
-namespace Auth.Application.Cqrs.Commands.RequestsAndResponses
+namespace Auth.Application.Cqrs.Commands.Responses
 {
     public class UserRegisterCommandResponse : IEventResponse
     {
