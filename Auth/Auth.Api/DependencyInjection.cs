@@ -13,6 +13,8 @@ namespace Auth.Api
         {
             services.AddControllers();
 
+            services.AddHttpContextAccessor();
+
             services.AddLogging();
 
             services.AddEndpointsApiExplorer();
@@ -52,8 +54,6 @@ namespace Auth.Api
                     }
                 });
             });
-
-            services.AddHttpContextAccessor();
 
             services.AddScoped<HashPasswordActionFilter>();
 

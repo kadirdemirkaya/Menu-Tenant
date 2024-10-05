@@ -1,31 +1,33 @@
-﻿using Auth.Infrastructure.Data;
+﻿using Auth.Application.Cqrs.Commands.Requests;
+using Auth.Application.Cqrs.Commands.Responses;
+using Auth.Application.Dtos.User;
+using EventBusDomain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Shared.Application.Abstractions;
-using Shared.Domain.Aggregates.UserAggregate;
-using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
 
 namespace Auth.Api.Controllers
 {
     [Authorize]
-    public class UserController(AuthDbContext _context) : BaseController
+    public class UserController(EventBus _eventBus) : BaseController
     {
-        [HttpGet]
-        [Route("GetUserWithTenantId")]
-        public async Task<IActionResult> GetUserWithTenantId()
+        [HttpDelete]
+        [Route("deleteuser")]
+        public async Task<IActionResult> DeleteUser([FromHeader] Guid id)
         {
-            var userWithTenantId = await _context.Users.FirstOrDefaultAsync();
-            return Ok(userWithTenantId);
+            DeleteUserCommandRequest request = new(id);
+            DeleteUserCommandResponse response = await _eventBus.PublishAsync(request) as DeleteUserCommandResponse;
+
+            return response.ApiResponseModel.Success is true ? Ok() : BadRequest(response.ApiResponseModel);
         }
 
-        [HttpGet]
-        [Route("GetUserWithTenantId2")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetUserWithTenantId2()
+        [HttpPut]
+        [Route("updateuser")]
+        public async Task<IActionResult> UpdateUser([FromBody] UserUpdateModelDto userUpdateModelDto)
         {
-            var userWithTenantId = await _context.Users.FirstOrDefaultAsync();
-            return Ok(userWithTenantId);
+            UpdateUserCommandRequest request = new(userUpdateModelDto);
+            UpdateUserCommandResponse response = await _eventBus.PublishAsync(request) as UpdateUserCommandResponse;
+
+            return response.ApiResponseModel.Success is true ? Ok() : BadRequest(response.ApiResponseModel);
         }
     }
 }

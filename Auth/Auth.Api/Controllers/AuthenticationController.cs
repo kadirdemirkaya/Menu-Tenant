@@ -1,23 +1,18 @@
-﻿using Auth.Application.Cqrs.Commands.RequestsAndResponses;
+﻿using Auth.Application.Cqrs.Commands.Requests;
+using Auth.Application.Cqrs.Commands.Responses;
 using Auth.Application.Dtos.User;
 using EventBusDomain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application.Filters;
 using Shared.Domain.Models;
+using Shared.Domain.Models.User;
 
 namespace Auth.Api.Controllers
 {
     [AllowAnonymous]
-    public class AuthenticationController : BaseController
+    public class AuthenticationController(EventBus _eventBus) : BaseController
     {
-        private readonly EventBus _eventBus;
-
-        public AuthenticationController(EventBus eventBus)
-        {
-            _eventBus = eventBus;
-        }
-
         [HttpPost]
         [Route("Auth/Register")]
         [ServiceFilter(typeof(HashPasswordActionFilter))]
@@ -26,18 +21,18 @@ namespace Auth.Api.Controllers
             UserRegisterCommandRequest request = new(userRegisterModelDto);
             UserRegisterCommandResponse response = await _eventBus.PublishAsync(request) as UserRegisterCommandResponse;
 
-            return response.ApiResponseModel;
+            return Ok(response.ApiResponseModel);
         }
 
         [HttpPost]
         [Route("Auth/Login")]
         [ServiceFilter(typeof(HashPasswordActionFilter))]
-        public async Task<ActionResult<ApiResponseModel<Token>>> UserLogin([FromBody] UserLoginModelDto userLoginModelDto)
+        public async Task<ActionResult<ApiResponseModel<UserLoginModel>>> UserLogin([FromBody] UserLoginModelDto userLoginModelDto)
         {
             UserLoginCommandRequest request = new(userLoginModelDto);
             UserLoginCommandResponse response = await _eventBus.PublishAsync(request) as UserLoginCommandResponse;
 
-            return response.ApiResponseModel;
+            return Ok(response.ApiResponseModel);
         }
     }
 }
