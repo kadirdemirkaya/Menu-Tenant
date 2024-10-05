@@ -23,9 +23,7 @@ namespace Auth.Job.Events
                     _context.Update(connectionPool);
                     await _context.SaveChangesAsync();
 
-                    //
-                    // maybe could send a mail for user menu
-                    //
+                    // TODO : maybe could send a mail for user menu                    
                 }
                 else
                     _logger.LogError("{DateTime} : ConnectionPool is not found in DatabaseCreatedProcessStreamEventHandler ! ", DateTime.UtcNow);

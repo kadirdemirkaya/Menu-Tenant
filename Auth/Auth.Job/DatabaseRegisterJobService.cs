@@ -42,6 +42,7 @@ namespace Auth.Job
             {
                 List<ConnectionPool>? connectionPools = await _context.Set<ConnectionPool>().IgnoreQueryFilters().AsNoTracking().Where(c => c.DatabaseName.StartsWith("personaldb_")).Include(c => c.Company).ToListAsync();
 
+                // TODO : got error then will fixed (Repository)
                 #region got error then will fixed
                 //List<ConnectionPool>? connectionPools = await _repository.GetAllAsync(c => c.IsActive == false || c.DatabaseName.StartsWith("personaldb_"), false, true, c => c.Company, com => com.Company.AppUser);
                 #endregion
@@ -110,9 +111,11 @@ namespace Auth.Job
                 #region this could a other job service 
                 List<ConnectionPool> connectionPoolsForCache = await _context.ConnectionPools.IgnoreQueryFilters().AsNoTracking().Include(cp => cp.Company).ToListAsync();
                 List<ConnectionPoolWithCompanyModel> poolCompanyModel = new();
-                foreach (var con in connectionPools)
+                foreach (var con in connectionPoolsForCache)
                 {
-                    poolCompanyModel.Add(new(con.Company.Name, StringExtension.SetDbUrl(con.Host, con.Port, con.Username, con.Password, con.DatabaseName)));
+                    var test1 = con.Company.Name;
+                    var test2 = StringExtension.SetDbUrl(con.Host, con.Port, con.Username, con.Password, con.DatabaseName);
+                    poolCompanyModel.Add(new(con.Company.Name, StringExtension.SetDbUrl(con.Host, con.Port, con.Username, con.Password, con.DatabaseName), con.TenantId));
                 }
                 await _cacheManager.SetAsync(cacheKey, poolCompanyModel);
                 #endregion
