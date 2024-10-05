@@ -24,23 +24,9 @@ namespace Auth.Infrastructure.Seeds
         }
         public async Task<SeedData> SeedDataApply()
         {
-            if (!await _dbContext.Set<AppUser>().IgnoreQueryFilters().AnyAsync())
+            if (!await _dbContext.Set<ConnectionPool>().IgnoreQueryFilters().Where(cp => cp.DatabaseName == "shareddb").AnyAsync())
             {
-                string tenantId = Guid.NewGuid().ToString();
-
-                var appUser = AppUser.Create(AppUserId.CreateUnique(), "kadir", "kadir@gmail.com", "kadir123", "5556667788", tenantId);
-
-                var company = Company.Create(CompanyId.CreateUnique(), "kadir_company", "shared", appUser.Id, tenantId);
-
-                var connectionPool = ConnectionPool.Create(ConnectionPoolId.CreateUnique(), "postgresql", await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_Host), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_Port), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_SharedDb), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_User), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Password), company.Id, tenantId);
-
-                company.AddConnectionPool(connectionPool);
-
-                appUser.AddCompany(company);
-
-                await _dbContext.Set<AppUser>().AddAsync(appUser);
-
-                //await _dbContext.SaveChangesAsync();
+                // TODO : purpose the in this section will creating database request in this place and event sending for shared db in database service
             }
 
             return this;

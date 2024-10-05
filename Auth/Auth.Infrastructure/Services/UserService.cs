@@ -56,7 +56,7 @@ namespace Auth.Infrastructure.Services
             else
                 connectionPool = ConnectionPool.Create(ConnectionPoolId.CreateUnique(), "postgresql", await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_Host), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_Port), dbName, await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_User), await _secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Password), company.Id, tenantId, false);
 
-            company.AddConnectionPool(connectionPool);
+            company.AddOrUpdateConnectionPool(connectionPool);
 
             user.AddCompany(company);
 

@@ -47,8 +47,6 @@ namespace Tenant.Application.Cqrs.Commands.RequestHandlers
                 _logger.LogError("{DateTime} : Menu gotta not create then more 10  !", DateTime.UtcNow);
                 return new(ApiResponseModel<bool>.CreateFailure<bool>("Menu gotta not create then more 10 !"));
             }
-
-            return new(default);
         }
     }
 }

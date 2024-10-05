@@ -7,13 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Cqrs\Queries\RequestHandlers\" />
-		<Folder Include="Cqrs\Queries\Requests\" />
-		<Folder Include="Configurations\" />
-		<Folder Include="Repository\" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Bogus" Version="35.6.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="6.0.0-preview.4.21253.5" />
 

@@ -14,9 +14,11 @@ using Shared.Domain.Aggregates.ProductAggregate;
 using Shared.Domain.Models.ConnectionPools;
 using Shared.Infrastructure;
 using Shared.Stream;
+using Tenant.Application.Abstractions;
 using Tenant.Infrastructure.Data;
 using Tenant.Infrastructure.Repository;
 using Tenant.Infrastructure.Seeds;
+using Tenant.Infrastructure.Services;
 
 namespace Tenant.Infrastructure
 {
@@ -100,8 +102,8 @@ namespace Tenant.Infrastructure
 
                 string? companyName = httpContextAccessor.HttpContext?.Items["CompanyName"]?.ToString();
 
-                // companyName is empty and if not come tenantid |||| we are didn't matching to urls 
-                // shareddb tenantId value not equals connectionpools tenantId value !!!
+                // TODO : companyName is empty and if not come tenantid |||| we are didn't matching to urls 
+                // TODO : shareddb tenantId value not equals connectionpools tenantId value !!!
                 if (conCompModels != null)
                     if (conCompModels.Count() != 0 && companyName != null)
                     {
@@ -143,6 +145,7 @@ namespace Tenant.Infrastructure
 
             services.AddScoped<IRepository<Menu, MenuId>, Repository<Menu, MenuId>>();
 
+            services.AddScoped<IImageService, ImageService>();
 
             return services;
         }

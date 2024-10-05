@@ -13,7 +13,7 @@ namespace Tenant.Application.Cqrs.Commands.RequestHandlers
     {
         public async Task<ActiveteMenuCommandResponse> Handle(ActiveteMenuCommandRequest @event)
         {
-            List<Menu> menus = await _repository.GetAllAsync();
+            List<Menu> menus = await _repository.GetAllAsync(false,false);
 
             if (menus.Count() <= 10)
             {

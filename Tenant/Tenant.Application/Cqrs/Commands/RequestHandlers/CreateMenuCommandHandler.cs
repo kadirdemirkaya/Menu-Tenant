@@ -17,16 +17,25 @@ namespace Tenant.Application.Cqrs.Commands.RequestHandlers
 
             if (menuCount <= 10)
             {
-                Menu menu = Menu.Create(@event.CreateMenuModelDto.Name, @event.CreateMenuModelDto.Description, null);
+                Menu menu = Menu.Create(MenuId.CreateUnique(), @event.CreateMenuModelDto.Name, @event.CreateMenuModelDto.Description, null);
                 menu.SetActive(false);
 
                 Address address = Address.Create(@event.CreateMenuModelDto.Street, @event.CreateMenuModelDto.City, @event.CreateMenuModelDto.Country);
 
                 menu.AddAddress(address);
 
-                bool createRes = await _repository.CreateAsync(menu);
+                try
+                {
+                    bool createRes = await _repository.CreateAsync(menu);
 
-                return createRes is true ? new(ApiResponseModel<bool>.CreateSuccess(true)) : new(ApiResponseModel<bool>.CreateFailure<bool>("A error accured while menu created"));
+                    createRes = await _repository.SaveCahangesAsync();
+
+                    return createRes is true ? new(ApiResponseModel<bool>.CreateSuccess(true)) : new(ApiResponseModel<bool>.CreateFailure<bool>("A error accured while menu created"));
+                }
+                catch (Exception ex)
+                {
+                    return new(ApiResponseModel<bool>.CreateFailure<bool>("A error accured while menu created"));
+                }
             }
 
             _logger.LogError("{DateTime} : More than 10 menus cannot be created !", DateTime.UtcNow);

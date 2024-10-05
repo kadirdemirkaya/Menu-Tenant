@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SecretManagement;
 using Shared.Application.Abstractions;
 using Shared.Domain.Aggregates.UserAggregate;
 using Shared.Domain.Aggregates.UserAggregate.Entities;
@@ -51,17 +50,53 @@ namespace Auth.Infrastructure.Data
 
         public async override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            var entries = ChangeTracker.Entries<ITenantId>()
-                 .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+            var entries = ChangeTracker.Entries<IEntityTenantId>()
+               .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted);
 
             foreach (var entry in entries)
             {
+                if (entry.State == EntityState.Added)
+                    entry.Entity.CreatedDateUTC = DateTime.UtcNow;
+                else if (entry.State == EntityState.Modified)
+                    entry.Entity.UpdatedDateUTC = DateTime.UtcNow;
+                else if (entry.State == EntityState.Deleted)
+                {
+                    entry.Entity.UpdatedDateUTC = DateTime.UtcNow;
+                    entry.Entity.IsDeleted = true;
+                }
+
                 if (_workContext?.Tenant?.TenantId != null || entry.Entity.TenantId == null)
                 {
                     entry.Entity.TenantId = _workContext.Tenant.TenantId;
                 }
             }
             return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        public override int SaveChanges()
+        {
+            var entries = ChangeTracker.Entries<IEntityTenantId>()
+               .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted);
+
+            foreach (var entry in entries)
+            {
+                if (entry.State == EntityState.Added)
+                    entry.Entity.CreatedDateUTC = DateTime.UtcNow;
+                else if (entry.State == EntityState.Modified)
+                    entry.Entity.UpdatedDateUTC = DateTime.UtcNow;
+                else if (entry.State == EntityState.Deleted)
+                {
+                    entry.Entity.UpdatedDateUTC = DateTime.UtcNow;
+                    entry.Entity.IsDeleted = true;
+                }
+
+                if (_workContext?.Tenant?.TenantId != null || entry.Entity.TenantId == null)
+                {
+                    entry.Entity.TenantId = _workContext.Tenant.TenantId;
+                }
+            }
+
+            return base.SaveChanges();
         }
     }
 }

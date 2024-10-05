@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SecretManagement;
 using Shared.Application.Abstractions;
+using Shared.Domain.Aggregates.UserAggregate;
 using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
 using Shared.Infrastructure;
@@ -85,6 +86,8 @@ namespace Auth.Infrastructure
 
         private static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddScoped<IRepository<AppUser, AppUserId>, Repository<AppUser, AppUserId>>();
+
             services.AddScoped<IRepository<Company, CompanyId>, Repository<Company, CompanyId>>();
 
             services.AddScoped<IRepository<ConnectionPool, ConnectionPoolId>, Repository<ConnectionPool, ConnectionPoolId>>();

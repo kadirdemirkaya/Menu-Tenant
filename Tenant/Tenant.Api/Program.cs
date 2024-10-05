@@ -1,37 +1,26 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Shared.Stream;
-using StackExchange.Redis;
+using Tenant.Api;
+using Tenant.Application;
+using Tenant.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+IConfiguration configuration = builder.Configuration;
 
-builder.Services.AddHttpContextAccessor();
+builder.Services.TenantApiRegistration(configuration);
 
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.TenantApplicationRegistration(configuration);
 
-builder.Services.AddSwaggerGen();
+builder.Services.TenantInfrastructureRegistration(configuration);
 
-builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
-
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6379"));
-
-//builder.Services.AddSingleton<RedisStreamService>();
-
-builder.Services.AddStreamBus(typeof(Program).Assembly);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.TenantApiWebApplicationRegistration(configuration);
 
-app.UseHttpsRedirection();
+app.AuthInfrastructureWebApplicationRegistration();
 
-app.MapHealthChecks("/health");
+app.UseAuthentication();
 
 app.UseAuthorization();
 
