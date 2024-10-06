@@ -41,9 +41,14 @@ add_or_update_secret "Development" "POSTGRES_Password" "passw00rd"
 add_or_update_secret "Development" "POSTGRES_AuthDb" "authdb"
 add_or_update_secret "Development" "POSTGRES_SharedDb" "shareddb"
 add_or_update_secret "Development" "POSTGRES_Database" "database"
+add_or_update_secret "Development" "POSTGRES_Auth_Url" "Server=localhost;port=5432;Database=authdb;User Id=admin;Password=passw00rd"
+add_or_update_secret "Development" "POSTGRES_Database_Url" "Server=localhost;port=5432;Database=database;User Id=admin;Password=passw00rd"
+add_or_update_secret "Development" "POSTGRES_Shared_Url" "Server=localhost;port=5432;Database=shareddb;User Id=admin;Password=passw00rd"
 #
 add_or_update_secret "Development" "AuthApi" "https://localhost:7001"
 add_or_update_secret "Development" "TenantApi" "https://localhost:7100"
+add_or_update_secret "Development" "DatabaseApi" "https://localhost:7298"
+add_or_update_secret "Development" "HealtCheckApi" "https://localhost:7201"
 add_or_update_secret "Development" "Xabarihealthcheck" "http://localhost:5286"
 
 #aws --endpoint-url=http://localhost:4566 secretsmanager list-secrets
