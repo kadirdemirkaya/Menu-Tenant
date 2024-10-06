@@ -25,8 +25,7 @@ namespace Tenant.Application.Cqrs.Commands.RequestHandlers
 
                     if (menu is not null)
                     {
-                        menu.SetActive(false);
-                        menu.SetUpdatedDateUTC(DateTime.UtcNow);
+                        menu.SetActive(false).SetUpdatedDateUTC(DateTime.UtcNow);
                         await _repository.SaveCahangesAsync();
                         return new(ApiResponseModel<bool>.CreateSuccess(true));
                     }

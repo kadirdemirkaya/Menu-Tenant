@@ -13,7 +13,7 @@ namespace Tenant.Application.Cqrs.Commands.RequestHandlers
     {
         public async Task<ActiveteMenuCommandResponse> Handle(ActiveteMenuCommandRequest @event)
         {
-            List<Menu> menus = await _repository.GetAllAsync(false,false);
+            List<Menu> menus = await _repository.GetAllAsync(false, false);
 
             if (menus.Count() <= 10)
             {
@@ -25,8 +25,8 @@ namespace Tenant.Application.Cqrs.Commands.RequestHandlers
 
                     if (menu is not null)
                     {
-                        menu.SetActive(true);
-                        menu.SetUpdatedDateUTC(DateTime.UtcNow);
+                        menu.SetActive(true).SetUpdatedDateUTC(DateTime.UtcNow);
+
                         await _repository.SaveCahangesAsync();
                         return new(ApiResponseModel<bool>.CreateSuccess(true));
                     }

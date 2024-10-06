@@ -13,7 +13,7 @@ namespace Tenant.Application.Cqrs.Commands.RequestHandlers
         public async Task<DeleteProductCommandResponse> Handle(DeleteProductCommandRequest @event)
         {
             Product product = await _repository.GetAsync(p => p.Id == @event.ProductId, false, false, null);
-            product.SetIsDeleted(true);
+            product.SetIsDeletedForEntity(true);
 
             bool delResponse = _repository.Update(product);
 

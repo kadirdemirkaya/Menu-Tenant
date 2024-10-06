@@ -1,7 +1,6 @@
 ﻿using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
 using Shared.Domain.BaseTypes;
-using Shared.Domain.Models;
 
 namespace Shared.Domain.Aggregates.UserAggregate
 {
@@ -64,50 +63,69 @@ namespace Shared.Domain.Aggregates.UserAggregate
         public static AppUser Create(AppUserId appUserId, string userName, string email, string password, string phoneNumber, string tenantId)
             => new(appUserId, userName, email, password, phoneNumber, tenantId);
 
-        public void SetUsername(string userName)
-        {
-            Username = userName;
-        }
-        public void SetEmail(string email)
-        {
-            Email = email;
-        }
 
-        public void SetPassword(string password)
-        {
-            Password = HashProvider.HashPassword(password);
-        }
+        public AppUser SetId(AppUserId id) { Id = id; return this; }
+        public AppUser SetUsername(string userName) { Username = Username; return this; }
+        public AppUser SetEmail(string email) { Email = email; return this; }
+        public AppUser SetPassword(string password) { Password = password; return this; }
+        public AppUser SetPhoneNumber(string phoneNumber) { PhoneNumber = phoneNumber; return this; }
+        public AppUser SetTenantIdForEntity(string id) { SetTenantId(id); return this; }
+        public AppUser SetUpdatedDate(DateTime updateDate) { SetCreatedDateUTC(updateDate); return this; }
+        public AppUser SetCreatedDate(DateTime createdDate) { SetCreatedDateUTC(createdDate); return this; }
+        public AppUser SetIsDeletedForEntity(bool isDeleted) { SetIsDeleted(isDeleted); return this; }
 
-        public void SetPhoneNumber(string phoneNumber)
-        {
-            PhoneNumber = phoneNumber;
-        }
+        #region Old Seter Method
+        //public void SetUsername(string userName)
+        //{
+        //    Username = userName;
+        //}
+
+        //public void SetEmail(string email)
+        //{
+        //    Email = email;
+        //}
+
+        //public void SetPassword(string password)
+        //{
+        //    Password = HashProvider.HashPassword(password);
+        //}
+
+        //public void SetPhoneNumber(string phoneNumber)
+        //{
+        //    PhoneNumber = phoneNumber;
+        //}
+
+        //public void SetTenantIdForEntity(string id)
+        //{
+        //    SetTenantId(id);
+        //}
+        #endregion
 
         public void UpdateUser(string userName, string email, string password, string phoneNumber)
         {
-            SetUsername(userName);
-            SetEmail(email);
-            SetPassword(password);
-            SetPhoneNumber(phoneNumber);
+            SetUsername(userName)
+            .SetEmail(email)
+            .SetPassword(password)
+            .SetPhoneNumber(phoneNumber);
         }
 
         public void UpdateUser(AppUserId appUserId, string userName, string email, string password, string phoneNumber)
         {
-            Id = appUserId;
-            SetUsername(userName);
-            SetEmail(email);
-            SetPassword(password);
-            SetPhoneNumber(phoneNumber);
+            SetId(appUserId)
+            .SetUsername(userName)
+            .SetEmail(email)
+            .SetPassword(password)
+            .SetPhoneNumber(phoneNumber);
         }
 
         public void UpdateUser(AppUserId appUserId, string userName, string email, string password, string phoneNumber, string tenantId)
         {
-            Id = appUserId;
-            SetUsername(userName);
-            SetEmail(email);
-            SetPassword(password);
-            SetPhoneNumber(phoneNumber);
-            SetTenantId(tenantId);
+            SetId(appUserId)
+             .SetUsername(userName)
+             .SetEmail(email)
+             .SetPassword(password)
+             .SetPhoneNumber(phoneNumber)
+             .SetTenantId(tenantId);
         }
 
 
@@ -134,11 +152,5 @@ namespace Shared.Domain.Aggregates.UserAggregate
             if (company.TenantId is not null)
                 updateEntity.UpdateCompany(company.Id, company.Name, company.DatabaseName, company.AppUserId, company.TenantId);
         }
-
-        public void SetTenantIdForEntity(string id)
-        {
-            SetTenantId(id);
-        }
-
     }
 }

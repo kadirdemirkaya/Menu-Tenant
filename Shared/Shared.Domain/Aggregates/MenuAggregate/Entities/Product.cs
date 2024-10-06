@@ -40,7 +40,7 @@ namespace Shared.Domain.Aggregates.MenuAggregate.Entities
             Image = image;
         }
 
-        public Product(string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId,string tenantId, ProductStatus productStatus = ProductStatus.InStock)
+        public Product(string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, string tenantId, ProductStatus productStatus = ProductStatus.InStock)
         {
             Id = ProductId.CreateUnique();
             Title = title;
@@ -69,80 +69,73 @@ namespace Shared.Domain.Aggregates.MenuAggregate.Entities
         public static Product Create(string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
             => new(title, name, price, image, productDetail, menuId, productStatus);
         public static Product Create(string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, string tenantId, ProductStatus productStatus = ProductStatus.InStock)
-            => new(title, name, price, image, productDetail, menuId, tenantId,productStatus);
+            => new(title, name, price, image, productDetail, menuId, tenantId, productStatus);
         public static Product Create(ProductId productId, string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, string tenantId, ProductStatus productStatus = ProductStatus.InStock)
            => new(productId, title, name, price, image, productDetail, menuId, tenantId, productStatus);
 
-        public void SetTitle(string title)
-        {
-            Title = title;
-        }
+        public Product SetId(ProductId id) { Id = id; return this; }
+        public Product SetTitle(string title) { Title = title; return this; }
+        public Product SetName(string name) { Name = name; return this; }
+        public Product SetPrice(decimal price) { Price = price; return this; }
+        public Product SetProductStatus(ProductStatus productStatus) { ProductStatus = productStatus; return this; }
+        public Product SetMenuId(MenuId menuId) { MenuId = menuId; return this; }
+        public Product SetImage(byte[] image) { Image = image; return this; }
+        public Product AddProductDetail(ProductDetail productDetail) { ProductDetails = productDetail; return this; }
+        public Product SetTenantIdForEntity(string id) { SetTenantId(id); return this; }
+        public Product SetUpdatedDate(DateTime updateDate) { SetCreatedDateUTC(updateDate); return this; }
+        public Product SetCreatedDate(DateTime createdDate) { SetCreatedDateUTC(createdDate); return this; }
+        public Product SetIsDeletedForEntity(bool isDeleted) { SetIsDeleted(isDeleted); return this; }
 
-        public void SetName(string name)
-        {
-            Name = name;
-        }
+        #region Old Setter Methods
+        //public void SetTitle(string title)
+        //{
+        //    Title = title;
+        //}
 
-        public void SetPrice(decimal price)
-        {
-            Price = price;
-        }
+        //public void SetName(string name)
+        //{
+        //    Name = name;
+        //}
 
-        public void SetProductStatus(ProductStatus productStatus)
-        {
-            ProductStatus = productStatus;
-        }
+        //public void SetPrice(decimal price)
+        //{
+        //    Price = price;
+        //}
 
-        public void SetMenuId(MenuId menuId)
-        {
-            MenuId = menuId;
-        }
+        //public void SetProductStatus(ProductStatus productStatus)
+        //{
+        //    ProductStatus = productStatus;
+        //}
 
-        public void SetImage(byte[] image)
-        {
-            Image = image;
-        }
+        //public void SetMenuId(MenuId menuId)
+        //{
+        //    MenuId = menuId;
+        //}
 
-        public void AddProductDetail(ProductDetail productDetail)
-        {
-            ProductDetails = productDetail;
-        }
+        //public void SetImage(byte[] image)
+        //{
+        //    Image = image;
+        //}
 
+        //public void AddProductDetail(ProductDetail productDetail)
+        //{
+        //    ProductDetails = productDetail;
+        //}
+        #endregion
 
         public void UpdateProduct(string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
         {
-            SetTitle(title);
-            SetName(name);
-            SetPrice(price);
-            SetImage(image);
-            AddProductDetail(productDetail);
-            SetMenuId(menuId);
-            SetProductStatus(productStatus);
+            SetTitle(title).SetName(name).SetPrice(price).SetImage(image).AddProductDetail(productDetail).SetMenuId(menuId).SetProductStatus(productStatus);
         }
 
         public void UpdateProduct(ProductId productId, string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
         {
-            Id = productId;
-            SetTitle(title);
-            SetName(name);
-            SetPrice(price);
-            SetImage(image);
-            AddProductDetail(productDetail);
-            SetMenuId(menuId);
-            SetProductStatus(productStatus);
+            SetId(productId).SetTitle(title).SetName(name).SetPrice(price).SetImage(image).AddProductDetail(productDetail).SetMenuId(menuId).SetProductStatus(productStatus);
         }
 
-        public void UpdateProduct(ProductId productId, string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId,string tenantId, ProductStatus productStatus = ProductStatus.InStock)
+        public void UpdateProduct(ProductId productId, string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, string tenantId, ProductStatus productStatus = ProductStatus.InStock)
         {
-            Id = productId;
-            SetTitle(title);
-            SetName(name);
-            SetPrice(price);
-            SetImage(image);
-            AddProductDetail(productDetail);
-            SetMenuId(menuId);
-            SetProductStatus(productStatus);
-            SetTenantId(tenantId);
+            SetId(productId).SetTitle(title).SetName(name).SetPrice(price).SetImage(image).AddProductDetail(productDetail).SetMenuId(menuId).SetProductStatus(productStatus).SetTenantId(tenantId);
         }
     }
 }

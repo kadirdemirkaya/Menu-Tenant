@@ -55,59 +55,62 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
           => new(companyId, name, databaseName, appUserId);
 
         public static Company Create(CompanyId companyId, string name, string databaseName, AppUserId appUserId, string tenantId)
-        => new(companyId, name, databaseName, appUserId, tenantId);
+          => new(companyId, name, databaseName, appUserId, tenantId);
 
-        public void SetName(string name)
-        {
-            Name = name;
-        }
 
-        public void SetDatabaseName(string databaseName)
-        {
-            DatabaseName = databaseName;
-        }
+        public Company SetId(CompanyId id) { Id = id; return this; }
+        public Company SetName(string name) { Name = name; return this; }
+        public Company SetDatabaseName(string databaseName) { DatabaseName = databaseName; return this; }
+        public Company SetAppUserId(AppUserId appUserId) { AppUserId = appUserId; return this; }
+        public Company SetConnectionPool(ConnectionPool connectionPool) { ConnectionPool = connectionPool; return this; }
+        public Company SetTenantIdForEntity(string id) { SetTenantId(id); return this; }
+        public Company SetUpdatedDate(DateTime updateDate) { SetCreatedDateUTC(updateDate); return this; }
+        public Company SetCreatedDate(DateTime createdDate) { SetCreatedDateUTC(createdDate); return this; }
+        public Company SetIsDeletedForEntity(bool isDeleted) { SetIsDeleted(isDeleted); return this; }
+
+
+        #region Old Setter Method
+        //public void SetName(string name)
+        //{
+        //    Name = name;
+        //}
+
+        //public void SetDatabaseName(string databaseName)
+        //{
+        //    DatabaseName = databaseName;
+        //}
+
+        //public void SetAppUserId(AppUserId appUserId)
+        //{
+        //    AppUserId = appUserId;
+        //}
+
+        //public void SetTenantIdForEntity(string id)
+        //{
+        //    SetTenantId(id);
+        //}
+        #endregion
 
         public void UpdateCompany(string name, string databaseName, AppUserId appUserId)
         {
-            SetName(name);
-            SetDatabaseName(databaseName);
-            SetAppUserId(appUserId);
+            SetName(name)
+            .SetDatabaseName(databaseName)
+            .SetAppUserId(appUserId);
         }
         public void UpdateCompany(CompanyId companyId, string name, string databaseName, AppUserId appUserId)
         {
-            Id = companyId;
-            SetName(name);
-            SetDatabaseName(databaseName);
-            SetAppUserId(appUserId);
+            SetId(companyId)
+            .SetName(name)
+            .SetDatabaseName(databaseName)
+            .SetAppUserId(appUserId);
         }
         public void UpdateCompany(CompanyId companyId, string name, string databaseName, AppUserId appUserId, string tenantId)
         {
-            Id = companyId;
-            SetName(name);
-            SetDatabaseName(databaseName);
-            SetAppUserId(appUserId);
-            SetTenantId(tenantId);
-        }
-
-        public void AddOrUpdateConnectionPool(ConnectionPool connectionPool)
-        {
-            ConnectionPool = connectionPool;
-        }
-
-        public void RemoveConnectionPool()
-        {
-            if (ConnectionPool != null)
-                ConnectionPool = null;
-        }
-
-        public void SetAppUserId(AppUserId appUserId)
-        {
-            AppUserId = appUserId;
-        }
-
-        public void SetTenantIdForEntity(string id)
-        {
-            SetTenantId(id);
+            SetId(companyId)
+            .SetName(name)
+            .SetDatabaseName(databaseName)
+            .SetAppUserId(appUserId)
+            .SetTenantId(tenantId);
         }
     }
 }
