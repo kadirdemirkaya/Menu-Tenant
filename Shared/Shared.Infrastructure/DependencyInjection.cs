@@ -1,26 +1,28 @@
 ﻿using Base.Caching;
 using Base.Caching.Configurations;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using SecretManagement;
 using Serilog;
 using Serilog.Events;
 using Shared.Application.Abstractions;
 using Shared.Domain.Models;
-using Shared.Domain.Models.Configs;
-using Shared.Infrastructure.Extensions;
 using Shared.Infrastructure.Middlewares;
 using Shared.Infrastructure.Services;
 using StackExchange.Redis;
-using System.Text;
 
 namespace Shared.Infrastructure
 {
     public static class DependencyInjection
     {
+        public static IServiceCollection AddPollyPolicies(this IServiceCollection services)
+        {
+            services.AddSingleton<IPollyPolicyService, PollyPolicyService>();
+
+            return services;
+        }
+
         public static IServiceCollection SecretManagementRegistration(this IServiceCollection services)
         {
             services.AddSingleton<ISecretManagementFactory, SecretManagementFactory>();

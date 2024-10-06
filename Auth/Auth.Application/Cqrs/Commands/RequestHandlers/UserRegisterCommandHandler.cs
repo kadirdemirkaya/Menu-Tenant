@@ -12,7 +12,7 @@ namespace Auth.Application.Cqrs.Commands.RequestHandlers
         {
             bool response = await _userService.UserRegisterAsync(@event.userRegisterModelDto);
 
-            return response is true ? new UserRegisterCommandResponse(ApiResponseModel<bool>.CreateSuccess(true)) : new UserRegisterCommandResponse(ApiResponseModel<bool>.CreateFailure<bool>());
+            return response ? new UserRegisterCommandResponse(ApiResponseModel<bool>.CreateSuccess(true)) : new UserRegisterCommandResponse(ApiResponseModel<bool>.CreateFailure<bool>());
         }
     }
 }

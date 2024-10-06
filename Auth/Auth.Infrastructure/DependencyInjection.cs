@@ -13,6 +13,7 @@ using Shared.Application.Abstractions;
 using Shared.Domain.Aggregates.UserAggregate;
 using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.Aggregates.UserAggregate.ValueObjects;
+using Shared.Domain.Models;
 using Shared.Infrastructure;
 using Shared.Stream;
 
@@ -78,7 +79,8 @@ namespace Auth.Infrastructure
         {
             services.AddDbContext<AuthDbContext>((sp, options) =>
             {
-                options.UseNpgsql("Server=localhost;port=5432;Database=authdb;User Id=admin;Password=passw00rd");
+                ISecretsManagerService _secretsManagerService = sp.GetRequiredService<ISecretsManagerService>();
+                options.UseNpgsql(_secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Auth_Url).GetAwaiter().GetResult());
             });
 
             return services;

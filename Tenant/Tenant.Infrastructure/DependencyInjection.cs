@@ -11,6 +11,7 @@ using Shared.Application.Abstractions;
 using Shared.Domain.Aggregates.MenuAggregate.Entities;
 using Shared.Domain.Aggregates.MenuAggregate.ValueObjects;
 using Shared.Domain.Aggregates.ProductAggregate;
+using Shared.Domain.Models;
 using Shared.Domain.Models.ConnectionPools;
 using Shared.Infrastructure;
 using Shared.Stream;
@@ -95,7 +96,7 @@ namespace Tenant.Infrastructure
                 var workContext = sp.GetRequiredService<IWorkContext>();
                 var cacheManager = sp.GetRequiredService<ICacheManager>();
                 var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
-
+                var _secretsManagerService = sp.GetRequiredService<ISecretsManagerService>();
                 conCompModels = cacheManager.Get<List<ConnectionPoolWithCompanyModel>>(cacheKey,
                       () => Task.FromResult<List<ConnectionPoolWithCompanyModel>>(null).GetAwaiter().GetResult()
                 );
@@ -133,7 +134,7 @@ namespace Tenant.Infrastructure
                     }
 
                 if (!isConfigure)
-                    options.UseNpgsql("Server=localhost;port=5432;Database=shareddb;User Id=admin;Password=passw00rd");
+                    options.UseNpgsql(_secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Shared_Url).GetAwaiter().GetResult());
             });
 
             return services;

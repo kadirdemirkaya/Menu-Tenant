@@ -28,7 +28,7 @@ namespace Tenant.Application.Cqrs.Commands.RequestHandlers
                 if (updateResponse)
                     updateResponse = await _repository.SaveCahangesAsync();
 
-                return updateResponse is true ? new(ApiResponseModel<bool>.CreateSuccess(true)) : new(ApiResponseModel<bool>.CreateFailure<bool>("got a error while product updated"));
+                return updateResponse ? new(ApiResponseModel<bool>.CreateSuccess(true)) : new(ApiResponseModel<bool>.CreateFailure<bool>("got a error while product updated"));
             }
 
             return new(ApiResponseModel<bool>.CreateNotFound<bool>("No object to update found !"));

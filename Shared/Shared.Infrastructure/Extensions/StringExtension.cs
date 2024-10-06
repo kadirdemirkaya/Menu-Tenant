@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Security.Cryptography;
+using System.Text;
 
 namespace Shared.Infrastructure.Extensions
 {
@@ -42,8 +43,6 @@ namespace Shared.Infrastructure.Extensions
         {
             return dbName.StartsWith("personaldb_");
         }
-
-
 
         public static string SetDbUrl(string host, string port, string userName, string password, string databaseName)
         {

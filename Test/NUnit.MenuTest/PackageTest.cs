@@ -1,15 +1,12 @@
 ﻿using EventBusDomain;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using NUnit.MenuTest.Events.Event;
 using NUnit.MenuTest.Events.Response;
 using NUnit.MenuTest.StreamEvents;
 using SecretManagement;
-using Shared.Domain.Models;
 using Shared.Stream;
 using StackExchange.Redis;
-using System;
 
 namespace NUnit.MenuTest
 {
@@ -97,7 +94,7 @@ namespace NUnit.MenuTest
             var serviceProvider = services.BuildServiceProvider();
             var redisStreamService = serviceProvider.GetRequiredService<RedisStreamService>();
 
-            await redisStreamService.PublishEventAsync(new StreamEvent() { Message = "naifa7ggbdf" });
+            await redisStreamService.PublishEventAsync(new StreamEvent() { Message = "naifa7ggbdf" }, StreamEnum.AuthApi);
 
             Assert.Pass();
         }
@@ -108,8 +105,7 @@ namespace NUnit.MenuTest
             var serviceProvider = services.BuildServiceProvider();
             var redisStreamService = serviceProvider.GetRequiredService<RedisStreamService>();
 
-            await redisStreamService.PublishEventAsync(new ConnectionPoolUpdateStreamEvent() { Message = "naifa7ggbdf" });
+            await redisStreamService.PublishEventAsync(new ConnectionPoolUpdateStreamEvent() { Message = "naifa7ggbdf" }, StreamEnum.AuthApi);
         }
-
     }
 }

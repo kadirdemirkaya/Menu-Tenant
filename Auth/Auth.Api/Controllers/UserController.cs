@@ -15,7 +15,7 @@ namespace Auth.Api.Controllers
         public async Task<IActionResult> DeleteUser([FromHeader] Guid id)
         {
             DeleteUserCommandRequest request = new(id);
-            DeleteUserCommandResponse response = await _eventBus.PublishAsync(request) as DeleteUserCommandResponse;
+            DeleteUserCommandResponse? response = await _eventBus.PublishAsync(request) as DeleteUserCommandResponse;
 
             return response.ApiResponseModel.Success is true ? Ok() : BadRequest(response.ApiResponseModel);
         }
@@ -25,7 +25,7 @@ namespace Auth.Api.Controllers
         public async Task<IActionResult> UpdateUser([FromBody] UserUpdateModelDto userUpdateModelDto)
         {
             UpdateUserCommandRequest request = new(userUpdateModelDto);
-            UpdateUserCommandResponse response = await _eventBus.PublishAsync(request) as UpdateUserCommandResponse;
+            UpdateUserCommandResponse? response = await _eventBus.PublishAsync(request) as UpdateUserCommandResponse;
 
             return response.ApiResponseModel.Success is true ? Ok() : BadRequest(response.ApiResponseModel);
         }

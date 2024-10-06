@@ -24,7 +24,7 @@ namespace Auth.Application.Cqrs.Commands.RequestHandlers
                 UserModelDto userModelDto = new();
                 userModelDto = userModelDto.UserModelDtoMapper(currentUser);
 
-                return updateRes is true ? new(ApiResponseModel<UserModelDto>.CreateSuccess(userModelDto)) : new(ApiResponseModel<UserModelDto>.CreateServerError<UserModelDto>());
+                return updateRes ? new(ApiResponseModel<UserModelDto>.CreateSuccess(userModelDto)) : new(ApiResponseModel<UserModelDto>.CreateServerError<UserModelDto>());
             }
 
             return new(ApiResponseModel<UserModelDto>.CreateFailure<UserModelDto>());

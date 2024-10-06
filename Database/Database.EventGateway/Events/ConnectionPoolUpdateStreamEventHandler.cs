@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using SecretManagement;
 using Shared.Domain.Aggregates.MenuDatabaseAggregate;
+using Shared.Domain.Models;
 using Shared.Domain.Models.ConnectionPools;
 using Shared.Infrastructure.Extensions;
 using Shared.Stream;
@@ -34,7 +35,7 @@ namespace Database.EventGateway.Events
 
             if (!anyResponse)
             {
-                await _databaseService.SetConnectionStringAsync("Server=localhost;port=5432;Database=authdb;User Id=admin;Password=passw00rd");
+                await _databaseService.SetConnectionStringAsync(await _secretsManager.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Database_Url));
 
                 MenuDatabase menuDatabase = MenuDatabase.Create(@event.ConnectionPoolUpdate.Host, @event.ConnectionPoolUpdate.Port, @event.ConnectionPoolUpdate.DatabaseName, @event.ConnectionPoolUpdate.Username, @event.ConnectionPoolUpdate.Password, @event.ConnectionPoolUpdate.TenantId);
 
@@ -42,7 +43,7 @@ namespace Database.EventGateway.Events
                 {
                     _logger.LogInformation("{DateTime} : {Datebase} create process is succesfully.", DateTime.UtcNow, @event.ConnectionPoolUpdate.DatabaseName);
 
-                    using (var connection = new NpgsqlConnection("Server=localhost;port=5432;Database=authdb;User Id=admin;Password=passw00rd"))
+                    using (var connection = new NpgsqlConnection(await _secretsManager.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Database_Url)))
                     {
                         await connection.OpenAsync();
 

@@ -35,8 +35,24 @@ namespace Shared.Domain.Aggregates.ProductAggregate
             Description = description;
             WebUrl = webUrl;
         }
+        public Menu(string name, string tenantId, string? description, string? webUrl)
+        {
+            Id = MenuId.CreateUnique();
+            TenantId = tenantId;
+            Name = name;
+            Description = description;
+            WebUrl = webUrl;
+        }
 
-        public Menu(MenuId id, string name, string? description, string? webUrl) : base(id)
+        public Menu(MenuId menuId, string name, string? description, string? webUrl)
+        {
+            Id = menuId;
+            Name = name;
+            Description = description;
+            WebUrl = webUrl;
+        }
+
+        public Menu(MenuId id, string name, string tenantId, string? description, string? webUrl) : base(id)
         {
             Name = name;
             Description = description;
@@ -46,8 +62,14 @@ namespace Shared.Domain.Aggregates.ProductAggregate
         public static Menu Create(string name, string? description, string? webUrl)
             => new(name, description, webUrl);
 
-        public static Menu Create(MenuId id, string name, string? description, string? webUrl)
-            => new(id, name, description, webUrl);
+        public static Menu Create(MenuId menuId, string name, string? description, string? webUrl)
+         => new(menuId, name, description, webUrl);
+
+        public static Menu Create(string name, string tenantId, string? description, string? webUrl)
+            => new(name, description, webUrl);
+
+        public static Menu Create(MenuId id, string name, string tenantId, string? description, string? webUrl)
+            => new(id, name, tenantId, description, webUrl);
 
         public void SetName(string name)
         {
@@ -72,23 +94,23 @@ namespace Shared.Domain.Aggregates.ProductAggregate
         public void UpdateMenu(string name, string? description, string? webUrl)
         {
             SetName(name);
-            SetDescription(description);
-            SetWebUrl(webUrl);
+            SetDescription(description ?? string.Empty);
+            SetWebUrl(webUrl ?? string.Empty);
         }
 
         public void UpdateMenu(MenuId id, string name, string? description, string? webUrl)
         {
             Id = id;
             SetName(name);
-            SetDescription(description);
-            SetWebUrl(webUrl);
+            SetDescription(description ?? string.Empty);
+            SetWebUrl(webUrl ?? string.Empty);
         }
         public void UpdateMenu(MenuId id, string name, string? description, string? webUrl, string tenantId)
         {
             Id = id;
             SetName(name);
-            SetDescription(description);
-            SetWebUrl(webUrl);
+            SetDescription(description ?? string.Empty);
+            SetWebUrl(webUrl ?? string.Empty);
             SetTenantId(tenantId);
         }
 

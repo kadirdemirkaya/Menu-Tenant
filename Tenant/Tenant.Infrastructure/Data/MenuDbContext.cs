@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SecretManagement;
 using Shared.Application.Abstractions;
 using Shared.Domain.Aggregates.MenuAggregate.Entities;
 using Shared.Domain.Aggregates.ProductAggregate;
 using Shared.Domain.BaseTypes;
+using Shared.Domain.Models;
 using Shared.Infrastructure.Configurations;
 
 namespace Tenant.Infrastructure.Data
@@ -10,6 +12,7 @@ namespace Tenant.Infrastructure.Data
     public class MenuDbContext : DbContext
     {
         private readonly IWorkContext _workContext;
+        private readonly ISecretsManagerService _secretsManagerService;
 
         public MenuDbContext()
         {
@@ -18,9 +21,10 @@ namespace Tenant.Infrastructure.Data
         public MenuDbContext(DbContextOptions options) : base(options) // !!!
         {
         }
-        public MenuDbContext(DbContextOptions options, IWorkContext workContext) : base(options) // !!!
+        public MenuDbContext(DbContextOptions options, IWorkContext workContext, ISecretsManagerService secretsManagerService) : base(options) // !!!
         {
             _workContext = workContext;
+            _secretsManagerService = secretsManagerService;
         }
 
 
@@ -39,7 +43,7 @@ namespace Tenant.Infrastructure.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql("Server=localhost;port=5432;Database=shareddb;User Id=admin;Password=passw00rd");
+                optionsBuilder.UseNpgsql(_secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Shared_Url).GetAwaiter().GetResult());
             }
         }
 
@@ -62,7 +66,7 @@ namespace Tenant.Infrastructure.Data
 
                 if (_workContext?.Tenant?.TenantId != null || entry.Entity.TenantId == null)
                 {
-                    entry.Entity.TenantId = _workContext.Tenant.TenantId;
+                    entry.Entity.TenantId = _workContext?.Tenant?.TenantId ?? Guid.NewGuid().ToString();
                 }
             }
             return await base.SaveChangesAsync(cancellationToken);
@@ -87,7 +91,7 @@ namespace Tenant.Infrastructure.Data
 
                 if (_workContext?.Tenant?.TenantId != null || entry.Entity.TenantId == null)
                 {
-                    entry.Entity.TenantId = _workContext.Tenant.TenantId;
+                    entry.Entity.TenantId = _workContext?.Tenant?.TenantId ?? Guid.NewGuid().ToString();
                 }
             }
 

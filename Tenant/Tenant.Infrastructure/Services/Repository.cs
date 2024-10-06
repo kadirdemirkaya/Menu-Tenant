@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Shared.Application.Abstractions;
 using Shared.Application.Services;
@@ -42,7 +43,7 @@ namespace Tenant.Infrastructure.Repository
             }
             catch (Exception ex)
             {
-                Log.Error("MsSql Error : " + ex.Message);
+                Log.Error(ex, "{Datetime} : Database Error: {Message}", DateTime.UtcNow, ex.Message);
                 return false;
             }
         }
@@ -50,7 +51,7 @@ namespace Tenant.Infrastructure.Repository
         public async Task<bool> AnyAsync(bool ignoreQueryFilter = false)
             => await AnyAsync(null, true, ignoreQueryFilter);
 
-        public async Task<int> CountAsync(Expression<Func<T, bool>> expression = null, bool tracking = true, bool ignoreQueryFilter = false)
+        public async Task<int> CountAsync(Expression<Func<T, bool>>? expression = null, bool tracking = true, bool ignoreQueryFilter = false)
         {
             try
             {
@@ -72,8 +73,8 @@ namespace Tenant.Infrastructure.Repository
             }
             catch (Exception ex)
             {
-                Log.Error("MsSql Error : " + ex.Message);
-                return default;
+                Log.Error(ex, "{Datetime} : Database Error: {Message}", DateTime.UtcNow, ex.Message);
+                return -1;
             }
         }
 
@@ -92,7 +93,7 @@ namespace Tenant.Infrastructure.Repository
             return await Table.ToListAsync();
         }
 
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> expression = null, bool tracking = true, bool ignoreQueryFilter = false, params Expression<Func<T, object>>[] includeEntity)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? expression = null, bool tracking = true, bool ignoreQueryFilter = false, params Expression<Func<T, object>>[]? includeEntity)
         {
             var query = Table.AsQueryable();
             if (!tracking)
@@ -101,7 +102,11 @@ namespace Tenant.Infrastructure.Repository
             if (ignoreQueryFilter)
                 query = query.IgnoreQueryFilters();
 
-            if (includeEntity.Any())
+            //if (includeEntity.Any())
+            //    foreach (var include in includeEntity)
+            //        query = query.Include(include);
+
+            if (includeEntity.Length > 0)
                 foreach (var include in includeEntity)
                     query = query.Include(include);
 
@@ -111,8 +116,8 @@ namespace Tenant.Infrastructure.Repository
             return await Table.ToListAsync();
         }
 
-        public async Task<PaginatedList<T>> GetAllAsync(Expression<Func<T, bool>> expression = null, bool tracking = true, int pageIndex = 1,
-    int pageSize = 10, bool ignoreQueryFilter = false, params Expression<Func<T, object>>[] includeEntity)
+        public async Task<PaginatedList<T>> GetAllAsync(Expression<Func<T, bool>>? expression = null, bool tracking = true, int pageIndex = 1,
+    int pageSize = 10, bool ignoreQueryFilter = false, params Expression<Func<T, object>>[]? includeEntity)
         {
             try
             {
@@ -123,7 +128,11 @@ namespace Tenant.Infrastructure.Repository
                 if (ignoreQueryFilter)
                     query = query.IgnoreQueryFilters();
 
-                if (includeEntity.Any())
+                //if (includeEntity.Any())
+                //    foreach (var include in includeEntity)
+                //        query = query.Include(include);
+
+                if (includeEntity.Length > 0)
                     foreach (var include in includeEntity)
                         query = query.Include(include);
 
@@ -141,13 +150,13 @@ namespace Tenant.Infrastructure.Repository
             }
             catch (Exception ex)
             {
-                Log.Error("MsSql Error : " + ex.Message);
+                Log.Error(ex, "{Datetime} : Database Error: {Message}", DateTime.UtcNow, ex.Message);
                 return null;
             }
         }
 
         public async Task<PaginatedList<T>> GetAllAsync(bool tracking = true, int pageIndex = 1,
-    int pageSize = 10, bool ignoreQueryFilter = false, params Expression<Func<T, object>>[] includeEntity)
+    int pageSize = 10, bool ignoreQueryFilter = false, params Expression<Func<T, object>>[]? includeEntity)
         {
             try
             {
@@ -158,9 +167,14 @@ namespace Tenant.Infrastructure.Repository
                 if (ignoreQueryFilter)
                     query = query.IgnoreQueryFilters();
 
-                if (includeEntity.Any())
+                //if (includeEntity.Any())
+                //    foreach (var include in includeEntity)
+                //        query = query.Include(include);
+
+                if (includeEntity.Length > 0)
                     foreach (var include in includeEntity)
                         query = query.Include(include);
+
                 var count = await query.CountAsync();
 
                 var items = await query
@@ -172,7 +186,7 @@ namespace Tenant.Infrastructure.Repository
             }
             catch (Exception ex)
             {
-                Log.Error("MsSql Error : " + ex.Message);
+                Log.Error(ex, "{Datetime} : Database Error: {Message}", DateTime.UtcNow, ex.Message);
                 return null;
             }
         }
@@ -185,12 +199,12 @@ namespace Tenant.Infrastructure.Repository
             }
             catch (Exception ex)
             {
-                Log.Error("MsSql Error : " + ex.Message);
+                Log.Error(ex, "{Datetime} : Database Error: {Message}", DateTime.UtcNow, ex.Message);
                 return null;
             }
         }
 
-        public async Task<T> GetAsync(Expression<Func<T, bool>> expression = null, bool tracking = true, bool ignoreQueryFilter = false, params Expression<Func<T, object>>[] includeEntity)
+        public async Task<T> GetAsync(Expression<Func<T, bool>>? expression = null, bool tracking = true, bool ignoreQueryFilter = false, params Expression<Func<T, object>>[]? includeEntity)
         {
             try
             {
@@ -202,7 +216,11 @@ namespace Tenant.Infrastructure.Repository
                 if (ignoreQueryFilter)
                     query = query.IgnoreQueryFilters();
 
-                if (includeEntity.Any())
+                //if (includeEntity.Any())
+                //    foreach (var include in includeEntity)
+                //        query = query.Include(include);
+
+                if (includeEntity.Length > 0)
                     foreach (var include in includeEntity)
                         query = query.Include(include);
 
@@ -213,10 +231,52 @@ namespace Tenant.Infrastructure.Repository
             }
             catch (Exception ex)
             {
-                Log.Error("MsSql Error : " + ex.Message);
-                return default;
+                Log.Error(ex, "{Datetime} : Database Error: {Message}", DateTime.UtcNow, ex.Message);
+                return null;
             }
         }
+
+        public async Task<PaginatedList<T>> GetAsync(Expression<Func<T, bool>>? expression = null, bool tracking = true, bool ignoreQueryFilter = false, int pageIndex = 1,
+    int pageSize = 10, params Expression<Func<T, object>>[]? includeEntity)
+        {
+            try
+            {
+                var query = Table.AsQueryable();
+
+                if (!tracking)
+                    query = query.AsNoTracking();
+
+                if (ignoreQueryFilter)
+                    query = query.IgnoreQueryFilters();
+
+                //if (includeEntity.Any())
+                //    foreach (var include in includeEntity)
+                //        query = query.Include(include);
+
+                if (includeEntity.Length > 0)
+                    foreach (var include in includeEntity)
+                        query = query.Include(include);
+
+                if (expression != null)
+                    query = query.Where(expression);
+
+                var count = await query.CountAsync();
+
+                var items = await query
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                return new PaginatedList<T>(items, count, pageIndex, pageSize);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "{Datetime} : Database Error: {Message}", DateTime.UtcNow, ex.Message);
+                return null;
+            }
+        }
+
+
         public async Task<bool> CreateAsync(T entity)
         {
             try
@@ -226,7 +286,7 @@ namespace Tenant.Infrastructure.Repository
             }
             catch (Exception ex)
             {
-                Log.Error("MsSql Error : " + ex.Message);
+                Log.Error(ex, "{Datetime} : Database Error: {Message}", DateTime.UtcNow, ex.Message);
                 return false;
             }
         }
@@ -240,7 +300,7 @@ namespace Tenant.Infrastructure.Repository
             }
             catch (Exception ex)
             {
-                Log.Error("MsSql Error : " + ex.Message);
+                Log.Error(ex, "{Datetime} : Database Error: {Message}", DateTime.UtcNow, ex.Message);
                 return false;
             }
         }
@@ -254,7 +314,7 @@ namespace Tenant.Infrastructure.Repository
             }
             catch (Exception ex)
             {
-                Log.Error("MsSql Error : " + ex.Message);
+                Log.Error(ex, "{Datetime} : Database Error: {Message}", DateTime.UtcNow, ex.Message);
                 return false;
             }
         }
@@ -268,7 +328,7 @@ namespace Tenant.Infrastructure.Repository
             }
             catch (Exception ex)
             {
-                Log.Error("MsSql Error : " + ex.Message);
+                Log.Error(ex, "{Datetime} : Database Error: {Message}", DateTime.UtcNow, ex.Message);
                 return false;
             }
         }
@@ -281,7 +341,7 @@ namespace Tenant.Infrastructure.Repository
             }
             catch (Exception ex)
             {
-                Log.Error("MsSql Error : " + ex.Message);
+                Log.Error(ex, "{Datetime} : Database Error: {Message}", DateTime.UtcNow, ex.Message);
                 return false;
             }
         }

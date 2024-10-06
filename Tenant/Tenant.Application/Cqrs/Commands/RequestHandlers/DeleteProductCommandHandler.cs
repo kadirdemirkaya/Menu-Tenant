@@ -19,9 +19,10 @@ namespace Tenant.Application.Cqrs.Commands.RequestHandlers
 
             if (delResponse)
             {
-                delResponse = await _repository.SaveCahangesAsync();
+                bool saveResponse = await _repository.SaveCahangesAsync();
 
-                return new(ApiResponseModel<bool>.CreateSuccess(true));
+                if (saveResponse)
+                    return new(ApiResponseModel<bool>.CreateSuccess(true));
             }
             return new(ApiResponseModel<bool>.CreateFailure<bool>("a got error in database while product added"));
         }

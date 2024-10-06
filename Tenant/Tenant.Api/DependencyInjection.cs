@@ -2,6 +2,7 @@
 using Microsoft.OpenApi.Models;
 using Shared.Application.Extensions;
 using Shared.Domain.Models.Configs;
+using Shared.Infrastructure.Filters;
 using Tenant.Api.Filters;
 
 namespace Tenant.Api
@@ -59,6 +60,8 @@ namespace Tenant.Api
             });
 
             services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
+
+            services.AddScoped<PaginationFilter>();
 
             return services;
         }

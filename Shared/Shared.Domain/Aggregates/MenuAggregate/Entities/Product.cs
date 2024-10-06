@@ -40,7 +40,19 @@ namespace Shared.Domain.Aggregates.MenuAggregate.Entities
             Image = image;
         }
 
-        public Product(ProductId productId, string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock) : base(productId)
+        public Product(string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId,string tenantId, ProductStatus productStatus = ProductStatus.InStock)
+        {
+            Id = ProductId.CreateUnique();
+            Title = title;
+            Name = name;
+            ProductDetails = productDetail;
+            MenuId = menuId;
+            ProductStatus = productStatus;
+            Image = image;
+            TenantId = tenantId;
+        }
+
+        public Product(ProductId productId, string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, string tenantId, ProductStatus productStatus = ProductStatus.InStock) : base(productId)
         {
             Id = productId;
             Title = title;
@@ -49,13 +61,17 @@ namespace Shared.Domain.Aggregates.MenuAggregate.Entities
             MenuId = menuId;
             ProductStatus = productStatus;
             Image = image;
+            TenantId = tenantId;
         }
 
+        public static Product Create(ProductId id)
+            => new(id);
         public static Product Create(string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
             => new(title, name, price, image, productDetail, menuId, productStatus);
-
-        public static Product Create(ProductId productId, string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, ProductStatus productStatus = ProductStatus.InStock)
-           => new(productId, title, name, price, image, productDetail, menuId, productStatus);
+        public static Product Create(string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, string tenantId, ProductStatus productStatus = ProductStatus.InStock)
+            => new(title, name, price, image, productDetail, menuId, tenantId,productStatus);
+        public static Product Create(ProductId productId, string title, string name, decimal price, byte[] image, ProductDetail productDetail, MenuId menuId, string tenantId, ProductStatus productStatus = ProductStatus.InStock)
+           => new(productId, title, name, price, image, productDetail, menuId, tenantId, productStatus);
 
         public void SetTitle(string title)
         {

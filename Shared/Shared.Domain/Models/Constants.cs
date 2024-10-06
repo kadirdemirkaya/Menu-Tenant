@@ -39,9 +39,14 @@ namespace Shared.Domain.Models
             public const string DevelopmentPOSTGRES_POSTGRES_SharedDb = "Development_POSTGRES_SharedDb";
             public const string DevelopmentPOSTGRES_POSTGRES_SharedDb_TenantId = "23B7F25B-D97F-4B20-8608-7F2C55ACFA4E";
             public const string DevelopmentPOSTGRES_POSTGRES_Database = "Development_POSTGRES_Database";
+            public const string DevelopmentPOSTGRES_POSTGRES_Auth_Url = "Development_POSTGRES_Auth_Url";
+            public const string DevelopmentPOSTGRES_POSTGRES_Database_Url = "Development_POSTGRES_Database_Url";
+            public const string DevelopmentPOSTGRES_POSTGRES_Shared_Url = "Development_POSTGRES_Shared_Url";
 
             public const string DevelopmentAuthApi = "Development_AuthApi";
             public const string DevelopmentTenantApi = "Development_TenantApi";
+            public const string DevelopmentDatabaseApi = "Development_DatabaseApi";
+            public const string DevelopmentHealtCheckApi = "Development_HealtCheckApi";
         }
 
         public static class Stream

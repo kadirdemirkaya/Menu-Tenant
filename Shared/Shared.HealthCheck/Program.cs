@@ -1,5 +1,6 @@
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using SecretManagement;
 using Shared.Domain.Models;
 using Shared.HealthCheck;
@@ -18,6 +19,8 @@ builder.Services.SecretManagementRegistration();
 
 builder.Services.AddServiceDiscovery(o => o.UseConsul());
 
+builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
+
 using (ISecretsManagerService secretsManagerService = new AwsSecretsManagerService(builder.Configuration))
 {
     builder.Services.AddHttpClient("xabarihealthcheck", client =>
@@ -28,15 +31,43 @@ using (ISecretsManagerService secretsManagerService = new AwsSecretsManagerServi
 .AddRoundRobinLoadBalancer();
 
     builder.Services.AddHealthChecks()
-        .AddNpgSql($"{await secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_Host)}:{await secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_Port)}")
         .AddRedis(
             redisConnectionString: await secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentRedis2),
             name: "Redis",
-            tags: ["Docker-Compose", "Redis"])
+            tags: ["Docker-Compose", "Redis"]
+        )
+        .AddNpgSql(
+            connectionString: await secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Auth_Url),
+            name: "PostgreSql_AuthDb",
+            tags: ["Docker-Compose", "Postgresql", "AuthDB"]
+        )
+        .AddConsul(setup =>
+            {
+                setup.HostName = "localhost";
+                setup.Port = 8500;
+            },
+            name: "Consul",
+            tags: ["Docker-Compose", "Consul"]
+        )
+        .AddNpgSql(
+            connectionString: await secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Database_Url),
+            name: "PostgreSql_DatabaseDB",
+            tags: ["Docker-Compose", "Postgresql", "DatabaseDB"]
+        )
+        .AddNpgSql(
+            connectionString: await secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Shared_Url),
+            name: "PostgreSql_SharedDB",
+            tags: ["Docker-Compose", "Postgresql", "SharedDB"]
+        )
         .AddCheck(
             name: "Auth Api",
             instance: new HealthChecker2(await secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentAuthApi)),
             tags: ["Auth.Api", "REST"]
+        )
+        .AddCheck(
+            name: "Database Api",
+            instance: new HealthChecker2(await secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentDatabaseApi)),
+            tags: ["Auth.Api", "Event"]
         )
         .AddCheck(
             name: "Tenant Api",
@@ -64,6 +95,8 @@ app.UseHealthChecks("/health", new HealthCheckOptions
 
 app.MapGet("/", () => Results.Redirect("/health-ui"));
 app.MapGet("/swagger", () => Results.Redirect("/health-ui"));
+
+app.MapHealthChecks("/health");
 
 app.UseHttpsRedirection();
 

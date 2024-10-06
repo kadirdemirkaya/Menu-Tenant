@@ -14,9 +14,17 @@ namespace Shared.Infrastructure.Services
             }
         }
 
+        public string CompanyName
+        {
+            get
+            {
+                return _httpContextAccessor?.HttpContext?.Items?["CompanyName"]?.ToString() ?? string.Empty;
+            }
+        }
+
         public string GetItem(string item)
         {
-            return _httpContextAccessor?.HttpContext?.Items[$"{item}"] as string;
+            return _httpContextAccessor?.HttpContext?.Items[$"{item}"] as string ?? string.Empty;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Auth.Api.Controllers
         public async Task<ActionResult<ApiResponseModel<bool>>> UserRegister([FromBody] UserRegisterModelDto userRegisterModelDto)
         {
             UserRegisterCommandRequest request = new(userRegisterModelDto);
-            UserRegisterCommandResponse response = await _eventBus.PublishAsync(request) as UserRegisterCommandResponse;
+            UserRegisterCommandResponse? response = await _eventBus.PublishAsync(request) as UserRegisterCommandResponse;
 
             return Ok(response.ApiResponseModel);
         }
@@ -30,7 +30,7 @@ namespace Auth.Api.Controllers
         public async Task<ActionResult<ApiResponseModel<UserLoginModel>>> UserLogin([FromBody] UserLoginModelDto userLoginModelDto)
         {
             UserLoginCommandRequest request = new(userLoginModelDto);
-            UserLoginCommandResponse response = await _eventBus.PublishAsync(request) as UserLoginCommandResponse;
+            UserLoginCommandResponse? response = await _eventBus.PublishAsync(request) as UserLoginCommandResponse;
 
             return Ok(response.ApiResponseModel);
         }

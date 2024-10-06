@@ -82,11 +82,12 @@ namespace Auth.Infrastructure.Services
                 {
                     TenantId = user.TenantId,
                     Email = user.Email,
+                    CompanyName = user.Companies?.FirstOrDefault()?.Name ?? "",
                     PhoneNumber = user.PhoneNumber,
-                    DatabaseName = user.Companies.FirstOrDefault().DatabaseName
+                    DatabaseName = user.Companies?.FirstOrDefault()?.DatabaseName ?? ""
                 };
 
-                ConnectionPool connectionPool = await _dbContext.ConnectionPools.IgnoreQueryFilters().Where(cp => cp.TenantId == user.TenantId).FirstOrDefaultAsync();
+                ConnectionPool? connectionPool = await _dbContext.ConnectionPools.IgnoreQueryFilters().Where(cp => cp.TenantId == user.TenantId).FirstOrDefaultAsync();
 
                 tenantModel.Name = connectionPool.Name;
                 tenantModel.Host = connectionPool.Host;
@@ -115,8 +116,9 @@ namespace Auth.Infrastructure.Services
                 {
                     TenantId = user.TenantId,
                     Email = user.Email,
+                    CompanyName = company.Name,
                     PhoneNumber = user.PhoneNumber,
-                    DatabaseName = user.Companies.FirstOrDefault().DatabaseName,
+                    DatabaseName = user.Companies?.FirstOrDefault()?.DatabaseName ?? company.DatabaseName,
                     Name = company.ConnectionPool.Name,
                     Host = company.ConnectionPool.Host,
                     Port = company.ConnectionPool.Port,

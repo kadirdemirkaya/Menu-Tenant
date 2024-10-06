@@ -9,7 +9,7 @@ using Tenant.Application.Cqrs.Commands.Responses;
 
 namespace Tenant.Application.Cqrs.Commands.RequestHandlers
 {
-    public class CreateMenuCommandHandler(IRepository<Menu, MenuId> _repository, ILogger<CreateMenuCommandHandler> _logger) : IEventHandler<CreateMenuCommandRequest, CreateMenuCommandResponse>
+    public class CreateMenuCommandHandler(IRepository<Menu, MenuId> _repository, IWorkContext _workContext, ILogger<CreateMenuCommandHandler> _logger) : IEventHandler<CreateMenuCommandRequest, CreateMenuCommandResponse>
     {
         public async Task<CreateMenuCommandResponse> Handle(CreateMenuCommandRequest @event)
         {
@@ -17,7 +17,7 @@ namespace Tenant.Application.Cqrs.Commands.RequestHandlers
 
             if (menuCount <= 10)
             {
-                Menu menu = Menu.Create(MenuId.CreateUnique(), @event.CreateMenuModelDto.Name, @event.CreateMenuModelDto.Description, null);
+                Menu menu = Menu.Create(MenuId.CreateUnique(), @event.CreateMenuModelDto.Name, @event.CreateMenuModelDto.Description, _workContext.Tenant?.CompanyName ?? null);
                 menu.SetActive(false);
 
                 Address address = Address.Create(@event.CreateMenuModelDto.Street, @event.CreateMenuModelDto.City, @event.CreateMenuModelDto.Country);
@@ -30,7 +30,7 @@ namespace Tenant.Application.Cqrs.Commands.RequestHandlers
 
                     createRes = await _repository.SaveCahangesAsync();
 
-                    return createRes is true ? new(ApiResponseModel<bool>.CreateSuccess(true)) : new(ApiResponseModel<bool>.CreateFailure<bool>("A error accured while menu created"));
+                    return createRes ? new(ApiResponseModel<bool>.CreateSuccess(true)) : new(ApiResponseModel<bool>.CreateFailure<bool>("A error accured while menu created"));
                 }
                 catch (Exception ex)
                 {

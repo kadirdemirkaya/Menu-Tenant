@@ -1,6 +1,8 @@
-﻿namespace Shared.Application.Services
+﻿using System.Collections;
+
+namespace Shared.Application.Services
 {
-    public class PaginatedList<T>
+    public class PaginatedList<T> : IEnumerable<T>
     {
         public int PageIndex { get; private set; }
         public int TotalPages { get; private set; }
@@ -19,5 +21,15 @@
 
         public bool HasPreviousPage => PageIndex > 1;
         public bool HasNextPage => PageIndex < TotalPages;
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return Items.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

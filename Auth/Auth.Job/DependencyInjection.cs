@@ -29,9 +29,10 @@ namespace Auth.Job
 
             services.AddStreamBus(Auth.Job.AssemblyReference.Assembly);
 
-            services.AddDbContext<AuthDbContext>(options =>
+            services.AddDbContext<AuthDbContext>((sp, options) =>
             {
-                options.UseNpgsql("Server=localhost;port=5432;Database=authdb;User Id=admin;Password=passw00rd");
+                ISecretsManagerService _secretsManagerService = sp.GetRequiredService<ISecretsManagerService>();
+                options.UseNpgsql(_secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Auth_Url).GetAwaiter().GetResult());
             });
 
             services.AddScoped<IRepository<Company, CompanyId>, Repository<Company, CompanyId>>();

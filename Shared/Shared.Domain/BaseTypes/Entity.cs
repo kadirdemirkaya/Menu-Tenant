@@ -1,13 +1,13 @@
 ﻿namespace Shared.Domain.BaseTypes
 {
-    public abstract class Entity<TId> : IEquatable<Entity<TId>>, ITenantId
+    public abstract class Entity<TId> : IEquatable<Entity<TId>>, IEntityTenantId
         where TId : notnull
     {
         public TId Id { get; protected set; }
         public string TenantId { get; set; }
-        public bool IsDeleted { get; protected set; }
-        public DateTime CreatedDateUTC { get; protected set; }
-        public DateTime? UpdatedDateUTC { get; protected set; }
+        public bool IsDeleted { get; set; }
+        public DateTime CreatedDateUTC { get; set; }
+        public DateTime? UpdatedDateUTC { get; set; }
 
 
         public Entity()

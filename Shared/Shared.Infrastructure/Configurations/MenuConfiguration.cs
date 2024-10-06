@@ -33,6 +33,8 @@ namespace Shared.Infrastructure.Configurations
 
             builder.Property(p => p.Name).HasMaxLength(100);
 
+            builder.Property(p => p.IsActive).IsRequired();
+
             builder.Property(p => p.Description).HasDefaultValue("NONE").HasMaxLength(250);
 
             builder.Property(p => p.WebUrl).HasDefaultValue("NONE").HasMaxLength(150);

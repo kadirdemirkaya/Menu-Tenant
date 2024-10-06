@@ -2,6 +2,7 @@
 using Database.EventGateway.Seed;
 using Database.EventGateway.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SecretManagement;
 using Shared.Domain.Models;
 using Shared.Infrastructure;
@@ -20,9 +21,9 @@ namespace Database.EventGateway
 
             services.AddDbContext<DatabaseContext>((serviceProvider, options) =>
             {
-                ISecretsManagerService secretManagement = serviceProvider.GetRequiredService<ISecretsManagerService>();
+                ISecretsManagerService _secretsManagerService = serviceProvider.GetRequiredService<ISecretsManagerService>();
 
-                options.UseNpgsql($"Server=localhost;port=5432;Database={secretManagement.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Database).GetAwaiter().GetResult()};User Id=admin;Password=passw00rd");
+                options.UseNpgsql(_secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Database_Url).GetAwaiter().GetResult());
             });
 
             services.SeqRegistration(configuration);

@@ -16,8 +16,8 @@ namespace Tenant.Application.Cqrs.Commands.RequestHandlers
             foreach (var productModel in @event.AddProductsModelDtos)
             {
                 byte[] image = await imageService.UploadImageAsync(productModel.Image);
-                ProductDetail productDetail = ProductDetail.Create(productModel.Description, productModel.WeightInGrams ?? 0.0);
-                string tenantId = _workContext.Tenant.TenantId;
+                ProductDetail productDetail = ProductDetail.Create(productModel.Description, productModel.WeightInGrams);
+                string tenantId = _workContext.Tenant?.TenantId ?? string.Empty;
 
                 Product product = Product.Create(productModel.Title, productModel.Name, productModel.Price, image, productDetail, @event.MenuId, tenantId);
 
@@ -26,7 +26,7 @@ namespace Tenant.Application.Cqrs.Commands.RequestHandlers
 
             bool saveResponse = await _repository.SaveCahangesAsync();
 
-            return saveResponse is true ? new(ApiResponseModel<bool>.CreateSuccess(true)) : new(ApiResponseModel<bool>.CreateFailure<bool>("got a error in database while added products !"));
+            return saveResponse ? new(ApiResponseModel<bool>.CreateSuccess(true)) : new(ApiResponseModel<bool>.CreateFailure<bool>("got a error in database while added products !"));
         }
     }
 }

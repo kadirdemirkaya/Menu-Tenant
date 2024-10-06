@@ -21,7 +21,7 @@ namespace Auth.Application.Cqrs.Commands.RequestHandlers
 
                 bool updateRes = _repository.Update(user);
 
-                return updateRes is true ? new(ApiResponseModel<bool>.CreateSuccess(true)) : new(ApiResponseModel<bool>.CreateFailure<bool>("A got error in update process"));
+                return updateRes ? new(ApiResponseModel<bool>.CreateSuccess(true)) : new(ApiResponseModel<bool>.CreateFailure<bool>("A got error in update process"));
             }
 
             // TODO : Request event can be sending to database service in this section 

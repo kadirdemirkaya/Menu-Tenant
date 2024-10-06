@@ -6,11 +6,15 @@ namespace Shared.Infrastructure.Middlewares
     {
         public async Task InvokeAsync(HttpContext context)
         {
-            var path = context.Request.Path.Value;
-            if (path.StartsWith("/company/") || path.StartsWith("/Company/"))
+            String path = context.Request.Path.Value ?? string.Empty;
+
+            if (path.Contains("/company/"))
             {
-                var companyName = path.Split('/')[2];
-                context.Items["CompanyName"] = companyName;
+                var companyId = path.Split("/company/").LastOrDefault();
+                if (!string.IsNullOrEmpty(companyId))
+                {
+                    context.Items["CompanyName"] = companyId;
+                }
             }
 
             await _next(context);

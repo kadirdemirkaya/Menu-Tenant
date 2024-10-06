@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shared.Domain.BaseTypes
+namespace Shared.Application.Extensions
 {
-    public interface ITenantId
+    public class FakerExtensions
     {
-        public string TenantId { get; set; }
     }
 }

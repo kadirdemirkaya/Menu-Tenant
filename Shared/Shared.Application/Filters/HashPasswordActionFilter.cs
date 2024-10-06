@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Shared.Application.Filters.Attributes;
-using System.Security.Cryptography;
-using System.Text;
+using Shared.Domain.Models;
 
 namespace Shared.Application.Filters
 {
@@ -34,7 +33,7 @@ namespace Shared.Application.Filters
                     var passwordValue = property.GetValue(parameter) as string;
                     if (passwordValue != null)
                     {
-                        var hashedPassword = HashPassword(passwordValue); // hash
+                        var hashedPassword = HashProvider.HashPassword(passwordValue); // hash
                         property.SetValue(parameter, hashedPassword);
                     }
                 }
@@ -50,18 +49,18 @@ namespace Shared.Application.Filters
             }
         }
 
-        private string HashPassword(string password)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-                return builder.ToString();
-            }
-        }
+        //private string HashPassword(string password)
+        //{
+        //    using (SHA256 sha256 = SHA256.Create())
+        //    {
+        //        byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+        //        StringBuilder builder = new StringBuilder();
+        //        for (int i = 0; i < bytes.Length; i++)
+        //        {
+        //            builder.Append(bytes[i].ToString("x2"));
+        //        }
+        //        return builder.ToString();
+        //    }
+        //}
     }
 }

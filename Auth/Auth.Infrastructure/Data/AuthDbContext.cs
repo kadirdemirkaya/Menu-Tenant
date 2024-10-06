@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SecretManagement;
 using Shared.Application.Abstractions;
 using Shared.Domain.Aggregates.UserAggregate;
 using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.BaseTypes;
+using Shared.Domain.Models;
 using Shared.Infrastructure.Configurations;
 
 namespace Auth.Infrastructure.Data
@@ -10,7 +12,7 @@ namespace Auth.Infrastructure.Data
     public class AuthDbContext : DbContext
     {
         private readonly IWorkContext _workContext;
-
+        private readonly ISecretsManagerService _secretsManagerService;
         public AuthDbContext()
         {
         }
@@ -19,9 +21,10 @@ namespace Auth.Infrastructure.Data
         {
         }
 
-        public AuthDbContext(DbContextOptions options, IWorkContext workContext) : base(options)
+        public AuthDbContext(DbContextOptions options, IWorkContext workContext, ISecretsManagerService secretsManagerService) : base(options)
         {
             _workContext = workContext;
+            _secretsManagerService = secretsManagerService;
         }
 
 
@@ -44,7 +47,7 @@ namespace Auth.Infrastructure.Data
 
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql("Server=localhost;port=5432;Database=authdb;User Id=admin;Password=passw00rd");
+                optionsBuilder.UseNpgsql(_secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Auth_Url).GetAwaiter().GetResult());
             }
         }
 
@@ -67,7 +70,7 @@ namespace Auth.Infrastructure.Data
 
                 if (_workContext?.Tenant?.TenantId != null || entry.Entity.TenantId == null)
                 {
-                    entry.Entity.TenantId = _workContext.Tenant.TenantId;
+                    entry.Entity.TenantId = _workContext?.Tenant?.TenantId ?? Guid.NewGuid().ToString();
                 }
             }
             return await base.SaveChangesAsync(cancellationToken);
@@ -92,7 +95,7 @@ namespace Auth.Infrastructure.Data
 
                 if (_workContext?.Tenant?.TenantId != null || entry.Entity.TenantId == null)
                 {
-                    entry.Entity.TenantId = _workContext.Tenant.TenantId;
+                    entry.Entity.TenantId = _workContext?.Tenant?.TenantId ?? Guid.NewGuid().ToString();
                 }
             }
 

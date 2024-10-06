@@ -1,16 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SecretManagement;
 using Shared.Application.Abstractions;
 using Shared.Domain.Aggregates.MenuDatabaseAggregate;
-using Shared.Domain.Aggregates.UserAggregate;
 using Shared.Domain.BaseTypes;
+using Shared.Domain.Models;
 using Shared.Infrastructure.Configurations;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Database.EventGateway.Data
 {
     public class DatabaseContext : DbContext
     {
         private readonly IWorkContext _workContext;
+        private readonly ISecretsManagerService _secretsManagerService;
 
         public DatabaseContext()
         {
@@ -19,9 +20,10 @@ namespace Database.EventGateway.Data
         public DatabaseContext(DbContextOptions options) : base(options)
         {
         }
-        public DatabaseContext(DbContextOptions options, IWorkContext workContext) : base(options)
+        public DatabaseContext(DbContextOptions options, IWorkContext workContext, ISecretsManagerService secretsManagerService) : base(options)
         {
             _workContext = workContext;
+            _secretsManagerService = secretsManagerService;
         }
 
         public DbSet<MenuDatabase> Databases { get; set; }
@@ -35,7 +37,7 @@ namespace Database.EventGateway.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql("Server=localhost;port=5432;Database=database;User Id=admin;Password=passw00rd");
+                optionsBuilder.UseNpgsql(_secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentPOSTGRES_POSTGRES_Database_Url).GetAwaiter().GetResult());
             }
         }
 
@@ -58,7 +60,7 @@ namespace Database.EventGateway.Data
 
                 if (_workContext?.Tenant?.TenantId != null || entry.Entity.TenantId == null)
                 {
-                    entry.Entity.TenantId = _workContext.Tenant.TenantId;
+                    entry.Entity.TenantId = _workContext?.Tenant?.TenantId ?? Guid.NewGuid().ToString();
                 }
             }
             return await base.SaveChangesAsync(cancellationToken);
@@ -83,7 +85,7 @@ namespace Database.EventGateway.Data
 
                 if (_workContext?.Tenant?.TenantId != null || entry.Entity.TenantId == null)
                 {
-                    entry.Entity.TenantId = _workContext.Tenant.TenantId;
+                    entry.Entity.TenantId = _workContext?.Tenant?.TenantId ?? Guid.NewGuid().ToString();
                 }
             }
 

@@ -14,18 +14,18 @@ namespace Shared.Domain.Aggregates.MenuAggregate.ValueObjects
             
         }
 
-        public ProductDetail(string description, double weightInGrams)
+        public ProductDetail(string? description, double? weightInGrams)
         {
             Description = description;
             WeightInGrams = weightInGrams;
         }
 
-        public static ProductDetail Create(string description, double weightInGrams)
+        public static ProductDetail Create(string? description = "", double? weightInGrams = 0.0)
         {
             return new(description, weightInGrams);
         }
 
-        public void ProductDetailSet(string description, double weightInGrams)
+        public void ProductDetailSet(string? description, double? weightInGrams)
         {
             Description = description;
             WeightInGrams = weightInGrams;
