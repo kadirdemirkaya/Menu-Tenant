@@ -16,8 +16,7 @@ namespace Auth.Application.Cqrs.Commands.RequestHandlers
 
             if (user is not null)
             {
-                user.SetIsDeleted(true);
-                user.SetUpdatedDateUTC(DateTime.UtcNow);
+                user.SetIsDeletedForEntity(true).SetUpdatedDate(DateTime.UtcNow);
 
                 bool updateRes = _repository.Update(user);
 

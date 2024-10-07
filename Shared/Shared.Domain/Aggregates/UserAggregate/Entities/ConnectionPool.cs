@@ -77,24 +77,43 @@ namespace Shared.Domain.Aggregates.UserAggregate.Entities
         public static ConnectionPool Create(ConnectionPoolId connectionPoolId, string name, string host, string port, string databaseName, string userName, string password, CompanyId companyId, string tenantId, bool isActive = true)
             => new(connectionPoolId, name, host, port, databaseName, userName, password, companyId, tenantId, isActive);
 
-        public void SetDatabaseName(string databaseName)
-        {
-            DatabaseName = databaseName;
-        }
 
-        public void SetIsActive(bool isActive)
-        {
-            IsActive = isActive;
-        }
+        public ConnectionPool SetId(ConnectionPoolId id) { Id = id; return this; }
+        public ConnectionPool SetName(string name) { Name = name; return this; }
+        public ConnectionPool SetHost(string host) { Host = host; return this; }
+        public ConnectionPool SetPort(string port) { Port = port; return this; }
+        public ConnectionPool SetDatabaseName(string databaseName) { DatabaseName = databaseName; return this; }
+        public ConnectionPool SetUsername(string username) { Username = username; return this; }
+        public ConnectionPool SetPassword(string password) { Password = password; return this; }
+        public ConnectionPool SetIsActive(bool isActive) { IsActive = IsActive; return this; }
+        public ConnectionPool CompanyIdSet(CompanyId companyId) { CompanyId = companyId; return this; }
+        public ConnectionPool SetTenantIdForEntity(string id) { SetTenantId(id); return this; }
+        public ConnectionPool SetUpdatedDate(DateTime updateDate) { SetCreatedDateUTC(updateDate); return this; }
+        public ConnectionPool SetCreatedDate(DateTime createdDate) { SetCreatedDateUTC(createdDate); return this; }
+        public ConnectionPool SetIsDeletedForEntity(bool isDeleted) { SetIsDeleted(isDeleted); return this; }
 
-        public void CompanyIdSet(CompanyId companyId)
-        {
-            CompanyId = companyId;
-        }
 
-        public void SetTenantIdForEntity(string id)
-        {
-            SetTenantId(id);
-        }
+        #region Old Setter Methods
+        //public void SetDatabaseName(string databaseName)
+        //{
+        //    DatabaseName = databaseName;
+        //}
+
+        //public void SetIsActive(bool isActive)
+        //{
+        //    IsActive = isActive;
+        //}
+
+        //public void CompanyIdSet(CompanyId companyId)
+        //{
+        //    CompanyId = companyId;
+        //}
+
+        //public void SetTenantIdForEntity(string id)
+        //{
+        //    SetTenantId(id);
+        //}
+
+        #endregion
     }
 }

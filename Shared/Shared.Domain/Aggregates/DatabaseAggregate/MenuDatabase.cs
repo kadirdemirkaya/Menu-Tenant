@@ -1,4 +1,5 @@
 ﻿using Shared.Domain.Aggregates.DatabaseAggregate.ValueObjects;
+using Shared.Domain.Aggregates.MenuAggregate.Entities;
 using Shared.Domain.BaseTypes;
 
 namespace Shared.Domain.Aggregates.MenuDatabaseAggregate
@@ -52,56 +53,74 @@ namespace Shared.Domain.Aggregates.MenuDatabaseAggregate
         public static MenuDatabase Create(MenuDatabaseId menuDatabaseId, string host, string port, string databaseName, string userName, string password, string tenantid, bool isActive = true)
           => new(menuDatabaseId, host, port, databaseName, userName, password, tenantid, isActive);
 
+
+        public MenuDatabase SetId(MenuDatabaseId id) { Id = id; return this; }
+        public MenuDatabase SetHost(string host) { Host = host; return this; }
+        public MenuDatabase SetPort(string port) { Port = port; return this; }
+        public MenuDatabase SetDatabaseName(string databaseName) { DatabaseName = databaseName; return this; }
+        public MenuDatabase SetUsername(string userName) { Username = userName; return this; }
+        public MenuDatabase SetPassword(string password) { Password = password; return this; }
+        public MenuDatabase SetIsActive(bool isActive ) { IsActive = isActive; return this; }
+        public MenuDatabase SetTenantIdForEntity(string id) { SetTenantId(id); return this; }
+        public MenuDatabase SetUpdatedDate(DateTime updateDate) { SetCreatedDateUTC(updateDate); return this; }
+        public MenuDatabase SetCreatedDate(DateTime createdDate) { SetCreatedDateUTC(createdDate); return this; }
+        public MenuDatabase SetIsDeletedForEntity(bool isDeleted) { SetIsDeleted(isDeleted); return this; }
+
+
+        #region Old Setter Method
+        //public void SetHost(string host)
+        //{
+        //    Host = host;
+        //}
+
+        //public void SetPort(string port)
+        //{
+        //    Port = port;
+        //}
+
+        //public void SetDatabaseName(string databaseName)
+        //{
+        //    DatabaseName = databaseName;
+        //}
+
+        //public void SetUsername(string userName)
+        //{
+        //    Username = userName;
+        //}
+
+        //public void SetPassword(string password)
+        //{
+        //    Password = password;
+        //}
+
+        //public void SetIsActive(bool isActive)
+        //{
+        //    IsActive = isActive;
+        //}
+        #endregion
+
         public void UpdateMenuDatabase(string host, string port, string databaseName, string userName, string password, string tenantid, bool isActive = true)
         {
-            SetHost(host);
-            SetPort(port);
-            SetDatabaseName(databaseName);
-            SetUsername(userName);
-            SetPassword(password);
-            SetTenantId(tenantid);
-            SetIsActive(isActive);
+            SetHost(host)
+            .SetPort(port)
+            .SetDatabaseName(databaseName)
+            .SetUsername(userName)
+            .SetPassword(password)
+            .SetTenantIdForEntity(tenantid)
+            .SetIsActive(isActive)
+            .SetUpdatedDate(DateTime.UtcNow);
         }
         public void UpdateMenuDatabase(MenuDatabaseId menuDatabaseId, string host, string port, string databaseName, string userName, string password, string tenantid, bool isActive = true)
         {
-            Id = menuDatabaseId;
-            SetHost(host);
-            SetPort(port);
-            SetDatabaseName(databaseName);
-            SetUsername(userName);
-            SetPassword(password);
-            SetTenantId(tenantid);
-            SetIsActive(isActive);
-        }
-
-        public void SetHost(string host)
-        {
-            Host = host;
-        }
-
-        public void SetPort(string port)
-        {
-            Port = port;
-        }
-
-        public void SetDatabaseName(string databaseName)
-        {
-            DatabaseName = databaseName;
-        }
-
-        public void SetUsername(string userName)
-        {
-            Username = userName;
-        }
-
-        public void SetPassword(string password)
-        {
-            Password = password;
-        }
-
-        public void SetIsActive(bool isActive)
-        {
-            IsActive = isActive;
+            SetId(menuDatabaseId)
+            .SetHost(host)
+            .SetPort(port)
+            .SetDatabaseName(databaseName)
+            .SetUsername(userName)
+            .SetPassword(password)
+            .SetTenantIdForEntity(tenantid)
+            .SetIsActive(isActive)
+            .SetUpdatedDate(DateTime.UtcNow);
         }
     }
 }

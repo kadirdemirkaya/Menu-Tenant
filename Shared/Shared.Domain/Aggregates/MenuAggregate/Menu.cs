@@ -1,5 +1,6 @@
 ﻿using Shared.Domain.Aggregates.MenuAggregate.Entities;
 using Shared.Domain.Aggregates.MenuAggregate.ValueObjects;
+using Shared.Domain.Aggregates.UserAggregate;
 using Shared.Domain.Aggregates.UserAggregate.Entities;
 using Shared.Domain.BaseTypes;
 
@@ -71,53 +72,60 @@ namespace Shared.Domain.Aggregates.ProductAggregate
         public static Menu Create(MenuId id, string name, string tenantId, string? description, string? webUrl)
             => new(id, name, tenantId, description, webUrl);
 
-        public void SetName(string name)
-        {
-            Name = name;
-        }
 
-        public void SetDescription(string description)
-        {
-            Description = description;
-        }
+        public Menu SetId(MenuId menuId) { Id = menuId; return this; }
+        public Menu SetName(string name) { Name = name; return this; }
+        public Menu SetDescription(string description) { Description = description; return this; }
+        public Menu SetWebUrl(string webUrl) { WebUrl = webUrl; return this; }
+        public Menu SetActive(bool isActive) { IsActive = isActive; return this; }
+        public Menu AddAddress(Address address) { Address = address; return this; }
+        public Menu SetTenantIdForEntity(string id) { SetTenantId(id); return this; }
+        public Menu SetUpdatedDate(DateTime updateDate) { SetCreatedDateUTC(updateDate); return this; }
+        public Menu SetCreatedDate(DateTime createdDate) { SetCreatedDateUTC(createdDate); return this; }
+        public Menu SetIsDeletedForEntity(bool isDeleted) { SetIsDeleted(isDeleted); return this; }
 
-        public void SetWebUrl(string webUrl)
-        {
-            WebUrl = webUrl;
-        }
+        #region Old Setter Methods
+        //public void SetName(string name)
+        //{
+        //    Name = name;
+        //}
 
-        public void SetActive(bool activeState)
-        {
-            IsActive = activeState;
-        }
+        //public void SetDescription(string description)
+        //{
+        //    Description = description;
+        //}
+
+        //public void SetWebUrl(string webUrl)
+        //{
+        //    WebUrl = webUrl;
+        //}
+
+        //public void SetActive(bool activeState)
+        //{
+        //    IsActive = activeState;
+        //}
+        #endregion
 
         public void UpdateMenu(string name, string? description, string? webUrl)
         {
-            SetName(name);
-            SetDescription(description ?? string.Empty);
-            SetWebUrl(webUrl ?? string.Empty);
+            SetName(name).SetDescription(description ?? string.Empty).SetWebUrl(webUrl ?? string.Empty);
         }
 
         public void UpdateMenu(MenuId id, string name, string? description, string? webUrl)
         {
-            Id = id;
-            SetName(name);
-            SetDescription(description ?? string.Empty);
-            SetWebUrl(webUrl ?? string.Empty);
+            SetId(id).SetName(name).SetDescription(description ?? string.Empty).SetWebUrl(webUrl ?? string.Empty);
         }
         public void UpdateMenu(MenuId id, string name, string? description, string? webUrl, string tenantId)
         {
-            Id = id;
-            SetName(name);
-            SetDescription(description ?? string.Empty);
-            SetWebUrl(webUrl ?? string.Empty);
-            SetTenantId(tenantId);
+            SetId(id).SetName(name).SetDescription(description ?? string.Empty).SetWebUrl(webUrl ?? string.Empty).SetTenantId(tenantId);
         }
 
-        public void AddAddress(Address address)
-        {
-            Address = address;
-        }
+        #region Old Setter Method !
+        //public void AddAddress(Address address)
+        //{
+        //    Address = address;
+        //}
+        #endregion
 
         public void AddProduct(Product product)
         {
