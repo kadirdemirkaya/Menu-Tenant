@@ -24,6 +24,12 @@ namespace NUnit.MenuTest
         [SetUp]
         public void Init()
         {
+            var builder = new ConfigurationBuilder()
+               .SetBasePath(Directory.GetCurrentDirectory())
+               .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            _configuration = builder.Build();
+
             services.AddEventBus(AssemblyReference.Assembly);
 
             services.AddSingleton<ISecretsManagerService>(sp =>
@@ -31,15 +37,9 @@ namespace NUnit.MenuTest
                 return new AwsSecretsManagerService(_configuration);
             });
 
-            var builder = new ConfigurationBuilder()
-               .SetBasePath(Directory.GetCurrentDirectory())
-               .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(_configuration["RedisUrl"] ?? "localhost"));
 
-            _configuration = builder.Build();
-
-            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6379"));
-
-            services.AddSingleton<RedisStreamService>();
+            services.AddStreamBus(AssemblyReference.Assembly);
         }
 
         [OneTimeTearDown]
@@ -105,7 +105,9 @@ namespace NUnit.MenuTest
             var serviceProvider = services.BuildServiceProvider();
             var redisStreamService = serviceProvider.GetRequiredService<RedisStreamService>();
 
-            await redisStreamService.PublishEventAsync(new ConnectionPoolUpdateStreamEvent() { Message = "naifa7ggbdf" }, StreamEnum.AuthApi);
+            await redisStreamService.PublishEventAsync(new TestStreamEvent() { Data = "naifa7ggbdf" }, StreamEnum.Test);
+
+            await Task.Delay(10000);
         }
     }
 }

@@ -33,7 +33,6 @@ namespace Shared.Stream
                 return new StreamBus(valueDictionary, logger, sp);
             });
 
-
             services.AddHostedService<Worker>();
 
             return services;

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Shared.Application.Extensions;
 using Shared.Domain.Models.Configs;
 using StackExchange.Redis;
+using System.Globalization;
 
 namespace Shared.Stream
 {
@@ -54,19 +55,19 @@ namespace Shared.Stream
 
                     string eventTypeVal = entry.Values[0].Value.ToString();
                     var dataVal = entry.Values[1].Value;
+                    DateTime expirationTimeVal = DateTime.Parse(entry.Values[2].Value).ToUniversalTime();
 
-                    #region this value will improved soon 
-                    // TODO : var expirationTimeVal = entry.Values[2].Value;
-                    #endregion
+                    if (expirationTimeVal < DateTime.UtcNow)
+                    {
+                        _logger.LogWarning("{Datetime} : Incoming data is fulled expiration time ! ", DateTime.UtcNow);
+                        continue;
+                    }
 
                     await _streamBus.PublishAsync(eventTypeVal, dataVal);
 
                     await _db.StreamAcknowledgeAsync(_streamConfigs.StreamKey, _streamConfigs.GroupName, entry.Id);
                 }
-                else
-                {
 
-                }
                 await Task.Delay(1000);
             }
             _logger.LogInformation("Worker is stoped.");

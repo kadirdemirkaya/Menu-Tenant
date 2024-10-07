@@ -6,5 +6,6 @@
         AuthJob,
         DatabaseEventGateway,
         TenantApi,
+        Test
     }
 }
