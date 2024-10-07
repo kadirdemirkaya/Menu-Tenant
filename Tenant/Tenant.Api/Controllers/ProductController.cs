@@ -33,11 +33,11 @@ namespace Tenant.Api.Controllers
 
         [HttpPut]
         [Route("updateproduct")]
-        public async Task<IActionResult> UpdateProduct()
+        public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductDto updateProductDto)
         {
-            UpdateProductCommandRequest request = new(default);
+            UpdateProductCommandRequest request = new(updateProductDto);
             UpdateProductCommandResponse response = await _eventBus.PublishAsync(request) as UpdateProductCommandResponse;
-            
+
             return response.ApiResponseModel.Success ? Ok() : BadRequest();
         }
     }
