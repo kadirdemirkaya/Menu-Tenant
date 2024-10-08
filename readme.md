@@ -78,7 +78,7 @@ In the project scenario, more than one business wants a menu service and also we
 
 - All database operations (creation, deletion, etc.) take place here
 
-## Şu Anki Eksikler 🚧
+## Current Shortcomings
 
 - [ ] The project can be supported with email services. User can be informed instantly.
 - [ ] QueryFilter errors in the repository service should be fixed and it can be developed as a common layer.
