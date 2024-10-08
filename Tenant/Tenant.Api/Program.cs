@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Serilog;
 using Tenant.Api;
 using Tenant.Application;
 using Tenant.Infrastructure;
@@ -13,6 +14,7 @@ builder.Services.TenantApplicationRegistration(configuration);
 
 builder.Services.TenantInfrastructureRegistration(configuration);
 
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 

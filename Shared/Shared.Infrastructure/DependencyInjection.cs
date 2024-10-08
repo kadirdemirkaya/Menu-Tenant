@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SecretManagement;
 using Serilog;
-using Serilog.Events;
 using Shared.Application.Abstractions;
 using Shared.Domain.Models;
 using Shared.Infrastructure.Middlewares;
@@ -36,10 +35,11 @@ namespace Shared.Infrastructure
             using (ISecretsManagerService secretsManagerService = new AwsSecretsManagerService(configuration))
             {
                 Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .WriteTo.Seq($"http://{secretsManagerService.GetSecretValueAsStringAsync(Constants.Secrets.DevelopmentSeq).GetAwaiter().GetResult()}")
-                .CreateLogger();
+                  .ReadFrom.Configuration(configuration)
+                  .Enrich.WithProperty("ServiceName", configuration["LogName"])
+                  .CreateLogger();
+
+                services.AddSingleton(Log.Logger);
             }
 
             return services;

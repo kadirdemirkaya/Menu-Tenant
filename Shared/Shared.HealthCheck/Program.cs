@@ -2,6 +2,7 @@ using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using SecretManagement;
+using Serilog;
 using Shared.Domain.Models;
 using Shared.HealthCheck;
 using Shared.Infrastructure;
@@ -11,9 +12,13 @@ using Steeltoe.Discovery.Consul;
 
 var builder = WebApplication.CreateBuilder(args);
 
+IConfiguration configuration = builder.Configuration;
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddDiscoveryClient();
+
+builder.Services.SeqRegistration(configuration);
 
 builder.Services.SecretManagementRegistration();
 
@@ -84,6 +89,7 @@ using (ISecretsManagerService secretsManagerService = new AwsSecretsManagerServi
     }).AddInMemoryStorage();
 }
 
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 
