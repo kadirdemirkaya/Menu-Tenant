@@ -84,7 +84,8 @@ services:
   seq:
     image: datalust/seq:latest
     ports:
-      - "5341:80"
+      - "5341:5341"
+      - "8081:80"
     environment:
       - ACCEPT_EULA=Y
     volumes:
