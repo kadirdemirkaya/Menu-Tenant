@@ -85,3 +85,4 @@ In the project scenario, more than one business wants a menu service and also we
 - [ ] CompanyName is empty and if not come tenantid we are didn't matching to urls
 - [ ] Shareddb tenantId value not equals connectionpools tenantId value
 - [ ] Unit Tests fell short
+- [ ] No distribution testing done
