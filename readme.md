@@ -57,7 +57,7 @@ In the project scenario, more than one business wants a menu service and also we
     services.AddSingleton<ISecretsManagerService, AwsSecretsManagerService>();
     ```
 
-## Katmanlar
+## Layers
 
 #### 1. **Shared**
 
