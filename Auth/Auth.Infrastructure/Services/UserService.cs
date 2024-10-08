@@ -61,8 +61,12 @@ namespace Auth.Infrastructure.Services
             user.AddCompany(company);
 
             if (await CreateAsync(user))
+            {
+                _logger.LogInformation("{DateTime} : '{email}' person is register ", DateTime.UtcNow,user.Email);
                 return await SaveCahangesAsync();
+            }
 
+            _logger.LogInformation("{DateTime} : '{email}' person is not register ", DateTime.UtcNow, user.Email);
             return false;
         }
 
@@ -96,6 +100,8 @@ namespace Auth.Infrastructure.Services
 
                 Token token = _jwtTokenService.GenerateToken(tenantModel);
 
+                _logger.LogInformation("{DateTime} : '{email}' person is login ", DateTime.UtcNow, user.Email);
+
                 return token;
             }
             else // user have one of more companies
@@ -126,6 +132,8 @@ namespace Auth.Infrastructure.Services
                 };
 
                 Token token = _jwtTokenService.GenerateToken(tenantModel);
+
+                _logger.LogInformation("{DateTime} : '{email}' person is login ", DateTime.UtcNow, user.Email);
 
                 return token;
             }

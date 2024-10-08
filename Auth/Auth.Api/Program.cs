@@ -1,6 +1,7 @@
 using Auth.Api;
 using Auth.Application;
 using Auth.Infrastructure;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,8 @@ builder.Services.AuthApiRegistration(configuration);
 builder.Services.AuthApplicationRegistration(configuration);
 
 builder.Services.AuthInfrastructureServiceRegistrations(configuration);
+
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 

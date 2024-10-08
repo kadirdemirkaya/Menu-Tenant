@@ -85,10 +85,12 @@ services:
     image: datalust/seq:latest
     ports:
       - "5341:5341"
+      - "8081:80"
     environment:
       - ACCEPT_EULA=Y
     volumes:
       - seq_data:/data
+      - seq-logs:/logs
 
 volumes:
   sonarqube_data:
@@ -97,3 +99,4 @@ volumes:
   postgresql_data:
   pgdata:
   seq_data:
+  seq-logs:

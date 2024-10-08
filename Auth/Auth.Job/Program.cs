@@ -2,8 +2,10 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 IHost host = Host.CreateDefaultBuilder(args)
+    .UseSerilog()
     .ConfigureServices((hostContext, services) =>
     {
         IConfiguration configuration = hostContext.Configuration;
@@ -21,6 +23,8 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<IConfiguration>(configuration);
 
         services.AuthJobDependencyInjection(configuration);
+
+
     })
     .Build();
 
